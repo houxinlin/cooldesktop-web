@@ -1,0 +1,37 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1087767",
+      "name": "关闭",
+      "font_class": "webicon309",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "2089524",
+      "name": "t最小化",
+      "font_class": "tzuixiaohua",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "16272380",
+      "name": "最大化",
+      "font_class": "big",
+      "unicode": "e6bc",
+      "unicode_decimal": 59068
+    },
+    {
+      "icon_id": "16793618",
+      "name": "状态栏_最大化",
+      "font_class": "zhuangtailan_zuidahua",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    }
+  ]
+}
