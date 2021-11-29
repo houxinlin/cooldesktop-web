@@ -11,7 +11,14 @@
               <div class="app-name">文件</div>
             </div>
           </li>
-
+           <li @dblclick="openNewApp('http://www.houxinlin.com:6060/')">
+            <div class="app-item">
+              <div class="app-icon">
+                <img src="../assets/icon/ic-folder.png" alt="" />
+              </div>
+              <div class="app-name">文件</div>
+            </div>
+          </li>
         </ul>
       </div>
       <template v-for="item in folder" :key="item">
@@ -21,10 +28,11 @@
             'min-window': item.minState,
             'max-window': item.maxState,
           }"
-          class="window-item"
+          class="window-item folder"
+          @mousedown="windowMove"
         >
-          <div class="window-title" @mousedown="windowMove">
-            <header>文件夹</header>
+          <div class="window-title">
+            <header>此电脑</header>
             <div class="opt">
               <i
                 class="iconfont icon-tzuixiaohua"
@@ -38,7 +46,16 @@
             </div>
           </div>
           <div class="window-body">
-            {{ item.id }}
+            <ul>
+              <template v-for="item in 10" :key="item">
+                <li>
+                  <div class="file-item">
+                    <img src="../assets/icon/ic-folder-green.png" alt="" />
+                    <span>root</span>
+                  </div>
+                </li>
+              </template>
+            </ul>
           </div>
         </div>
       </template>
@@ -49,9 +66,10 @@
             'min-window': item.minState,
             'max-window': item.maxState,
           }"
+          @mousedown="windowMove"
           class="window-item"
         >
-          <div class="window-title" @mousedown="windowMove">
+          <div class="window-title" >
             <header>{{ item.title }}</header>
             <div class="opt">
               <i
@@ -65,8 +83,8 @@
               ></i>
             </div>
           </div>
-          <div class="window-body">
-            <iframe :src="item.url"></iframe>
+          <div class="window-body" >
+            <iframe @click="openNewApp('www.baidu.com')" :src="item.url"></iframe>
           </div>
         </div>
       </template>
@@ -103,13 +121,25 @@ export default {
       actionWindowId: -1,
     });
     const windowMove = (e) => {
+      if (e.which == 3) {
+        return;
+      }
+    console.log(e)
       let odiv = e.target;
+      let downDiv = odiv;
       let list = [];
-      while (list.findIndex((item) => item == "window-item") != 0) {
+
+      //找到window-item节点
+      while (list.findIndex((item) => item == "window-item") == -1) {
         odiv = odiv.parentNode;
         let classList = odiv.classList;
+        if (classList == undefined) {
+          return;
+        }
         list = [...classList];
       }
+
+      //置顶
       odiv.style.zIndex = 9999;
       for (const item of document.querySelectorAll(".window-item")) {
         if (item != odiv) {
@@ -117,6 +147,13 @@ export default {
         }
       }
 
+      //除了window-body其他都可以移动
+      if ( [...downDiv.classList].findIndex((item) => item == "window-title") == -1) {
+        if(downDiv.nodeName!="HEADER" ){
+        return;
+
+        }
+      }
       let disX = e.clientX - odiv.offsetLeft;
       let disY = e.clientY - odiv.offsetTop;
       document.onmousemove = (e) => {
@@ -199,9 +236,10 @@ export default {
     const openNewApp = (url) => {
       pushWindow(state.appWindows, "/src/assets/icon/ic-folder.png", url);
     };
-
+    const setWindowPos = (id, z) => {};
     return {
       openNewApp,
+      setWindowPos,
       showWindow,
       windowMin,
       windowSize,
@@ -217,4 +255,5 @@ export default {
 <style lang="less">
 @import "../assets/less/index.less";
 @import "../assets/less/window.less";
+@import "../assets/less/folder.less";
 </style>>
