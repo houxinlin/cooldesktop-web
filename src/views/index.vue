@@ -11,7 +11,7 @@
               <div class="app-name">文件</div>
             </div>
           </li>
-           <li @dblclick="openNewApp('http://www.houxinlin.com:6060/')">
+          <li @dblclick="openNewApp('http://www.houxinlin.com:6060/')">
             <div class="app-item">
               <div class="app-icon">
                 <img src="../assets/icon/ic-folder.png" alt="" />
@@ -21,24 +21,37 @@
           </li>
         </ul>
       </div>
-      <template v-for="item in folder" :key="item">
+
+      <template v-for="item in windowsHwnd" :key="item">
         <div
+          :data-id="item.id"
           :class="{
-            'window-transition': item.windowTransition,
+            'window-scale': item.windowTransition,
             'min-window': item.minState,
             'max-window': item.maxState,
+            'window-z-height': item.actionWindow,
+            folder: item.windowType == 'folder',
           }"
-          class="window-item folder"
+          class="window-item"
           @mousedown="windowMove"
         >
           <div class="window-title">
-            <header>此电脑</header>
+            <header>
+              <ul v-if="item.windowType == 'folder'" class="location">
+                <li>/</li>
+                <li>/root</li>
+                <li>/pad</li>
+              </ul>
+            </header>
             <div class="opt">
               <i
                 class="iconfont icon-tzuixiaohua"
                 @click="windowMin(item.id)"
               ></i>
-              <i class="iconfont icon-big" @click="windowSize(item.id)"></i>
+              <i
+                class="iconfont icon-big"
+                @click="windowFullScreen(item.id)"
+              ></i>
               <i
                 class="iconfont icon-webicon309"
                 @click="closeWindow(item.id)"
@@ -46,7 +59,8 @@
             </div>
           </div>
           <div class="window-body">
-            <ul>
+            <iframe v-if="item.windowType == 'web'" :src="item.url"></iframe>
+            <ul v-if="item.windowType == 'folder'">
               <template v-for="item in 10" :key="item">
                 <li>
                   <div class="file-item">
@@ -59,44 +73,20 @@
           </div>
         </div>
       </template>
-      <template v-for="item in appWindows" :key="item">
-        <div
-          :class="{
-            'window-transition': item.windowTransition,
-            'min-window': item.minState,
-            'max-window': item.maxState,
-          }"
-          @mousedown="windowMove"
-          class="window-item"
-        >
-          <div class="window-title" >
-            <header>{{ item.title }}</header>
-            <div class="opt">
-              <i
-                class="iconfont icon-tzuixiaohua"
-                @click="windowMin(item.id)"
-              ></i>
-              <i class="iconfont icon-big" @click="windowSize(item.id)"></i>
-              <i
-                class="iconfont icon-webicon309"
-                @click="closeWindow(item.id)"
-              ></i>
-            </div>
-          </div>
-          <div class="window-body" >
-            <iframe @click="openNewApp('www.baidu.com')" :src="item.url"></iframe>
-          </div>
-        </div>
-      </template>
     </div>
     <div class="task-bar">
       <div class="task-bar-mask"></div>
       <div class="task-bar-content">
         <ul>
-          <template v-for="item in taskBarInfo" :key="item">
+          <template v-for="item in windowsHwnd" :key="item">
             <li @click="showWindow(item.id)">
               <div class="task-item">
-                <img :src="item.icon" alt="" />
+                <img
+                  :class="{ select: item.id == actionWindowId }"
+                  :src="item.icon"
+                  alt=""
+                />
+                <span :class="{ select: item.id == actionWindowId }"></span>
               </div>
             </li>
           </template>
@@ -110,21 +100,20 @@
 import { reactive, toRefs } from "vue";
 import "../assets/font/iconfont.css";
 import { randId } from "../utils/utils";
+import { StandardWindow, FolderWindow } from "../js/window.js";
 export default {
   setup() {
     let state = reactive({
       positionX: 0,
       positionY: 0,
-      folder: [],
-      appWindows: [],
-      taskBarInfo: [],
       actionWindowId: -1,
+      //窗口集合
+      windowsHwnd: [],
     });
     const windowMove = (e) => {
       if (e.which == 3) {
         return;
       }
-    console.log(e)
       let odiv = e.target;
       let downDiv = odiv;
       let list = [];
@@ -138,7 +127,8 @@ export default {
         }
         list = [...classList];
       }
-
+      state.actionWindowId = odiv.getAttribute("data-id");
+      setWindowPos(state.actionWindowId);
       //置顶
       odiv.style.zIndex = 9999;
       for (const item of document.querySelectorAll(".window-item")) {
@@ -148,10 +138,11 @@ export default {
       }
 
       //除了window-body其他都可以移动
-      if ( [...downDiv.classList].findIndex((item) => item == "window-title") == -1) {
-        if(downDiv.nodeName!="HEADER" ){
-        return;
-
+      if (
+        [...downDiv.classList].findIndex((item) => item == "window-title") == -1
+      ) {
+        if (downDiv.nodeName != "HEADER") {
+          return;
         }
       }
       let disX = e.clientX - odiv.offsetLeft;
@@ -171,55 +162,59 @@ export default {
         document.onmouseup = null;
       };
     };
-    const pushWindow = (windowType, icon, url) => {
-      let windowId = randId();
-      state.actionWindowId = windowId;
-      windowType.push({
-        url: url,
-        id: windowId,
-        maxState: false,
-        minState: false,
-        windowTransition: false,
-      });
-      state.taskBarInfo.push({
-        id: windowId,
-        icon: icon,
-      });
-      return windowId;
+
+    //打开新窗口
+    const openNewWindow = (windowProperty = {}) => {
+      let newProperty = {};
+      Object.assign(newProperty, StandardWindow.getProperty(), windowProperty);
+      newProperty.id = randId();
+      newProperty.actionWindow = true;
+      state.windowsHwnd.push(newProperty);
     };
+    //打开文件夹
     const openNewFolder = () => {
-      pushWindow(state.folder, "/src/assets/icon/ic-folder.png", "");
+      let p = FolderWindow.getProperty();
+      p.icon = "/src/assets/icon/ic-folder.png";
+      openNewWindow(p);
+
     };
+    //打开web
+    const openNewApp = (url) => {
+      openNewWindow({ url: url, icon: "/src/assets/icon/ic-folder.png" });
+    };
+    //关闭Window
     const closeWindow = (id) => {
-      getAppById(id).tp.splice(getAppById(id).index, 1);
-      state.taskBarInfo.splice(
-        state.taskBarInfo.findIndex((item) => item.id == id),
-        1
-      );
+      state.windowsHwnd.splice(getAppById(id).index, 1);
     };
+    //显示Window
     const showWindow = (id) => {
-      getAppById(id).instance.minState = !getAppById(id).instance.minState;
+      //如果当前Window已经显示，并且是置顶，则开始动画
+      if (
+        getAppById(id).instance.actionWindow == true
+      ) {
+        getAppById(id).instance.windowTransition = true;
+        setTimeout(() => {
+          getAppById(id).instance.windowTransition = false;
+        }, 600);
+        return;
+      }
+      //显示Window
+      setWindowPos(id);
     };
+    //最小化
     const windowMin = (id) => {
       getAppById(id).instance.minState = !getAppById(id).instance.minState;
     };
+    //获取实例
     const getAppById = (id) => {
-      let index = state.folder.findIndex((item) => item.id == id);
-      if (index >= 0) {
-        return {
-          instance: state.folder[index],
-          index: index,
-          tp: state.folder,
-        };
-      }
-      index = state.appWindows.findIndex((item) => item.id == id);
+      let index = state.windowsHwnd.findIndex((item) => item.id == id);
       return {
-        instance: state.appWindows[index],
+        instance: state.windowsHwnd[index],
         index: index,
-        tp: state.appWindows,
       };
     };
-    const windowSize = (id) => {
+    //全屏
+    const windowFullScreen = (id) => {
       let app = getAppById(id);
       if (app.instance.maxState) {
         app.instance.maxState = !app.instance.maxState;
@@ -233,16 +228,29 @@ export default {
         }, 10);
       }
     };
-    const openNewApp = (url) => {
-      pushWindow(state.appWindows, "/src/assets/icon/ic-folder.png", url);
+
+    //置顶制定Id的Window
+    const setWindowPos = (id) => {
+      for (const item of state.windowsHwnd) {
+        item.actionWindow = false;
+      }
+
+      //当前活动id
+      state.actionWindowId = id;
+      //设置当前为置顶
+      getAppById(id).instance.actionWindow = true;
+      //如果是最小化的时候，则显示
+      if (getAppById(id).instance.minState) {
+        getAppById(id).instance.minState = false;
+        return;
+      }
     };
-    const setWindowPos = (id, z) => {};
     return {
       openNewApp,
       setWindowPos,
       showWindow,
       windowMin,
-      windowSize,
+      windowFullScreen,
       closeWindow,
       openNewFolder,
       windowMove,

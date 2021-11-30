@@ -1,4 +1,4 @@
-.folder{
+.folder .window-body{
     ul{
         padding: 6px;
         display: grid;
@@ -9,8 +9,10 @@
             cursor: pointer;
             width: 80px;
             height: 80px;
-            padding: 7px;
             margin: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             .file-item{
                 align-items: center;
                 justify-content: center;
@@ -32,5 +34,31 @@
             border-radius: 6px;
         }
        
+    }
+}
+.folder header{
+    height: 100%;
+    ul{
+        display: flex;
+        padding: 4px 10px;
+        height: 100%;
+        li{
+            padding: 1px 9px;
+            background: #9f9f9f30;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px #c3c3c34a solid;
+        }
+        li:nth-of-type(1){
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 10px;
+        }
+        li:nth-last-of-type(1){
+            border-right: none;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 10px;
+        }
     }
 }

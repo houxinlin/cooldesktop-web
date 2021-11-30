@@ -1,5 +1,6 @@
 @TASK_BAR_HEGIHT: 57px;
 @APP_CONTAINER_Z_INDEX:1000;
+@APP_TASK_BAR_Z_INDEX:999999;
 .max-window{
     position: absolute !important;
     left: 0px !important;
@@ -16,6 +17,10 @@
 }
 .window-transition{
     transition: all 0.3s !important;
+}
+
+.window-z-height{
+    z-index: 99999 !important
 }
 .desktop{
     position: fixed;
@@ -41,7 +46,7 @@
        margin: 0 73px 15px 73px;
        border-radius: 12px;
        box-shadow: 0px 2px 10px #00000069;
-       z-index: 1;
+       z-index: @APP_TASK_BAR_Z_INDEX;
        .task-bar-mask{
             content: '';
             position: absolute;
@@ -73,17 +78,32 @@
                     justify-content: center;
                 }
                 .task-item:hover img{
-                   transform: scale(1.2);
-                   transform: translateY(-4px);
+                   transform: scale(1.2) translateY(-2px);
 
                 }
                 .task-item{
+                    flex-direction: column;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     img{
                         width: 32px;
                         transition: all 0.4s;
+                    }
+                    img.select{
+                        transform: translateY(-3px);
+                    }
+                    span{
+                        background: #5e181870;
+                        border-radius: 50%;
+                        margin-top: 6px;
+                        transition: all 0.5s;
+                        width: 7px;
+                        transform: scale(0);
+                        height: 7px;
+                    }
+                    span.select{
+                        transform: scale(1);
                     }
                 }
             }
@@ -96,7 +116,7 @@
    .app-list{
         display: flex;
         padding: 14px;
-        z-index: 1001;
+        z-index: 999;
         position: absolute;
        ul{
             display: flex;
@@ -141,33 +161,35 @@
     }
 
     .window-item{
-            transition: transform 0.2s ;
+            transition: transform 0.2s;
             position: absolute;
             box-shadow: 2px 6px 10px 2px #00000091;
             display: flex;
             flex-direction: column;
             width: 750px;
             height: 509px;
-            background: #000000b8;
+            background: #000000c4;
             backdrop-filter: blur(15px);
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
             resize: both;
             overflow: auto;
+            min-width: 200px;
+            min-height: 200px;
             .window-title::-webkit-resizer {
                 background-color: transparent;
             }
             .window-title{
-                min-height:  42px;
+                min-height: 45px;
                 display: flex;
-                justify-content: center;
+                justify-content: start;
                 color: #ffffff;
-                font-size: 16px;
-                padding: 0 10px;
-                box-sizing: border-box;
+                font-size: 17px;
                 position: relative;
                 align-items: center;
-                background: #0000004a;
+                border-bottom: 1px #ffffff12 solid;
+                background: #00000000;
+                cursor: grabbing;
                 .opt{
                     position: absolute;
                     right: 7px;
