@@ -1,5 +1,5 @@
 <template>
-  <div class="desktop">
+  <div :class="{'desktop-none':desktopScale}" class="desktop">
     <div class="work-region">
       <div class="app-list">
         <ul>
@@ -26,7 +26,8 @@
         <div
           :data-id="item.id"
           :class="{
-            'window-scale': item.windowTransition,
+            'window-transition': item.windowTransition,
+            'window-scale': item.windowScale,
             'min-window': item.minState,
             'max-window': item.maxState,
             'window-z-height': item.actionWindow,
@@ -62,7 +63,7 @@
             <iframe v-if="item.windowType == 'web'" :src="item.url"></iframe>
             <ul v-if="item.windowType == 'folder'">
               <template v-for="item in 10" :key="item">
-                <li>
+                <li @dblclick="fileDblClick">
                   <div class="file-item">
                     <img src="../assets/icon/ic-folder-green.png" alt="" />
                     <span>root</span>
@@ -102,8 +103,14 @@ import "../assets/font/iconfont.css";
 import { randId } from "../utils/utils";
 import { StandardWindow, FolderWindow } from "../js/window.js";
 export default {
+  mounted(){
+    setTimeout(() => {
+      this.desktopScale=false
+    }, 10);
+  },
   setup() {
     let state = reactive({
+      desktopScale:true,
       positionX: 0,
       positionY: 0,
       actionWindowId: -1,
@@ -169,6 +176,7 @@ export default {
       Object.assign(newProperty, StandardWindow.getProperty(), windowProperty);
       newProperty.id = randId();
       newProperty.actionWindow = true;
+      state.actionWindowId = newProperty.id;
       state.windowsHwnd.push(newProperty);
     };
     //打开文件夹
@@ -176,7 +184,6 @@ export default {
       let p = FolderWindow.getProperty();
       p.icon = "/src/assets/icon/ic-folder.png";
       openNewWindow(p);
-
     };
     //打开web
     const openNewApp = (url) => {
@@ -185,18 +192,21 @@ export default {
     //关闭Window
     const closeWindow = (id) => {
       state.windowsHwnd.splice(getAppById(id).index, 1);
+      state.actionWindowId=-1;
     };
     //显示Window
     const showWindow = (id) => {
       //如果当前Window已经显示，并且是置顶，则开始动画
-      if (
-        getAppById(id).instance.actionWindow == true
-      ) {
-        getAppById(id).instance.windowTransition = true;
+      if (getAppById(id).instance.actionWindow == true) {
+        getAppById(id).instance.windowScale = true;
+    
         setTimeout(() => {
-          getAppById(id).instance.windowTransition = false;
-        }, 600);
+          getAppById(id).instance.windowScale = false;
+        }, 301);
         return;
+      }
+      if (getAppById(id).instance.minState) {
+        getAppById(id).instance.minState = false;
       }
       //显示Window
       setWindowPos(id);
@@ -204,6 +214,8 @@ export default {
     //最小化
     const windowMin = (id) => {
       getAppById(id).instance.minState = !getAppById(id).instance.minState;
+      getAppById(id).instance.actionWindow = false;
+      state.actionWindowId = -1;
     };
     //获取实例
     const getAppById = (id) => {
@@ -245,7 +257,11 @@ export default {
         return;
       }
     };
+    const fileDblClick=()=>{
+      alert("a")
+    }
     return {
+      fileDblClick,
       openNewApp,
       setWindowPos,
       showWindow,
