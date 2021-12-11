@@ -16,7 +16,7 @@
               <div class="app-icon">
                 <img src="../assets/icon/ic-folder.png" alt="" />
               </div>
-              <div class="app-name">文件</div>
+              <div class="app-name">博客</div>
             </div>
           </li>
         </ul>
@@ -36,7 +36,9 @@
           class="window-item"
           @mousedown="windowMove"
         >
-          <div class="window-title">
+        <div @click="setWindowPos(item.id)"  :class="{'action':actionWindowId==item.id}" class="window-mask"></div>
+         <div class="window-content">
+            <div class="window-title">
             <header>
               <ul v-if="item.windowType == 'folder'" class="location">
                 <li>/</li>
@@ -72,6 +74,7 @@
               </template>
             </ul>
           </div>
+         </div>
         </div>
       </template>
     </div>
@@ -202,7 +205,7 @@ export default {
     
         setTimeout(() => {
           getAppById(id).instance.windowScale = false;
-        }, 301);
+        }, 301);的
         return;
       }
       if (getAppById(id).instance.minState) {
