@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'desktop-none':desktopScale}" class="desktop">
+  <div :class="{ 'desktop-none': desktopScale }" class="desktop">
     <div class="work-region">
       <div class="app-list">
         <ul>
@@ -19,6 +19,14 @@
               <div class="app-name">博客</div>
             </div>
           </li>
+          <li @dblclick="openNewApp('https://cn.bing.com/')">
+            <div class="app-item">
+              <div class="app-icon">
+                <img src="../assets/icon/ic-folder.png" alt="" />
+              </div>
+              <div class="app-name">构建</div>
+            </div>
+          </li>
         </ul>
       </div>
 
@@ -35,46 +43,55 @@
           }"
           class="window-item"
           @mousedown="windowMove"
+          @mouseup="windowMouseUp"
         >
-        <div @click="setWindowPos(item.id)"  :class="{'action':actionWindowId==item.id}" class="window-mask"></div>
-         <div class="window-content">
+          <div
+            @click="setWindowPos(item.id)"
+            :class="{ action: actionWindowId == item.id }"
+            class="window-mask"
+          ></div>
+          <div class="window-content">
             <div class="window-title">
-            <header>
-              <ul v-if="item.windowType == 'folder'" class="location">
-                <li>/</li>
-                <li>/root</li>
-                <li>/pad</li>
+              <header>
+                <ul v-if="item.windowType == 'folder'" class="location">
+                  <li>/</li>
+                  <li>/root</li>
+                  <li>/pad</li>
+                </ul>
+              </header>
+              <div class="opt">
+                <i
+                  class="iconfont icon-tzuixiaohua"
+                  @click="windowMin(item.id)"
+                ></i>
+                <i
+                  class="iconfont icon-big"
+                  @click="windowFullScreen(item.id)"
+                ></i>
+                <i
+                  class="iconfont icon-webicon309"
+                  @click="closeWindow(item.id)"
+                ></i>
+              </div>
+            </div>
+            <div class="window-body">
+              <iframe
+                :class="{ 'iframe-pointer-events': item.pointerEvents }"
+                v-if="item.windowType == 'web'"
+                :src="item.url"
+              ></iframe>
+              <ul v-if="item.windowType == 'folder'">
+                <template v-for="item in 10" :key="item">
+                  <li @dblclick="fileDblClick">
+                    <div class="file-item">
+                      <img src="../assets/icon/ic-folder-green.png" alt="" />
+                      <span>root</span>
+                    </div>
+                  </li>
+                </template>
               </ul>
-            </header>
-            <div class="opt">
-              <i
-                class="iconfont icon-tzuixiaohua"
-                @click="windowMin(item.id)"
-              ></i>
-              <i
-                class="iconfont icon-big"
-                @click="windowFullScreen(item.id)"
-              ></i>
-              <i
-                class="iconfont icon-webicon309"
-                @click="closeWindow(item.id)"
-              ></i>
             </div>
           </div>
-          <div class="window-body">
-            <iframe v-if="item.windowType == 'web'" :src="item.url"></iframe>
-            <ul v-if="item.windowType == 'folder'">
-              <template v-for="item in 10" :key="item">
-                <li @dblclick="fileDblClick">
-                  <div class="file-item">
-                    <img src="../assets/icon/ic-folder-green.png" alt="" />
-                    <span>root</span>
-                  </div>
-                </li>
-              </template>
-            </ul>
-          </div>
-         </div>
         </div>
       </template>
     </div>
@@ -106,14 +123,14 @@ import "../assets/font/iconfont.css";
 import { randId } from "../utils/utils";
 import { StandardWindow, FolderWindow } from "../js/window.js";
 export default {
-  mounted(){
+  mounted() {
     setTimeout(() => {
-      this.desktopScale=false
+      this.desktopScale = false;
     }, 10);
   },
   setup() {
     let state = reactive({
-      desktopScale:true,
+      desktopScale: true,
       positionX: 0,
       positionY: 0,
       actionWindowId: -1,
@@ -123,6 +140,9 @@ export default {
     const windowMove = (e) => {
       if (e.which == 3) {
         return;
+      }
+      for (const item of state.windowsHwnd) {
+        item.pointerEvents = true;
       }
       let odiv = e.target;
       let downDiv = odiv;
@@ -195,17 +215,18 @@ export default {
     //关闭Window
     const closeWindow = (id) => {
       state.windowsHwnd.splice(getAppById(id).index, 1);
-      state.actionWindowId=-1;
+      state.actionWindowId = -1;
     };
     //显示Window
     const showWindow = (id) => {
       //如果当前Window已经显示，并且是置顶，则开始动画
       if (getAppById(id).instance.actionWindow == true) {
         getAppById(id).instance.windowScale = true;
-    
+
         setTimeout(() => {
           getAppById(id).instance.windowScale = false;
-        }, 301);的
+        }, 301);
+        的;
         return;
       }
       if (getAppById(id).instance.minState) {
@@ -260,10 +281,16 @@ export default {
         return;
       }
     };
-    const fileDblClick=()=>{
-      alert("a")
-    }
+    const windowMouseUp = (e, b) => {
+     for (const item of state.windowsHwnd) {
+        item.pointerEvents = false;
+      }
+    };
+    const fileDblClick = () => {
+     
+    };
     return {
+      windowMouseUp,
       fileDblClick,
       openNewApp,
       setWindowPos,

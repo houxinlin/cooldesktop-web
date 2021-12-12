@@ -5,6 +5,7 @@ function basicProperty(obj){
     obj.actionWindow=true;
     obj.windowTransition=false;
     obj.windowType="web"
+    obj.pointerEvents=false
     obj.icon=""
 }
 function getProperty(obj) {
