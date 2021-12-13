@@ -251,16 +251,25 @@ export default {
     };
     //全屏
     const windowFullScreen = (id) => {
+      for (const item of state.windowsHwnd) {
+        item.pointerEvents = true;
+      }
       let app = getAppById(id);
       if (app.instance.maxState) {
         app.instance.maxState = !app.instance.maxState;
         setTimeout(() => {
           app.instance.windowTransition = !app.instance.windowTransition;
+          for (const item of state.windowsHwnd) {
+            item.pointerEvents = false;
+          }
         }, 500);
       } else {
         app.instance.windowTransition = !app.instance.windowTransition;
         setTimeout(() => {
           app.instance.maxState = !app.instance.maxState;
+          for (const item of state.windowsHwnd) {
+            item.pointerEvents = false;
+          }
         }, 10);
       }
     };
@@ -282,13 +291,11 @@ export default {
       }
     };
     const windowMouseUp = (e, b) => {
-     for (const item of state.windowsHwnd) {
+      for (const item of state.windowsHwnd) {
         item.pointerEvents = false;
       }
     };
-    const fileDblClick = () => {
-     
-    };
+    const fileDblClick = () => {};
     return {
       windowMouseUp,
       fileDblClick,
