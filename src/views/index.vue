@@ -34,6 +34,7 @@
         <div
           :data-id="item.id"
           :class="{
+            'close-window-transition':item.closeWindowTransition,
             'window-transition': item.windowTransition,
             'window-scale': item.windowScale,
             'min-window': item.minState,
@@ -214,8 +215,11 @@ export default {
     };
     //关闭Window
     const closeWindow = (id) => {
-      state.windowsHwnd.splice(getAppById(id).index, 1);
-      state.actionWindowId = -1;
+      getAppById(id).instance.closeWindowTransition=true
+      setTimeout(() => {
+        state.windowsHwnd.splice(getAppById(id).index, 1);
+        state.actionWindowId = -1;
+      }, 200);
     };
     //显示Window
     const showWindow = (id) => {
