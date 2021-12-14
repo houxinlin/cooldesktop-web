@@ -14,6 +14,14 @@
               <div class="app-name">文件</div>
             </div>
           </li>
+          <li @dblclick="openNewFolder()">
+            <div class="app-item">
+              <div class="app-icon">
+                <img src="../assets/icon/ic-shop.png" alt="" />
+              </div>
+              <div class="app-name">软件商店</div>
+            </div>
+          </li>
           <li @dblclick="openSetting()">
             <div class="app-item">
               <div class="app-icon">
