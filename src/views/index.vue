@@ -1,9 +1,12 @@
 <template>
   <div :class="{ 'desktop-none': desktopScale }" class="desktop">
-    <div class="work-region">
+    <div
+      class="app-starter"
+      :class="{ 'app-starter-visible': appStarterVisible }"
+    >
       <div class="app-list">
         <ul>
-          <li @dblclick="openNewFolder">
+          <li @dblclick="openNewFolder()">
             <div class="app-item">
               <div class="app-icon">
                 <img src="../assets/icon/ic-folder.png" alt="" />
@@ -11,15 +14,15 @@
               <div class="app-name">文件</div>
             </div>
           </li>
-          <li @dblclick="openNewApp('http://www.houxinlin.com:6060/')">
+          <li @dblclick="openSetting()">
             <div class="app-item">
               <div class="app-icon">
-                <img src="../assets/icon/ic-folder.png" alt="" />
+                <img src="../assets/icon/ic-setting.png" alt="" />
               </div>
-              <div class="app-name">博客</div>
+              <div class="app-name">设置</div>
             </div>
           </li>
-          <li @dblclick="openNewApp('https://cn.bing.com/')">
+          <li @dblclick="openNewApp('http://www.houxinlin.com:5993/')">
             <div class="app-item">
               <div class="app-icon">
                 <img src="../assets/icon/ic-folder.png" alt="" />
@@ -29,12 +32,14 @@
           </li>
         </ul>
       </div>
-
+    </div>
+    <div class="work-region">
       <template v-for="item in windowsHwnd" :key="item">
         <div
           :data-id="item.id"
           :class="{
-            'close-window-transition':item.closeWindowTransition,
+            'hide-window': item.hideWindow,
+            'close-window-transition': item.closeWindowTransition,
             'window-transition': item.windowTransition,
             'window-scale': item.windowScale,
             'min-window': item.minState,
@@ -100,6 +105,11 @@
       <div class="task-bar-mask"></div>
       <div class="task-bar-content">
         <ul>
+          <li @click="openStarter()">
+            <div class="task-item">
+              <img src="../assets/icon/ic-app.png" />
+            </div>
+          </li>
           <template v-for="item in windowsHwnd" :key="item">
             <li @click="showWindow(item.id)">
               <div class="task-item">
@@ -137,7 +147,24 @@ export default {
       actionWindowId: -1,
       //窗口集合
       windowsHwnd: [],
+      appStarterVisible: false,
+
+      windowVisibleState: [],
     });
+    const hideAllWindow = (status) => {
+      if (status) {
+        for (const iterator of state.windowsHwnd) {
+          iterator.hideWindow = false;
+        }
+        return;
+      }
+      state.windowVisibleState = state.windowsHwnd.filter(
+        (item) => item.hideWindow == false
+      );
+      for (const iterator of state.windowsHwnd) {
+        iterator.hideWindow = true;
+      }
+    };
     const windowMove = (e) => {
       if (e.which == 3) {
         return;
@@ -196,12 +223,14 @@ export default {
 
     //打开新窗口
     const openNewWindow = (windowProperty = {}) => {
+      hideAllWindow(true);
       let newProperty = {};
       Object.assign(newProperty, StandardWindow.getProperty(), windowProperty);
       newProperty.id = randId();
       newProperty.actionWindow = true;
       state.actionWindowId = newProperty.id;
       state.windowsHwnd.push(newProperty);
+      state.appStarterVisible = false;
     };
     //打开文件夹
     const openNewFolder = () => {
@@ -215,7 +244,7 @@ export default {
     };
     //关闭Window
     const closeWindow = (id) => {
-      getAppById(id).instance.closeWindowTransition=true
+      getAppById(id).instance.closeWindowTransition = true;
       setTimeout(() => {
         state.windowsHwnd.splice(getAppById(id).index, 1);
         state.actionWindowId = -1;
@@ -223,6 +252,10 @@ export default {
     };
     //显示Window
     const showWindow = (id) => {
+      if (state.appStarterVisible) {
+        state.appStarterVisible = false;
+        return;
+      }
       //如果当前Window已经显示，并且是置顶，则开始动画
       if (getAppById(id).instance.actionWindow == true) {
         getAppById(id).instance.windowScale = true;
@@ -230,7 +263,6 @@ export default {
         setTimeout(() => {
           getAppById(id).instance.windowScale = false;
         }, 301);
-        的;
         return;
       }
       if (getAppById(id).instance.minState) {
@@ -299,8 +331,16 @@ export default {
         item.pointerEvents = false;
       }
     };
+    const openStarter = () => {
+      hideAllWindow(false);
+      if (state.appStarterVisible) {
+        hideAllWindow(true);
+      }
+      state.appStarterVisible = !state.appStarterVisible;
+    };
     const fileDblClick = () => {};
     return {
+      openStarter,
       windowMouseUp,
       fileDblClick,
       openNewApp,

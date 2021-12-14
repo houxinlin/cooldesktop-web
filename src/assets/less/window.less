@@ -12,6 +12,9 @@
     border-radius: 0px !important;
 
 }
+.hide-window{
+    display: none  !important
+}
 .close-window-transition{
     transform: scaleY(0) !important
 }
@@ -23,10 +26,14 @@
 }
 
 .window-z-height{
-    z-index: 99999 !important
+    z-index: @APP_TASK_BAR_Z_INDEX - 1 !important
 }
 .desktop-none{
     transform: scale(0.0);
+}
+.app-starter-visible{
+    opacity: 1 !important;
+    z-index: 9999 !important
 }
 .desktop{
     transition: all 0.6s;
@@ -40,6 +47,17 @@
     flex-direction: column;
     background-size: cover;
     background-image: url(../background/desktop.jpg);
+    .app-starter{
+        background: #000000b8;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        opacity: 0;
+        transition: all 0.4s;
+        z-index: 1;
+    }
    .work-region{
         position: relative;
         flex: 1;
@@ -62,7 +80,7 @@
             bottom: 0;
             left: 0;
             backdrop-filter: blur(5px);
-            background: #fbfbfb59;
+            background: #00000082;
         }
         .task-bar-content{
             position: relative;
@@ -79,15 +97,16 @@
                     transition: all 0.3s;
                     cursor: pointer;
                     margin: 0 6px;
-                    height: 100%;
-                    width: 57px;
+                    height: 49px;
+                    width: 49px;
                     display: flex;
                     justify-content: center;
                 }
-                .task-item:hover img{
-                   transform: scale(1.2) translateY(-2px);
-
+                li:hover{
+                    background: #484646bd;
+                    border-radius: 3px;
                 }
+              
                 .task-item{
                     flex-direction: column;
                     display: flex;
@@ -97,17 +116,17 @@
                         width: 32px;
                         transition: all 0.4s;
                     }
-                    img.select{
-                        transform: translateY(-3px);
-                    }
+                 
                     span{
                         background: #5e181870;
                         border-radius: 50%;
                         margin-top: 6px;
                         transition: all 0.5s;
-                        width: 7px;
+                        width: 4px;
                         transform: scale(0);
-                        height: 7px;
+                        height: 4px;
+                        position: absolute;
+                        top: 42px;
                     }
                     span.select{
                         transform: scale(1);
@@ -125,11 +144,14 @@
         padding: 14px;
         z-index: 999;
         position: absolute;
+        width: 100%;
        ul{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        display: flex;
+        justify-content: center;
+        display: grid;
+        justify-content: center;
+        grid-template-columns: repeat(auto-fill, 97px);
+        width: 100%;
             li{
                 cursor: pointer;
                 padding: 0px;
