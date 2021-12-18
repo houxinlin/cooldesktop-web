@@ -1,10 +1,13 @@
-import {  folderWindow } from "./window-property";
-let folderCollection = Array()
+import { folderWindow } from "./window-property";
+import { createPath } from "../utils/path";
+
 class Folder {
     constructor(root, child) {
-        this.root = root;
+        this.path = createPath();
         this.child = child;
-        
+        this.select = "";
+        this.pathBlock = ["?s"]
+
     }
 }
 export const createFolder = (root, child) => {
@@ -12,6 +15,7 @@ export const createFolder = (root, child) => {
 }
 
 export const addFolder = (folder) => {
-    folderCollection.push(folder)
-    return folderWindow.getProperty();
+    let property = folderWindow.getProperty();
+    property.folder = folder;
+    return property;
 }

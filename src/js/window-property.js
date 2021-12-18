@@ -6,7 +6,7 @@ function basicProperty(obj) {
     obj.windowTransition = false;
     obj.windowType = "web"
     obj.pointerEvents = false
-    obj.hideWindow=false
+    obj.hideWindow = false
     obj.icon = ""
 }
 function getProperty(obj) {
@@ -29,7 +29,8 @@ class CWindowFolder {
     constructor() {
         this.currentPath = []
         this.windowType = "folder"
-        this.icon="/src/assets/icon/ic-folder.png"
+        this.icon = "/src/assets/icon/ic-folder.png"
+        this.folder = null;
     }
     getProperty() {
         return getProperty(this);
@@ -37,6 +38,7 @@ class CWindowFolder {
 }
 
 let standardWindow = new CWindow();
+
 let folderWindow = new CWindowFolder();
 
 export { standardWindow, folderWindow }

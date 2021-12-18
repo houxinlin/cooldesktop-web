@@ -12,8 +12,8 @@
       folder: item.windowType == 'folder',
     }"
     class="window-item"
-    @mousedown="windowMove"
-    @mouseup="windowMouseUp"
+    @mousedown="windowManager.windowMove"
+    @mouseup="windowManager.windowMouseUp"
   >
     <div
       @click="windowManager.setWindowPos(item.id)"
@@ -61,65 +61,6 @@ const props = defineProps({
   }
 };
 
-const windowMove = (e) => {
-  if (e.which == 3) {
-    return;
-  }
-  for (const item of windowManager.state.windowsCollection) {
-    item.pointerEvents = true;
-  }
-  let odiv = e.target;
-  let downDiv = odiv;
-  let list = [];
-
-  //找到window-item节点
-  while (list.findIndex((item) => item == "window-item") == -1) {
-    odiv = odiv.parentNode;
-    let classList = odiv.classList;
-    if (classList == undefined) {
-      return;
-    }
-    list = [...classList];
-  }
-  //   state.actionWindowId = odiv.getAttribute("data-id");
-  //   setWindowPos(state.actionWindowId);
-  //置顶
-  odiv.style.zIndex = 9999;
-  for (const item of document.querySelectorAll(".window-item")) {
-    if (item != odiv) {
-      item.style.zIndex = 1000;
-    }
-  }
-
-  //除了window-body其他都可以移动
-  if (
-    [...downDiv.classList].findIndex((item) => item == "window-title") == -1
-  ) {
-    if (downDiv.nodeName != "HEADER") {
-      return;
-    }
-  }
-  let disX = e.clientX - odiv.offsetLeft;
-  let disY = e.clientY - odiv.offsetTop;
-  document.onmousemove = (e) => {
-    let left = e.clientX - disX;
-    let top = e.clientY - disY;
-
-    // state.positionX = top;
-    // state.positionY = left;
-
-    odiv.style.left = left + "px";
-    odiv.style.top = top + "px";
-  };
-  document.onmouseup = (e) => {
-    document.onmousemove = null;
-    document.onmouseup = null;
-    console.log(windowManager.state)
-    for (const item of windowManager.state.windowsCollection) {
-      item.pointerEvents = false;
-    }
-  };
-};
 </script>
 
 <style>

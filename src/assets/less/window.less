@@ -202,7 +202,6 @@
             border-radius: 8px;
             overflow: hidden;
             resize: both;
-            overflow: auto;
             min-width: 200px;
             min-height: 200px;
             left: calc(50% - 375px);
@@ -239,17 +238,17 @@
             .window-title{
                 min-height: 45px;
                 display: flex;
-                justify-content: start;
+                justify-content: space-between;
                 color: #ffffff;
                 font-size: 17px;
                 position: relative;
                 align-items: center;
                 border-bottom: 1px #ffffff12 solid;
                 background: #00000000;
-                cursor: grabbing;
+                
                 .opt{
-                    position: absolute;
                     right: 7px;
+                    position: relative;
                     .iconfont{
                         font-size: 19px;
                         margin: 0 5px;
@@ -271,6 +270,9 @@
                     height: 99%;
                     border: none;
                     background: #ffffff;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    
                 }
                 .iframe-pointer-events{
                     pointer-events: none;

@@ -2,6 +2,7 @@ import { randId } from "../utils/utils";
 import { standardWindow, folderWindow } from "./window-property";
 import { reactive } from "vue";
 import * as folderManager from "./folder-manager.js";
+let actionMoveId = '';
 export const state = reactive({
     desktopScale: true,
     positionX: 0,
@@ -13,36 +14,15 @@ export const state = reactive({
     windowVisibleState: [],
 });;
 
-export const startNewWindow = ( windowProperty = {}) => {
+export const startNewWindow = (windowProperty = {}) => {
     let newProperty = {};
-    /**
-     * 生成新的属性
-     */
     Object.assign(newProperty, standardWindow.getProperty(), windowProperty);
-    /**
-     * 创建唯一id
-     */
     newProperty.id = randId();
-    /**
-     * 是否活动
-     */
     newProperty.actionWindow = true;
-    /**
-     * 当前活动窗口id
-     */
     state.actionWindowId = newProperty.id;
-
-    /**
-     * 启动器不可见
-     * 
-     * s
-     */
     state.appStarterVisible = false;
-
     state.windowsCollection.push(newProperty);
-
-    console.log(windowProperty)
-
+    console.log(newProperty)
 }
 
 export const hideWindow = (status) => {
@@ -94,11 +74,11 @@ export const windowMouseUp = (e, b) => {
 //打开新窗口
 export const openNewWindow = (windowProperty = {}) => {
     hideWindow(false)
-    startNewWindow( windowProperty);
+    startNewWindow(windowProperty);
 };
 //打开文件夹
 export const openNewFolder = () => {
-    let newFolder = folderManager.createFolder("/a", []);
+    let newFolder = folderManager.createFolder("", []);
     let folderProperty = folderManager.addFolder(newFolder);
     openNewWindow(folderProperty);
 };
@@ -172,7 +152,6 @@ export const windowFullScreen = (id) => {
 };
 
 export const openStarter = () => {
-
     //如果启动器已经显示
     if (state.appStarterVisible) {
         hideWindow(false);
@@ -180,4 +159,65 @@ export const openStarter = () => {
         hideWindow(true);
     }
     state.appStarterVisible = !state.appStarterVisible;
+};
+
+
+
+export const windowMove = (e) => {
+
+    if (e.which == 3) {
+        return;
+    }
+    for (const item of state.windowsCollection) {
+        item.pointerEvents = true;
+    }
+    let odiv = e.target;
+    let downDiv = odiv;
+    let list = [];
+
+    //找到window-item节点
+    while (list.findIndex((item) => item == "window-item") == -1) {
+        odiv = odiv.parentNode;
+        let classList = odiv.classList;
+        if (classList == undefined) {
+            return;
+        }
+        list = [...classList];
+    }
+    actionMoveId = odiv.getAttribute("data-id");
+    // setWindowPos(state.actionWindowId);
+    //置顶
+    odiv.style.zIndex = 9999;
+    for (const item of document.querySelectorAll(".window-item")) {
+        if (item != odiv) {
+            item.style.zIndex = 1000;
+        }
+    }
+
+    //除了window-body其他都可以移动
+    if (
+        [...downDiv.classList].findIndex((item) => item == "window-title") == -1
+    ) {
+        if (downDiv.nodeName != "HEADER") {
+            return;
+        }
+    }
+    let disX = e.clientX - odiv.offsetLeft;
+    let disY = e.clientY - odiv.offsetTop;
+    document.onmousemove = (e) => {
+        let left = e.clientX - disX;
+        let top = e.clientY - disY;
+        if (top <= -10) {
+            document.onmousemove = null;
+            document.onmouseup = null;
+            windowFullScreen(actionMoveId);
+            return
+        }
+        odiv.style.left = left + "px";
+        odiv.style.top = top + "px";
+    };
+    document.onmouseup = (e) => {
+        document.onmousemove = null;
+        document.onmouseup = null;
+    };
 };
