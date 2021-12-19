@@ -4,10 +4,13 @@ function basicProperty(obj) {
     obj.maxState = false;
     obj.actionWindow = true;
     obj.windowTransition = false;
-    obj.windowType = "web"
-    obj.pointerEvents = false
-    obj.hideWindow = false
-    obj.icon = ""
+    obj.windowType = "web";
+    obj.pointerEvents = false;
+    obj.hideWindow = false;
+    obj.icon = "";
+    obj.id = "";
+    obj.x = 0;
+    obj.y = 0;
 }
 function getProperty(obj) {
     let property = {};
@@ -36,9 +39,17 @@ class CWindowFolder {
         return getProperty(this);
     }
 }
+class CWindowErrorMessage {
+    constructor() {
+        this.message = ""
+        this.windowType="error-message"
+    }
+    getProperty() {
+        return getProperty(this);
+    }
+}
 
 let standardWindow = new CWindow();
-
 let folderWindow = new CWindowFolder();
-
-export { standardWindow, folderWindow }
+let errorMessageWindow = new CWindowErrorMessage();
+export { standardWindow, folderWindow ,errorMessageWindow}

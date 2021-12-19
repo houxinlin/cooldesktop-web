@@ -7,3 +7,10 @@ export function apiListDirectory(params) {
         }
     });
 }
+export function apiDeleteFileOrFolder(params) {
+    return axios.get("/desktop/api/file/delete?", {
+        params: {
+            path: params
+        }
+    });
+}

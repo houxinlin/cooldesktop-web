@@ -1,5 +1,5 @@
 import { randId } from "../utils/utils";
-import { standardWindow, folderWindow } from "./window-property";
+import { standardWindow, folderWindow, errorMessageWindow } from "./window-property";
 import { reactive } from "vue";
 import * as folderManager from "./folder-manager.js";
 let actionMoveId = '';
@@ -13,16 +13,20 @@ export const state = reactive({
     appStarterVisible: false,
     windowVisibleState: [],
 });;
-
-export const startNewWindow = (windowProperty = {}) => {
+ const startNewWindow = (windowProperty = {}) => {
     let newProperty = {};
     Object.assign(newProperty, standardWindow.getProperty(), windowProperty);
     newProperty.id = randId();
     newProperty.actionWindow = true;
     state.actionWindowId = newProperty.id;
-    state.appStarterVisible = false;
     state.windowsCollection.push(newProperty);
-    console.log(newProperty)
+
+}
+
+export const startNewErrorMessageDialog = (errorMsg) => {
+    let errorProperty = errorMessageWindow.getProperty();
+    errorProperty.error = { "message": errorMsg }
+    openNewWindow(errorProperty)
 }
 
 export const hideWindow = (status) => {
@@ -73,15 +77,17 @@ export const windowMouseUp = (e, b) => {
 
 //打开新窗口
 export const openNewWindow = (windowProperty = {}) => {
+    state.appStarterVisible = false;
     hideWindow(false)
     startNewWindow(windowProperty);
 };
 //打开文件夹
-export const openNewFolder = () => {
-    let newFolder = folderManager.createFolder("", []);
-    let folderProperty = folderManager.addFolder(newFolder);
+export const openNewFolder = (path = "/") => {
+    let newFolder = folderManager.createFolder(path, []);
+    let folderProperty = folderManager.getFolderWindowProperty(newFolder);
     openNewWindow(folderProperty);
 };
+
 //打开web
 export const openNewApp = (url) => {
     openNewWindow({ url: url, icon: "/src/assets/icon/ic-folder.png" });
@@ -119,7 +125,6 @@ export const windowMin = (id) => {
 };
 //关闭Window
 export const closeWindow = (id) => {
-    folderManager.addFolder();
     getAppById(id).instance.closeWindowTransition = true;
     setTimeout(() => {
         state.windowsCollection.splice(getAppById(id).index, 1);
@@ -185,7 +190,8 @@ export const windowMove = (e) => {
         list = [...classList];
     }
     actionMoveId = odiv.getAttribute("data-id");
-    // setWindowPos(state.actionWindowId);
+
+
     //置顶
     odiv.style.zIndex = 9999;
     for (const item of document.querySelectorAll(".window-item")) {

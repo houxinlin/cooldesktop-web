@@ -41,6 +41,11 @@
           :item="item"
           v-if="item.windowType == 'web'"
         />
+        <ErrorMessageView
+          :actionWindowId="state.actionWindowId"
+          :item="item"
+          v-if="item.windowType == 'error-message'"
+        />
       </template>
     </div>
     <div class="task-bar">
@@ -75,6 +80,7 @@
 <script  setup >
 import FolderView from "./folder.vue";
 import IWebView from "./iframe.vue";
+import ErrorMessageView from "./error-message.vue";
 import ComponentA from "./folder.vue";
 import { reactive, toRefs, onMounted } from "vue";
 import "../assets/font/iconfont.css";
@@ -86,11 +92,15 @@ onMounted(() => {
     state.desktopScale = false;
   }, 10);
 });
+
 let state = windowManager.state;
+
+
 </script>
 
 <style lang="less">
 @import "../assets/less/index.less";
 @import "../assets/less/window.less";
 @import "../assets/less/folder.less";
+@import "../assets/less/error-message.less";
 </style>>
