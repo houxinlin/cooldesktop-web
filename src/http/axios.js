@@ -1,5 +1,7 @@
 import axios from 'axios';
 import Qs from 'qs'; 
-axios.defaults.baseURL = 'http://localhost:8080/';
-
-export default axios 
+var instance = axios.create({
+    baseURL: import.meta.env.VITE_APP_REQUEST_URL,
+    timeout: 4000,
+  });
+export default instance 

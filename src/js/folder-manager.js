@@ -11,6 +11,7 @@ class Folder {
         this.contextMenuVisible=false;
         this.folderContextMenuVisible=false
         this.folderContextMenuPoint={x:0,y:0};
+        this.selectFileItem=null;
 
     }
 }

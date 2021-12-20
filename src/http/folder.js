@@ -14,3 +14,11 @@ export function apiDeleteFileOrFolder(params) {
         }
     });
 }
+
+// export function apiGetImageThumbnail(params) {
+//     return axios.get("/desktop/api/file/getImageThumbnail?", {
+//         params: {
+//             path: params
+//         }
+//     });
+// }

@@ -49,7 +49,7 @@
       class="file-menu"
     >
       <menu>
-        <div class="item-group">
+        <div v-if="state.selectFileItem.type == 'folder'" class="item-group">
           <li @click="openNewFolderWhitThis()">在新窗口打开</li>
         </div>
         <div class="item-group">
@@ -117,8 +117,20 @@
             >
               <div class="file-item">
                 <img
+                  v-if="item.type != 'img'"
                   :src="
-                    request + 'desktop/api/file/getFileIcon?path=' + item.path
+                    request +
+                    'desktop/api/file/getFileIconByType?type=' +
+                    item.type
+                  "
+                  alt=""
+                />
+                <img
+                  v-if="item.type == 'img'"
+                  :src="
+                    request +
+                    'desktop/api/file/getImageThumbnail?path=' +
+                    item.path
                   "
                   alt=""
                 />
@@ -148,6 +160,7 @@ const props = defineProps({
 let state = reactive({ ...props.item.folder });
 let fileRightFlag = false;
 const fileContextMenu = (e, item) => {
+  state.selectFileItem = item;
   state.folderContextMenuVisible = false;
   state.currentSelectName = item.name;
   state.contextMenuVisible = true;
@@ -173,9 +186,10 @@ const listDirector = (path) => {
   });
 };
 const fileDblClick = (item) => {
-  if (item.type != "directory") {
+  if (item.type != "folder") {
     return;
   }
+  state.child.length = 0;
   state.contextMenuVisible = false;
   state.path.append(item.name);
   listDirector(state.path.getPath());
@@ -186,24 +200,21 @@ const navPathClick = (index) => {
   listDirector(state.path.getPath());
 };
 const getSelectFile = () => {
-  let path = state.path.getPath();
-  if (path != "/") {
-    path = path + "/" + state.currentSelectName;
-  } else {
-    path = path + state.currentSelectName;
-  }
-  return path;
+  return state.selectFileItem;
 };
 const openNewFolderWhitThis = () => {
   state.contextMenuVisible = false;
-  windowManager.openNewFolder(getSelectFile());
+  if (getSelectFile().type != "folder") {
+    return;
+  }
+  windowManager.openNewFolder(getSelectFile().path);
 };
 const refresh = () => {
   listDirector(state.path.getPath());
 };
 const deleteFile = () => {
   state.contextMenuVisible = false;
-  folderApis.apiDeleteFileOrFolder(getSelectFile()).then((res) => {
+  folderApis.apiDeleteFileOrFolder(getSelectFile().path).then((res) => {
     if (res.data.data == "OK") {
       refresh();
       return;
