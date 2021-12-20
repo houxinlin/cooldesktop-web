@@ -1,5 +1,5 @@
 import { randId } from "../utils/utils";
-import { standardWindow, folderWindow, errorMessageWindow } from "./window-property";
+import { standardWindow, folderWindow, errorMessageWindow, successMessageWindow } from "./window-property";
 import { reactive } from "vue";
 import * as folderManager from "./folder-manager.js";
 let actionMoveId = '';
@@ -13,7 +13,7 @@ export const state = reactive({
     appStarterVisible: false,
     windowVisibleState: [],
 });;
- const startNewWindow = (windowProperty = {}) => {
+const startNewWindow = (windowProperty = {}) => {
     let newProperty = {};
     Object.assign(newProperty, standardWindow.getProperty(), windowProperty);
     newProperty.id = randId();
@@ -23,12 +23,17 @@ export const state = reactive({
 
 }
 
-export const startNewErrorMessageDialog = (errorMsg) => {
+export const startNewErrorMessageDialog = (msg) => {
     let errorProperty = errorMessageWindow.getProperty();
-    errorProperty.error = { "message": errorMsg }
+    errorProperty.error = { "message": msg }
     openNewWindow(errorProperty)
 }
 
+export const startNewSuccessMessageDialog = (msg) => {
+    let errorProperty = successMessageWindow.getProperty();
+    errorProperty.error = { "message": msg }
+    openNewWindow(errorProperty)
+}
 export const hideWindow = (status) => {
     if (status) {
         state.windowVisibleState = state.windowsCollection.filter(

@@ -42,14 +42,25 @@ class CWindowFolder {
 class CWindowErrorMessage {
     constructor() {
         this.message = ""
-        this.windowType="error-message"
+        this.windowType = "error-message"
+    }
+    getProperty() {
+        return getProperty(this);
+    }
+}
+class CWindowSuccessMessage {
+    constructor() {
+        this.message = ""
+        this.windowType = "success-message"
     }
     getProperty() {
         return getProperty(this);
     }
 }
 
+
 let standardWindow = new CWindow();
 let folderWindow = new CWindowFolder();
 let errorMessageWindow = new CWindowErrorMessage();
-export { standardWindow, folderWindow ,errorMessageWindow}
+let successMessageWindow = new CWindowSuccessMessage();
+export { standardWindow, folderWindow, errorMessageWindow, successMessageWindow}

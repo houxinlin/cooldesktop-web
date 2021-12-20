@@ -46,6 +46,11 @@
           :item="item"
           v-if="item.windowType == 'error-message'"
         />
+        <SuccessMessageView
+          :actionWindowId="state.actionWindowId"
+          :item="item"
+          v-if="item.windowType == 'success-message'"
+        />
       </template>
     </div>
     <div class="task-bar">
@@ -81,7 +86,8 @@
 import FolderView from "./folder.vue";
 import IWebView from "./iframe.vue";
 import ErrorMessageView from "./error-message.vue";
-import ComponentA from "./folder.vue";
+import SuccessMessageView from "./success-dialog.vue";
+
 import { reactive, toRefs, onMounted } from "vue";
 import "../assets/font/iconfont.css";
 import { randId } from "../utils/utils";
@@ -94,8 +100,6 @@ onMounted(() => {
 });
 
 let state = windowManager.state;
-
-
 </script>
 
 <style lang="less">
@@ -103,4 +107,5 @@ let state = windowManager.state;
 @import "../assets/less/window.less";
 @import "../assets/less/folder.less";
 @import "../assets/less/error-message.less";
+@import "../assets/less/success-message.less";
 </style>>

@@ -97,6 +97,9 @@
         </div>
       </div>
       <div
+        @dragover="dragover"
+        @dragleave="dragleave"
+        @drop="drop"
         @contextmenu.prevent="folderContextMenu($event)"
         @click="
           state.contextMenuVisible = false;
@@ -150,13 +153,13 @@ import { defineProps, onMounted, reactive, ref } from "vue";
 import * as windowManager from "../js/window-manager.js";
 import * as folderManager from "../js/folder-manager.js";
 import * as folderApis from "../http/folder.js";
+import { randId } from "../utils/utils.js";
 let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
 const props = defineProps({
   item: Object,
   actionWindowId: String,
   folderInfo: Object,
 });
-
 let state = reactive({ ...props.item.folder });
 let fileRightFlag = false;
 const fileContextMenu = (e, item) => {
@@ -221,6 +224,71 @@ const deleteFile = () => {
     }
     windowManager.startNewErrorMessageDialog(res.data.data);
   });
+};
+const dragover = (event) => {
+  console.log("enter");
+  event.preventDefault();
+};
+const dragleave = (event) => {
+  console.log("leaver");
+};
+function spArr(arr, num) {
+  let newArr = [];
+  for (let i = 0; i < arr.length; ) {
+    newArr.push(arr.slice(i, (i += num)));
+  }
+  return newArr;
+}
+const drop = (event) => {
+  event.preventDefault();
+  let files = event.dataTransfer.files;
+  let file = files[0];
+  if (file.size > 20 * 1024 * 1024) {
+    let chunkSize = Math.ceil(file.size / (20 * 1024 * 1024));
+    let chunkId = randId();
+    let chunks = [];
+    for (let i = 0; i < chunkSize; i++) {
+      let start = i * (20 * 1024 * 1024);
+      let end = start + 20 * 1024 * 1024;
+      let item = file.slice(start, end);
+      chunks.push({ id: i, data: item });
+    }
+    let uploadPromise = [];
+
+    for (const iterator of chunks) {
+      let formDate = new FormData();
+      let config = {
+        timeout: 3 * 60 * 1000,
+        headers: {},
+        onUploadProgress(progressEvent) {
+          var percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.log(percentCompleted);
+          return percentCompleted;
+        },
+      };
+      formDate.append("chunkId", chunkId);
+      formDate.append("blobId", iterator.id);
+      formDate.append("file", iterator.data);
+      uploadPromise.push(
+        folderApis.apiChunkFileUpload(formDate, config).then((res) => {})
+      );
+    }
+    Promise.all(uploadPromise).then((res) => {
+      let inPath = state.path.path;
+      folderApis
+        .apiChunkFileMerge(chunkId, file.name, inPath, chunkSize)
+        .then((res) => {
+          if (res.data.status == 0) {
+            windowManager.startNewSuccessMessageDialog("上传成功");
+          }
+          if (res.data.status != 0) {
+            windowManager.startNewErrorMessageDialog(res.data.msg);
+          }
+        });
+    });
+  }
 };
 onMounted(() => {
   listDirector(state.path.getPath());
