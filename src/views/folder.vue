@@ -3,6 +3,7 @@
     :id="item.id"
     :data-id="item.id"
     :class="{
+      'action-window-border':item.actionWindow,
       'hide-window': item.hideWindow,
       'close-window-transition': item.closeWindowTransition,
       'window-transition': item.windowTransition,
@@ -13,8 +14,8 @@
       folder: item.windowType == 'folder',
     }"
     class="window-item"
-    @mousedown="windowManager.windowMove"
-    @mouseup="windowManager.windowMouseUp"
+    @mousedown="wact.windowMove"
+    @mouseup="wact.windowMouseUp"
   >
     <div
       v-if="state.folderContextMenuVisible"
@@ -68,7 +69,7 @@
       </menu>
     </div>
     <div
-      @click="windowManager.setWindowPos(item.id)"
+      @click="wact.setWindowPos(item.id)"
       :class="{ action: actionWindowId == item.id }"
       class="window-mask"
     ></div>
@@ -80,19 +81,26 @@
               <li @click="navPathClick(index)">{{ item }}</li>
             </template>
           </ul>
+          <div class="infos">
+            <div
+              v-if="uploads.files.length > 0"
+              @click="showUploadView()"
+              class="loader"
+            ></div>
+          </div>
         </header>
         <div class="opt">
           <i
             class="iconfont icon-tzuixiaohua"
-            @click="windowManager.windowMin(item.id)"
+            @click="wact.windowMin(item.id)"
           ></i>
           <i
             class="iconfont icon-big"
-            @click="windowManager.windowFullScreen(item.id)"
+            @click="wact.windowFullScreen(item.id)"
           ></i>
           <i
             class="iconfont icon-webicon309"
-            @click="windowManager.closeWindow(item.id)"
+            @click="wact.closeWindow(item.id)"
           ></i>
         </div>
       </div>
@@ -150,17 +158,24 @@
 
 <script setup>
 import { defineProps, onMounted, reactive, ref } from "vue";
-import * as windowManager from "../js/window-manager.js";
-import * as folderManager from "../js/folder-manager.js";
+import { coolWindow, wact } from "../windows/window-manager.js";
 import * as folderApis from "../http/folder.js";
+import { FileUpload } from "../utils/upload/file-upload";
 import { randId } from "../utils/utils.js";
+import { uploads } from "../utils/upload/manager";
+
 let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
+const showUploadView = () => {
+  coolWindow.openFileUploadManager();
+};
+
 const props = defineProps({
   item: Object,
   actionWindowId: String,
   folderInfo: Object,
 });
-let state = reactive({ ...props.item.folder });
+
+let state = reactive({ ...props.item.data });
 let fileRightFlag = false;
 const fileContextMenu = (e, item) => {
   state.selectFileItem = item;
@@ -192,6 +207,7 @@ const fileDblClick = (item) => {
   if (item.type != "folder") {
     return;
   }
+
   state.child.length = 0;
   state.contextMenuVisible = false;
   state.path.append(item.name);
@@ -210,7 +226,7 @@ const openNewFolderWhitThis = () => {
   if (getSelectFile().type != "folder") {
     return;
   }
-  windowManager.openNewFolder(getSelectFile().path);
+  coolWindow.openNewFolder(getSelectFile().path);
 };
 const refresh = () => {
   listDirector(state.path.getPath());
@@ -218,11 +234,11 @@ const refresh = () => {
 const deleteFile = () => {
   state.contextMenuVisible = false;
   folderApis.apiDeleteFileOrFolder(getSelectFile().path).then((res) => {
-    if (res.data.data == "OK") {
+    if (res.data.status == 0) {
       refresh();
       return;
     }
-    windowManager.startNewErrorMessageDialog(res.data.data);
+    coolWindow.startNewErrorMessageDialog(res.data.msg);
   });
 };
 const dragover = (event) => {
@@ -243,57 +259,23 @@ const drop = (event) => {
   event.preventDefault();
   let files = event.dataTransfer.files;
   let file = files[0];
-  if (file.size > 20 * 1024 * 1024) {
-    let chunkSize = Math.ceil(file.size / (20 * 1024 * 1024));
-    let chunkId = randId();
-    let chunks = [];
-    for (let i = 0; i < chunkSize; i++) {
-      let start = i * (20 * 1024 * 1024);
-      let end = start + 20 * 1024 * 1024;
-      let item = file.slice(start, end);
-      chunks.push({ id: i, data: item });
-    }
-    let uploadPromise = [];
+  let inPath = state.path.path;
 
-    for (const iterator of chunks) {
-      let formDate = new FormData();
-      let config = {
-        timeout: 3 * 60 * 1000,
-        headers: {},
-        onUploadProgress(progressEvent) {
-          var percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          console.log(percentCompleted);
-          return percentCompleted;
-        },
-      };
-      formDate.append("chunkId", chunkId);
-      formDate.append("blobId", iterator.id);
-      formDate.append("file", iterator.data);
-      uploadPromise.push(
-        folderApis.apiChunkFileUpload(formDate, config).then((res) => {})
-      );
+  let upload = new FileUpload(file);
+  upload.start(inPath, (res) => {
+    if (res.data.status == 0) {
+      coolWindow.startNewSuccessMessageDialog("上传成功");
     }
-    Promise.all(uploadPromise).then((res) => {
-      let inPath = state.path.path;
-      folderApis
-        .apiChunkFileMerge(chunkId, file.name, inPath, chunkSize)
-        .then((res) => {
-          if (res.data.status == 0) {
-            windowManager.startNewSuccessMessageDialog("上传成功");
-          }
-          if (res.data.status != 0) {
-            windowManager.startNewErrorMessageDialog(res.data.msg);
-          }
-        });
-    });
-  }
+    if (res.data.status != 0) {
+      coolWindow.startNewErrorMessageDialog(res.data.msg);
+    }
+  });
 };
 onMounted(() => {
   listDirector(state.path.getPath());
 });
 </script>
 
-<style>
-</style>
+<style lang="less">
+@import "../assets/less/loading.less";
+</style>>

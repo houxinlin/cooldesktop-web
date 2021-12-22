@@ -12,11 +12,11 @@
       'success-message': item.windowType == 'success-message',
     }"
     class="window-item"
-    @mousedown="windowManager.windowMove"
-    @mouseup="windowManager.windowMouseUp"
+    @mousedown="wact.windowMove"
+    @mouseup="wact.windowMouseUp"
   >
     <div
-      @click="windowManager.setWindowPos(item.id)"
+      @click="wact.setWindowPos(item.id)"
       :class="{ action: actionWindowId == item.id }"
       class="window-mask"
     ></div>
@@ -26,35 +26,34 @@
         <div class="opt">
           <i
             class="iconfont icon-tzuixiaohua"
-            @click="windowManager.windowMin(item.id)"
+            @click="wact.windowMin(item.id)"
           ></i>
           <i
             class="iconfont icon-big"
-            @click="windowManager.windowFullScreen(item.id)"
+            @click="wact.windowFullScreen(item.id)"
           ></i>
           <i
             class="iconfont icon-webicon309"
-            @click="windowManager.closeWindow(item.id)"
+            @click="wact.closeWindow(item.id)"
           ></i>
         </div>
       </div>
       <div class="window-body">
-          {{state.message}}
+        {{ state.message }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps,reactive } from "vue";
-import * as windowManager from "../js/window-manager.js";
+import { defineProps, reactive } from "vue";
+import { coolWindow, wact } from "../windows/window-manager.js";
+
 const props = defineProps({
   item: Object,
   actionWindowId: String,
 });
-
-let state = reactive({ ...props.item.error});
-
+let state = reactive({ ...props.item.data });
 </script>
 
 <style>

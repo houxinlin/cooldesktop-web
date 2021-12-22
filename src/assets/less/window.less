@@ -12,6 +12,15 @@
     border-radius: 0px !important;
 
 }
+.action-window-border::after{
+    content: '1';
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    top: -1px;
+    border-radius: 5px;
+    position: absolute;
+}
 .hide-window{
     display: none  !important
 }
@@ -277,5 +286,43 @@
                 }
             }
     }   
+
+}
+
+
+.file-upload-manager{
+    .item{
+        padding: 5px;
+        position: relative;
+        border-radius: 25px;
+        overflow: hidden;
+        height: 35px;
+        margin: 18px 9px;
+        background: #ffffff1c;
+        .name{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            z-index: 999;
+            display: block;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            color: #ffffff;
+            font-size: 13px;
+            right: 0px;
+            justify-content: center;
+        }
+        .progress{
+            position: absolute;
+            height: 100%;
+            width: 38%;
+            background:#a94747;
+            border-radius: 38px;
+            top: 0px;
+            left: 0px;
+        }
+    }
 
 }

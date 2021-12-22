@@ -1,7 +1,7 @@
 import { folderWindow } from "./window-property";
 import { createPath } from "../utils/path";
 
-class Folder {
+export class Folder {
     constructor(root, child) {
         this.path = createPath(root);
         this.child = child;

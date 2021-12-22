@@ -9,7 +9,7 @@
       'min-window': item.minState,
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
-      'error-message': item.windowType == 'error-message',
+      'file-upload-manager': item.windowType == 'upload-manager',
     }"
     class="window-item"
     @mousedown="wact.windowMove"
@@ -33,13 +33,19 @@
             @click="wact.windowFullScreen(item.id)"
           ></i>
           <i
+            v-if="item.canClose"
             class="iconfont icon-webicon309"
             @click="wact.closeWindow(item.id)"
           ></i>
         </div>
       </div>
       <div class="window-body">
-        {{ state.message }}
+        <template v-for="item in state.files" :key="item.id">
+          <div class="item">
+            <span class="name">{{ item.name }}</span>
+            <div :style="{ width: item.progress + '%' }" class="progress"></div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -53,6 +59,7 @@ const props = defineProps({
   item: Object,
   actionWindowId: String,
 });
+
 let state = reactive({ ...props.item.data });
 </script>
 

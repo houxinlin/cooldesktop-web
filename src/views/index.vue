@@ -6,7 +6,7 @@
     >
       <div class="app-list">
         <ul>
-          <li @dblclick="windowManager.openNewFolder()">
+          <li @dblclick="coolWindow.openNewFolder()">
             <div class="app-item">
               <div class="app-icon">
                 <img src="../assets/icon/ic-folder.png" alt="" />
@@ -15,9 +15,7 @@
             </div>
           </li>
           <li
-            @dblclick="
-              windowManager.openNewApp('http://www.houxinlin.com:6060/')
-            "
+            @dblclick="coolWindow.openNewApp('http://www.houxinlin.com:6060/')"
           >
             <div class="app-item">
               <div class="app-icon">
@@ -31,6 +29,12 @@
     </div>
     <div class="work-region">
       <template v-for="item in state.windowsCollection" :key="item">
+        <FileUploadManagerView
+
+          :actionWindowId="state.actionWindowId"
+          :item="item"
+          v-if="item.windowType == 'upload-manager'"
+        />
         <FolderView
           :actionWindowId="state.actionWindowId"
           :item="item"
@@ -57,13 +61,13 @@
       <div class="task-bar-mask"></div>
       <div class="task-bar-content">
         <ul>
-          <li @click="windowManager.openStarter()">
+          <li @click="coolWindow.openStarter()">
             <div class="task-item">
               <img src="../assets/icon/ic-app.png" />
             </div>
           </li>
           <template v-for="item in state.windowsCollection" :key="item">
-            <li @click="windowManager.showWindow(item.id)">
+            <li @click="wact.showWindow(item.id)">
               <div class="task-item">
                 <img
                   :class="{ select: item.id == state.actionWindowId }"
@@ -87,22 +91,27 @@ import FolderView from "./folder.vue";
 import IWebView from "./iframe.vue";
 import ErrorMessageView from "./error-message.vue";
 import SuccessMessageView from "./success-dialog.vue";
+import FileUploadManagerView from "./fileUpload-manager-view.vue";
+import { onMounted } from "vue";
+import { state, coolWindow, wact } from "../windows/window-manager.js";
 
-import { reactive, toRefs, onMounted } from "vue";
-import "../assets/font/iconfont.css";
-import { randId } from "../utils/utils";
-import * as folderManager from "../js/folder-manager.js";
-import * as windowManager from "../js/window-manager.js";
+import {
+  add,
+  changeProgress,
+  removeById,
+  uploads,
+} from "../utils/upload/manager";
+
+
 onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;
   }, 10);
 });
-
-let state = windowManager.state;
 </script>
 
 <style lang="less">
+@import "../assets/font/iconfont.css";
 @import "../assets/less/index.less";
 @import "../assets/less/window.less";
 @import "../assets/less/folder.less";
