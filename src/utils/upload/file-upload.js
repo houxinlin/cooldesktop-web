@@ -1,13 +1,14 @@
 import * as folderApis from "../../http/folder.js";
 import { randId } from "../../utils/utils.js";
 import { add, changeProgress, removeById, uploads } from "./manager.js";
-
+const UPLOAD_TIMER_OUT = 1000 * 60 * 15;
+const CHUNK_SIZE_MB = 15 * 1024 * 1024;
 const getChunk = (file) => {
-    let chunkSize = Math.ceil(file.size / (20 * 1024 * 1024));
+    let chunkSize = Math.ceil(file.size / (CHUNK_SIZE_MB));
     let chunks = [];
     for (let i = 0; i < chunkSize; i++) {
-        let start = i * (20 * 1024 * 1024);
-        let end = start + 20 * 1024 * 1024;
+        let start = i * (CHUNK_SIZE_MB);
+        let end = start + CHUNK_SIZE_MB;
         let item = file.slice(start, end);
         chunks.push({ id: i, data: item });
     }
@@ -16,6 +17,7 @@ const getChunk = (file) => {
 function onUploadProgress(params) {
 
 }
+
 function sum(arr) {
     let total = 0;
     for (var i in arr) {
@@ -30,7 +32,8 @@ export class FileUpload {
     start(inPath, callback) {
         let file = this.file
         let chunkId = randId();
-        if (file.size > 20 * 1024 * 1024) {
+        let errorPromise = []
+        if (file.size > CHUNK_SIZE_MB) {
             let chunks = getChunk(file);
             let uploadProgress = [...new Array(chunks.length).keys()];
             let uploadPromise = [];
@@ -38,7 +41,7 @@ export class FileUpload {
             for (const iterator of chunks) {
                 let formDate = new FormData();
                 let config = {
-                    timeout: 3 * 60 * 1000,
+                    timeout: UPLOAD_TIMER_OUT,
                     headers: {},
                     onUploadProgress(progressEvent) {
                         var percentCompleted = Math.round(
@@ -54,7 +57,9 @@ export class FileUpload {
                 formDate.append("chunkId", chunkId);
                 formDate.append("blobId", iterator.id);
                 formDate.append("file", iterator.data);
-                uploadPromise.push(folderApis.apiChunkFileUpload(formDate, config));
+                uploadPromise.push(folderApis.apiChunkFileUpload(formDate, config).then((res => { })).catch((res) => {
+
+                }));
             }
             // add({ name: "a", progress: "10" })
             Promise.all(uploadPromise).then((res) => {
@@ -67,7 +72,7 @@ export class FileUpload {
             });
         } else {
             let config = {
-                timeout: 3 * 60 * 1000,
+                timeout: UPLOAD_TIMER_OUT,
                 headers: {},
                 onUploadProgress(progressEvent) {
                     var percentCompleted = Math.round(
