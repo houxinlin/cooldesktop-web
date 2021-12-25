@@ -3,7 +3,7 @@
     :id="item.id"
     :data-id="item.id"
     :class="{
-      'action-window-border':item.actionWindow,
+      'action-window-border': item.actionWindow,
       'hide-window': item.hideWindow,
       'close-window-transition': item.closeWindowTransition,
       'window-transition': item.windowTransition,

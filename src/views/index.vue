@@ -94,6 +94,7 @@ import SuccessMessageView from "./success-dialog.vue";
 import FileUploadManagerView from "./fileUpload-manager-view.vue";
 import { onMounted } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
+import {Queue} from "../utils/queue"
 
 import {
   add,
