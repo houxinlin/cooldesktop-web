@@ -6,7 +6,12 @@ export class Queue extends Array {
             , writable: true
         });
     }
+    remove(index) {
+        this.splice(index, 1)
+        return this;
+    }
     enqueue(x) {
+        console.log("如对",x)
         this.push(x);
         return this;
     }
@@ -21,7 +26,7 @@ export class Queue extends Array {
     peek() {
         return this[this.head];
     }
-    size(){
+    size() {
         return this.length
     }
 }

@@ -30,7 +30,6 @@
     <div class="work-region">
       <template v-for="item in state.windowsCollection" :key="item">
         <FileUploadManagerView
-
           :actionWindowId="state.actionWindowId"
           :item="item"
           v-if="item.windowType == 'upload-manager'"
@@ -94,14 +93,36 @@ import SuccessMessageView from "./success-dialog.vue";
 import FileUploadManagerView from "./fileUpload-manager-view.vue";
 import { onMounted } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
-import {Queue} from "../utils/queue"
+import { Queue } from "../utils/queue";
 
 import {
+  addProgress,
   changeProgress,
+  createProgress,
   removeById,
   uploads,
+  uploadQueue,
 } from "../utils/upload/manager";
 
+// uploadQueue.files.enqueue({ uploadId: "a" });
+// uploadQueue.files.enqueue({ uploadId: "a" });
+// uploadQueue.files.dequeue();
+
+// uploadQueue.files.dequeue();
+// let result = -1;
+// result = uploadQueue.files.findIndex((res) => {
+//   console.log(res);
+//   return res!=undefined && res.uploadId == "a";
+// });
+
+// while (result >= 0) {
+//   console.log(result);
+//   uploadQueue.files.splice(result, 1);
+//   result = uploadQueue.files.findIndex((res) => res.uploadId == "a");
+// }
+
+coolWindow.openFileUploadManager();
+coolWindow.openNewFolder("/home/HouXinLin/test");
 
 onMounted(() => {
   setTimeout(() => {

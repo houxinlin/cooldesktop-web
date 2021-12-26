@@ -292,37 +292,66 @@
 
 
 .file-upload-manager{
+    .item:hover .cancel{
+        opacity: 1;
+    }
     .item{
-        padding: 5px;
+        padding: 8px;
         position: relative;
-        border-radius: 25px;
+        border-radius: 6px;
         overflow: hidden;
-        height: 35px;
         margin: 18px 9px;
         background: #ffffff1c;
-        .name{
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        .cancel{
+            transition: all 0.2s;
+            z-index: 2;
             position: absolute;
-            left: 0px;
+            left: 0;
             top: 0px;
-            z-index: 999;
-            display: block;
-            height: 100%;
+            right: 0px;
+            bottom: 0px;
+            background: #933838cf;
             display: flex;
             align-items: center;
-            margin-left: 15px;
+            justify-content: center;
+            opacity: 0;
+            img{
+                width: 10px;
+            }
+        }
+        img.file{
+            min-width: 32px;
+        }
+        .info{
+            margin-left: 10px;
+            flex: 1;
+            position: relative;
+            img{
+                position: absolute;
+                right: 5px;
+                width: 12px;
+                top: calc(50% - 6px);
+                display: none;
+                cursor: pointer;
+            }
+        }
+     
+        .name{
+            display: block;
+            height: 100%;
+            align-items: center;
             color: #ffffff;
             font-size: 13px;
-            right: 0px;
-            justify-content: center;
         }
         .progress{
-            position: absolute;
-            height: 100%;
-            width: 38%;
-            background:#a94747;
-            border-radius: 38px;
-            top: 0px;
-            left: 0px;
+            margin-top: 12px;
+            height: 8px;
+            width: 0%;
+            background:#1f784c;
+            border-radius:100px;
         }
     }
 

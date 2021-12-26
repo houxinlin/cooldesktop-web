@@ -69,6 +69,9 @@
       </menu>
     </div>
     <div
+      @dragover="dragover"
+      @dragleave="dragleave"
+      @drop="drop"
       @click="wact.setWindowPos(item.id)"
       :class="{ action: actionWindowId == item.id }"
       class="window-mask"
@@ -258,18 +261,19 @@ function spArr(arr, num) {
 const drop = (event) => {
   event.preventDefault();
   let files = event.dataTransfer.files;
-  let file = files[0];
   let inPath = state.path.path;
-
-  let upload = new FileUpload(file);
-  upload.start(inPath, (res) => {
-    if (res.data.status == 0) {
-      coolWindow.startNewSuccessMessageDialog("上传成功");
-    }
-    if (res.data.status != 0) {
-      coolWindow.startNewErrorMessageDialog(res.data.msg);
-    }
-  });
+  let upload = new FileUpload();
+  for (let index = 0; index < files.length; index++) {
+    const element = files[index];
+    upload.start(element, inPath, (res) => {
+      if (res.data.status == 0) {
+        coolWindow.startNewSuccessMessageDialog("上传成功");
+      }
+      if (res.data.status != 0) {
+        coolWindow.startNewErrorMessageDialog(res.data.msg);
+      }
+    });
+  }
 };
 onMounted(() => {
   listDirector(state.path.getPath());
