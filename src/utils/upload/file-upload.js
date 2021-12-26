@@ -11,12 +11,16 @@ function sum(arr) {
     return total;
 }
 class FileItemInfo {
-    constructor(file, uploadId, blobId, isChunks, progress) {
+    constructor(file, uploadId, blobId, isChunks, progress, target, fileName,totalSize) {
         this.file = file;
         this.uploadId = uploadId;
         this.blobId = blobId;
         this.isChunks = isChunks
         this.progress = progress;
+        this.target = target;
+        this.fileName = fileName;
+        this.total=totalSize;
+
     }
 }
 const getChunk = (file) => {
@@ -45,7 +49,7 @@ export const startConsumer = () => {
                         headers: {},
                         onUploadProgress: item.progress
                     };
-                    let formData = createFormData(item.file.data, item.uploadId, item.blobId)
+                    let formData = createFormData(item.file, item.uploadId, item.blobId, item.target, item.fileName,item.total)
                     folderApis.apiChunkFileUpload(formData, config).then((res => {
                         limit.current--
                     })).catch((res) => { limit.current-- })
@@ -60,7 +64,7 @@ export const startConsumer = () => {
     }
 }
 
-function createChunksUpload(file) {
+function createChunksUpload(file, target) {
     let uploadId = randId();
     let chunks = getChunk(file);
     addProgress({ id: uploadId, name: file.name, progress: "0" })
@@ -75,20 +79,21 @@ function createChunksUpload(file) {
             changeProgress(uploadId, gess * 100)
             return percentCompleted;
         }
-        uploadQueue.enqueue(new FileItemInfo(chunkItem, uploadId, chunkItem.id, true, onUploadProgress))
+        uploadQueue.enqueue(new FileItemInfo(chunkItem.data, uploadId, chunkItem.id, true, onUploadProgress, target,file.name,file.size))
     }
 }
-function createSingleFileUpload(file) {
+function createSingleFileUpload(file, target) {
+    console.log(file)
     let uploadId = randId();
     let onUploadProgress = (progressEvent) => {
         var percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total
         );
-        changeProgress(chunkId, percentCompleted)
+        changeProgress(uploadId, percentCompleted)
         return percentCompleted;
     }
-    addProgress({ id: chunkId, name: file.name, progress: "0" })
-    uploadQueue.enqueue(new FileItemInfo(file, uploadId, "0", false, onUploadProgress))
+    addProgress({ id: uploadId, name: file.name, progress: "0" })
+    uploadQueue.enqueue(new FileItemInfo(file, uploadId, "0", false, onUploadProgress, target,file.name,file.size))
 }
 
 
@@ -100,18 +105,20 @@ export class FileUpload {
         startConsumer()
         let file = this.file
         if (file.size > CHUNK_SIZE_MB) {
-            createChunksUpload(file)
+            createChunksUpload(file, inPath)
             return
         }
-        createSingleFileUpload(file)
+        createSingleFileUpload(file, inPath)
     }
 }
 
-const createFormData = (file, chunkId, blobId) => {
+const createFormData = (file, chunkId, blobId, target, fileName,fileSize) => {
     let formData = new FormData();
-    formData.append("file", file);
+    formData.append("target", target);
+    formData.append("fileBinary", file);
     formData.append("chunkId", chunkId);
     formData.append("blobId", blobId);
-    formData.append("total", file.size)
+    formData.append("fileName", fileName)
+    formData.append("total", fileSize)
     return formData;
 }

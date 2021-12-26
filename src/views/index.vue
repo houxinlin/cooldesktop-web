@@ -97,7 +97,6 @@ import { state, coolWindow, wact } from "../windows/window-manager.js";
 import {Queue} from "../utils/queue"
 
 import {
-  add,
   changeProgress,
   removeById,
   uploads,
