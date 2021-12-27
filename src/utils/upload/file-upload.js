@@ -36,33 +36,34 @@ const getChunk = (file) => {
 }
 
 let isStart = false
+let intervalId = null;
+
+const handlerItem = (item) => {
+    let config = {
+        signal: getController(item.uploadId).signal,
+        timeout: UPLOAD_TIMER_OUT,
+        headers: {},
+        onUploadProgress: item.progress
+    };
+    let formData = createFormData(item.file, item.uploadId, item.blobId, item.target, item.fileName, item.total)
+    folderApis.apiChunkFileUpload(formData, config).then((res => {limit.current--})).catch((res) => { limit.current-- })
+}
+const fileDequeue = () => {
+    if (limit.current < limit.max) {
+        let item = uploadQueue.files.dequeue();
+        if (item != undefined) {
+            handlerItem(item)
+            return
+        }
+        limit.current = 0;
+        clearInterval(intervalId);
+        isStart = false;
+    }
+}
 export const startConsumer = () => {
     if (!isStart) {
         isStart = true;
-        let id = setInterval(() => {
-            if (limit.current < limit.max) {
-                let item = uploadQueue.files.dequeue();
-                if (item != undefined) {
-                    limit.current++
-                    let config = {
-                        signal: getController(item.uploadId).signal,
-                        timeout: UPLOAD_TIMER_OUT,
-                        headers: {},
-                        onUploadProgress: item.progress
-                    };
-                    let formData = createFormData(item.file, item.uploadId, item.blobId, item.target, item.fileName, item.total)
-                    folderApis.apiChunkFileUpload(formData, config).then((res => {
-                        limit.current--
-                    })).catch((res) => { limit.current-- })
-                } else {
-                    limit.current=0;
-                    clearInterval(id);
-                    isStart = false;
-                }
-            } else {
-            }
-
-        }, 150);
+        intervalId = setInterval(fileDequeue, 120);
     }
 }
 

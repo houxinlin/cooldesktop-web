@@ -4,7 +4,23 @@ import { wact } from "../../windows/window-manager"
 export const limit = { max: 3, current: 0 }
 export const uploads = reactive({ files: [] });
 import { Queue } from "../queue.js"
-export const uploadQueue = { files: new Queue() }
+export const uploadQueue = {
+    files: new Proxy(new Queue(), {
+        get(target, key) {
+            let value = target[key];
+            if (key == 'dequeue' && value != undefined) {
+                if (limit.current > 0) {
+                    limit.current++;
+                }
+            }
+            return value
+        },
+        set: function (obj, prop, value) {
+            obj[prop] = value;
+            return true;
+        }
+    })
+}
 
 export const addProgress = (uploadInfo) => {
     uploadInfo.controller = new AbortController();;
