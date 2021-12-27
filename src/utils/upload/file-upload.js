@@ -1,6 +1,7 @@
 import * as folderApis from "../../http/folder.js";
 import { randId } from "../../utils/utils.js";
-import { addProgress, changeProgress, removeById, uploads, limit, uploadQueue } from "./manager.js";
+import { addProgress, changeProgress, removeById, uploads, limit, uploadQueue, getController } from "./manager.js";
+
 const UPLOAD_TIMER_OUT = 1000 * 60 * 15;
 const CHUNK_SIZE_MB = 15 * 1024 * 1024;
 function sum(arr) {
@@ -44,6 +45,7 @@ export const startConsumer = () => {
                 if (item != undefined) {
                     limit.current++
                     let config = {
+                        signal: getController(item.uploadId).signal,
                         timeout: UPLOAD_TIMER_OUT,
                         headers: {},
                         onUploadProgress: item.progress
@@ -53,7 +55,8 @@ export const startConsumer = () => {
                         limit.current--
                     })).catch((res) => { limit.current-- })
                 } else {
-                    clearInterval(id)
+                    limit.current=0;
+                    clearInterval(id);
                     isStart = false;
                 }
             } else {

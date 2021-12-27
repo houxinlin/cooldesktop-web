@@ -11,7 +11,6 @@ export class Queue extends Array {
         return this;
     }
     enqueue(x) {
-        console.log("如对",x)
         this.push(x);
         return this;
     }
@@ -21,7 +20,7 @@ export class Queue extends Array {
             , delete this[this.head++]
             , first
         )
-            : undefined; // perfect undefined
+            : undefined; 
     }
     peek() {
         return this[this.head];
