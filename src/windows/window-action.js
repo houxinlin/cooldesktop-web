@@ -149,8 +149,6 @@ export class WindowActions {
             list = [...classList];
         }
         actionMoveId = odiv.getAttribute("data-id");
-
-
         //置顶
         odiv.style.zIndex = 9999;
         for (const item of document.querySelectorAll(".window-item")) {
@@ -158,11 +156,9 @@ export class WindowActions {
                 item.style.zIndex = 1000;
             }
         }
-
         //除了window-body其他都可以移动
         if (
-            [...downDiv.classList].findIndex((item) => item == "window-title") == -1
-        ) {
+            [...downDiv.classList].findIndex((item) => item == "window-title") == -1 ) {
             if (downDiv.nodeName != "HEADER") {
                 return;
             }
@@ -175,7 +171,7 @@ export class WindowActions {
             if (top <= -10) {
                 document.onmousemove = null;
                 document.onmouseup = null;
-                windowFullScreen(actionMoveId);
+                this.windowFullScreen(actionMoveId);
                 return
             }
             odiv.style.left = left + "px";

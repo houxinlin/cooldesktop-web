@@ -34,7 +34,7 @@
           <li>创建文件</li>
         </div>
         <div class="item-group">
-          <li>粘贴</li>
+          <li @click="filePaste()">粘贴</li>
         </div>
         <div class="item-group">
           <li>属性</li>
@@ -55,10 +55,10 @@
         </div>
         <div class="item-group">
           <li @click="deleteFile()">删除</li>
-          <li>复制</li>
+          <li @click="fileCopy()">复制</li>
           <li>属性</li>
-          <li>剪切</li>
-          <li>重复名</li>
+          <li @click="fileCut()">剪切</li>
+          <li @click="reName()">重复名</li>
         </div>
         <div class="item-group">
           <li>下载</li>
@@ -119,7 +119,7 @@
         class="window-body"
       >
         <ul v-if="item.windowType == 'folder'">
-          <template v-for="item in state.child" :key="item">
+          <template v-for="(item, index) in state.child" :key="item">
             <li
               @contextmenu.prevent="fileContextMenu($event, item)"
               :class="{ select: state.currentSelectName == item.name }"
@@ -148,7 +148,15 @@
                   "
                   alt=""
                 />
-                <span>{{ item.name }}</span>
+                <span
+                  @keydown="fileKeyDown($event, index)"
+                  @blur="fileBlur(index)"
+                  class="contenteditable"
+                  v-if="item.edit"
+                  contenteditable="true"
+                  >{{ item.name }}</span
+                >
+                <span v-if="item.edit == false">{{ item.name }}</span>
                 <div class="tip">{{ item.name }}</div>
               </div>
             </li>
@@ -177,9 +185,79 @@ const props = defineProps({
   actionWindowId: String,
   folderInfo: Object,
 });
-
+const hideMenu = () => {
+  state.folderContextMenuVisible = false;
+  state.contextMenuVisible = false;
+};
+const fileCopy = () => {
+  folderApis.apiFileCopy(getSelectFile().path).then((res) => {});
+  hideMenu();
+};
+const filePaste = () => {
+  folderApis.apiFilePaste(state.path.getPath()).then((res) => {
+    if (res.data.status != 0) {
+      coolWindow.startNewErrorMessageDialog(res.data.msg);
+    }
+    refresh();
+  });
+  hideMenu();
+};
+const fileCut = () => {
+  folderApis.apiFileCut(getSelectFile().path).then((res) => {});
+  hideMenu();
+};
+const selectText = (element) => {
+  var text = document.querySelector(element);
+  if (document.body.createTextRange) {
+    var range = document.body.createTextRange();
+    range.moveToElementText(text);
+    range.select();
+  } else if (window.getSelection) {
+    var selection = window.getSelection();
+    var range = document.createRange();
+    range.selectNodeContents(text);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+};
 let state = reactive({ ...props.item.data });
 let fileRightFlag = false;
+
+const fileKeyDown = (events, index) => {
+  if (events.keyCode == 13) {
+    let span = document.querySelector(
+      `.window-body ul li:nth-child(${index + 1}) span`
+    );
+    folderApis
+      .apifileRename(state.child[index].path, span.textContent)
+      .then((res) => {
+        refresh();
+        if (res.data.status != 0) {
+          coolWindow.startNewErrorMessageDialog(res.data.msg);
+        }
+      });
+    events.preventDefault();
+    events.stopPropagation();
+  }
+};
+const fileBlur = (index) => {
+  state.child[index].edit = false;
+};
+const reName = () => {
+  let select = getSelectFile();
+  let index = state.child.findIndex((r) => {
+    return r == select;
+  });
+
+  setTimeout(function () {
+    document
+      .querySelector(`.window-body ul li:nth-child(${index + 1}) span`)
+      .focus();
+    selectText(`.window-body ul li:nth-child(${index + 1}) span`);
+  }, 0);
+  state.child[index].edit = true;
+  hideMenu();
+};
 const fileContextMenu = (e, item) => {
   state.selectFileItem = item;
   state.folderContextMenuVisible = false;
@@ -204,6 +282,9 @@ const folderContextMenu = (e) => {
 const listDirector = (path) => {
   folderApis.apiListDirectory(path).then((res) => {
     state.child = res.data.data;
+    for (const iterator of state.child) {
+      iterator.edit = false;
+    }
   });
 };
 const fileDblClick = (item) => {
@@ -220,6 +301,7 @@ const navPathClick = (index) => {
   state.path.range(index);
   state.contextMenuVisible = false;
   listDirector(state.path.getPath());
+  hideMenu();
 };
 const getSelectFile = () => {
   return state.selectFileItem;
@@ -229,9 +311,11 @@ const openNewFolderWhitThis = () => {
   if (getSelectFile().type != "folder") {
     return;
   }
+  hideMenu();
   coolWindow.openNewFolder(getSelectFile().path);
 };
 const refresh = () => {
+  hideMenu();
   listDirector(state.path.getPath());
 };
 const deleteFile = () => {

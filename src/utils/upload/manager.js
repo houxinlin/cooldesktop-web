@@ -9,9 +9,7 @@ export const uploadQueue = {
         get(target, key) {
             let value = target[key];
             if (key == 'dequeue' && value != undefined) {
-                if (limit.current > 0) {
-                    limit.current++;
-                }
+                limit.current++;
             }
             return value
         },

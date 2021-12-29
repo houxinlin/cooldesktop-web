@@ -46,9 +46,12 @@ const handlerItem = (item) => {
         onUploadProgress: item.progress
     };
     let formData = createFormData(item.file, item.uploadId, item.blobId, item.target, item.fileName, item.total)
-    folderApis.apiChunkFileUpload(formData, config).then((res => {limit.current--})).catch((res) => { limit.current-- })
+    folderApis.apiChunkFileUpload(formData, config)
+        .then((res => { if (limit.current > 0) limit.current-- }))
+        .catch((res) => { if (limit.current > 0) limit.current-- })
 }
 const fileDequeue = () => {
+    console.log("limit", limit)
     if (limit.current < limit.max) {
         let item = uploadQueue.files.dequeue();
         if (item != undefined) {
@@ -86,7 +89,6 @@ function createChunksUpload(file, target) {
     }
 }
 function createSingleFileUpload(file, target) {
-    console.log(file)
     let uploadId = randId();
     let onUploadProgress = (progressEvent) => {
         var percentCompleted = Math.round(

@@ -23,6 +23,7 @@ const removeWindowActionState = () => {
 }
 const startNewWindow = (windowProperty = {}) => {
     removeWindowActionState();
+    wact.hideWindow(false);
     windowProperty.actionWindow = true;
     state.appStarterVisible = false;
     state.actionWindowId = windowProperty.id;
@@ -48,7 +49,6 @@ class CoolWindowStarter {
     //打开文件夹
     openNewFolder = (path = "/") => {
         let window = createWindowByType(WindowEnum.Folder, createFolder(path, []))
-        wact.hideWindow(false);
         startNewWindow(window)
     };
     openFileUploadManager = () => {

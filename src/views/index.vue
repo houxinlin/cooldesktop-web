@@ -14,14 +14,12 @@
               <div class="app-name">文件</div>
             </div>
           </li>
-          <li
-            @dblclick="coolWindow.openNewApp('http://www.houxinlin.com:6060/')"
-          >
+          <li @dblclick="coolWindow.openFileUploadManager()">
             <div class="app-item">
               <div class="app-icon">
                 <img src="../assets/icon/ic-folder.png" alt="" />
               </div>
-              <div class="app-name">构建</div>
+              <div class="app-name">上传管理器</div>
             </div>
           </li>
         </ul>
