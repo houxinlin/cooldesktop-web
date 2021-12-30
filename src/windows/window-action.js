@@ -97,7 +97,9 @@ export class WindowActions {
         this.getAppById(id).instance.closeWindowTransition = true;
         setTimeout(() => {
             state.windowsCollection.splice(this.getAppById(id).index, 1);
-            state.actionWindowId = -1;
+            if(state.actionWindowId==id){
+                state.actionWindowId = ""
+            }
         }, 200);
     };
     //全屏

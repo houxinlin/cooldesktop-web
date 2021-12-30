@@ -9,12 +9,14 @@ export const state = reactive({
     desktopScale: true,
     positionX: 0,
     positionY: 0,
-    actionWindowId: -1,
+    actionWindowId: "",
     //窗口集合
     windowsCollection: [],
     appStarterVisible: false,
     windowVisibleState: [],
 });;
+
+export const wact = new WindowActions();
 
 const removeWindowActionState = () => {
     for (const iterator of state.windowsCollection) {
@@ -28,8 +30,9 @@ const startNewWindow = (windowProperty = {}) => {
     state.appStarterVisible = false;
     state.actionWindowId = windowProperty.id;
     state.windowsCollection.push(windowProperty);
+    console.log("活动窗口",windowProperty)
 }
-export const createWindowByType = (windowType, data={}) => {
+export const createWindowByType = (windowType, data = {}) => {
     let newWindow = Object.assign(new WindowEnum.BaseWindow(), new windowType(data));
     newWindow.id = randId();
     return newWindow;
@@ -52,7 +55,7 @@ class CoolWindowStarter {
         startNewWindow(window)
     };
     openFileUploadManager = () => {
-        let window = createWindowByType(WindowEnum.UploadManager,uploads)
+        let window = createWindowByType(WindowEnum.UploadManager, uploads)
         startNewWindow(window)
     };
     startNewErrorMessageDialog = (msg) => {
@@ -64,8 +67,11 @@ class CoolWindowStarter {
         let window = createWindowByType(WindowEnum.SuccessMessage, { "message": msg })
         startNewWindow(window)
     }
-    
+    startNewDialogSelect = (name, callback) => {
+        let window = createWindowByType(WindowEnum.DialogSelect, { "targetName": name, callback })
+        startNewWindow(window)
+    }
+
 
 }
 export const coolWindow = new CoolWindowStarter();
-export const wact = new WindowActions();

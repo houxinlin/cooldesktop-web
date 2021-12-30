@@ -64,7 +64,7 @@
           <li>下载</li>
         </div>
         <div class="item-group">
-          <li>压缩</li>
+          <li @click="fileCompress()">压缩</li>
         </div>
       </menu>
     </div>
@@ -172,19 +172,30 @@ import { defineProps, onMounted, reactive, ref } from "vue";
 import { coolWindow, wact } from "../windows/window-manager.js";
 import * as folderApis from "../http/folder.js";
 import { FileUpload } from "../utils/upload/file-upload";
-import { randId } from "../utils/utils.js";
 import { uploads } from "../utils/upload/manager";
-
+let state = reactive({ ...props.item.data });
 let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
 const showUploadView = () => {
   coolWindow.openFileUploadManager();
 };
-
 const props = defineProps({
   item: Object,
   actionWindowId: String,
   folderInfo: Object,
 });
+const fileCompress = () => {
+  hideMenu();
+  coolWindow.startNewDialogSelect(
+    getSelectFile().name,
+    function (data, dialog) {
+      folderApis
+        .apiFileCompress(getSelectFile().path, data.targetName, data.type)
+        .then((res) => {
+          coolWindow.startNewSuccessMessageDialog("任务调用成功");
+        });
+    }
+  );
+};
 const hideMenu = () => {
   state.folderContextMenuVisible = false;
   state.contextMenuVisible = false;
@@ -220,8 +231,6 @@ const selectText = (element) => {
     selection.addRange(range);
   }
 };
-let state = reactive({ ...props.item.data });
-let fileRightFlag = false;
 
 const fileKeyDown = (events, index) => {
   if (events.keyCode == 13) {
@@ -229,7 +238,7 @@ const fileKeyDown = (events, index) => {
       `.window-body ul li:nth-child(${index + 1}) span`
     );
     folderApis
-      .apifileRename(state.child[index].path, span.textContent)
+      .apiFileRename(state.child[index].path, span.textContent)
       .then((res) => {
         refresh();
         if (res.data.status != 0) {

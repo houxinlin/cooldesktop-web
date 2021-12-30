@@ -52,6 +52,11 @@
           :item="item"
           v-if="item.windowType == 'success-message'"
         />
+        <DialogSelect
+          :actionWindowId="state.actionWindowId"
+          :item="item"
+          v-if="item.windowType == 'dialog-select'"
+        />
       </template>
     </div>
     <div class="task-bar">
@@ -84,6 +89,7 @@
 </template>
 
 <script  setup >
+import DialogSelect from "./dialog/select.vue";
 import FolderView from "./folder.vue";
 import IWebView from "./iframe.vue";
 import ErrorMessageView from "./error-message.vue";
@@ -119,9 +125,8 @@ import {
 //   result = uploadQueue.files.findIndex((res) => res.uploadId == "a");
 // }
 
-coolWindow.openFileUploadManager();
+// coolWindow.openFileUploadManager();
 coolWindow.openNewFolder("/home/HouXinLin/test");
-
 onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;
@@ -136,4 +141,5 @@ onMounted(() => {
 @import "../assets/less/folder.less";
 @import "../assets/less/error-message.less";
 @import "../assets/less/success-message.less";
+@import "../assets/less/dialog.less";
 </style>>

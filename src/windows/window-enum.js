@@ -45,3 +45,8 @@ export function WebWindow() {
 export function NotifyWindow() {
     this.windowType = "notif-window"
 }
+
+export function DialogSelect(data) {
+    this.windowType = "dialog-select"
+    this.data = data;
+}

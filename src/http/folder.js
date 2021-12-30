@@ -38,23 +38,23 @@ export function apiFileCopy(path) {
 export function apiFilePaste(path) {
     return axios.post("/desktop/api/file/filePaste", qs.stringify({
         path: path
-    }),{timeout:60*1000*30});
+    }), { timeout: 60 * 1000 * 30 });
 }
 export function apiFileCut(path) {
     return axios.post("/desktop/api/file/fileCut", qs.stringify({
         path: path
     }));
 }
-export function apifileRename(source, newName) {
+export function apiFileRename(source, newName) {
     return axios.post("/desktop/api/file/fileRename", qs.stringify({
         newName: newName,
         source: source
     }));
 }
-// export function apiGetImageThumbnail(params) {
-//     return axios.get("/desktop/api/file/getImageThumbnail?", {
-//         params: {
-//             path: params
-//         }
-//     });
-// }
+export function apiFileCompress(path, targetName, compressType) {
+    return axios.post("/desktop/api/file/fileCompress", qs.stringify({
+        path,
+        targetName,
+        compressType
+    }));
+}
