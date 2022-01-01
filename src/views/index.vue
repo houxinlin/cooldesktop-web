@@ -57,6 +57,11 @@
           :item="item"
           v-if="item.windowType == 'dialog-select'"
         />
+        <FileAttribute
+          :actionWindowId="state.actionWindowId"
+          :item="item"
+          v-if="item.windowType == 'file-attribute'"
+        />
       </template>
     </div>
     <div class="task-bar">
@@ -89,12 +94,14 @@
 </template>
 
 <script  setup >
-import DialogSelect from "./dialog/select.vue";
+import DialogSelect from "./dialog/select-compress.vue";
 import FolderView from "./folder.vue";
 import IWebView from "./iframe.vue";
 import ErrorMessageView from "./error-message.vue";
 import SuccessMessageView from "./success-dialog.vue";
 import FileUploadManagerView from "./fileUpload-manager-view.vue";
+
+import FileAttribute from "./file-attribute.vue";
 import { onMounted } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { Queue } from "../utils/queue";
@@ -126,7 +133,8 @@ import {
 // }
 
 // coolWindow.openFileUploadManager();
-coolWindow.openNewFolder("/home/HouXinLin/test");
+coolWindow.openNewFolder("/home/HouXinLin")
+
 onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;

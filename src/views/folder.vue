@@ -3,6 +3,7 @@
     :id="item.id"
     :data-id="item.id"
     :class="{
+      'window-item-resize': item.canResize,
       'action-window-border': item.actionWindow,
       'hide-window': item.hideWindow,
       'close-window-transition': item.closeWindowTransition,
@@ -37,7 +38,7 @@
           <li @click="filePaste()">粘贴</li>
         </div>
         <div class="item-group">
-          <li>属性</li>
+          <li @click="openFileAttribute()">属性</li>
         </div>
       </menu>
     </div>
@@ -56,7 +57,6 @@
         <div class="item-group">
           <li @click="deleteFile()">删除</li>
           <li @click="fileCopy()">复制</li>
-          <li>属性</li>
           <li @click="fileCut()">剪切</li>
           <li @click="reName()">重复名</li>
         </div>
@@ -65,6 +65,9 @@
         </div>
         <div class="item-group">
           <li @click="fileCompress()">压缩</li>
+        </div>
+        <div class="item-group">
+          <li @click="openFileAttribute()">属性</li>
         </div>
       </menu>
     </div>
@@ -144,7 +147,7 @@
                   :src="
                     request +
                     'desktop/api/file/getImageThumbnail?path=' +
-                    item.path
+                    encodeURIComponent(item.path)
                   "
                   alt=""
                 />
@@ -175,6 +178,7 @@ import { FileUpload } from "../utils/upload/file-upload";
 import { uploads } from "../utils/upload/manager";
 let state = reactive({ ...props.item.data });
 let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
+
 const showUploadView = () => {
   coolWindow.openFileUploadManager();
 };
@@ -183,6 +187,10 @@ const props = defineProps({
   actionWindowId: String,
   folderInfo: Object,
 });
+const openFileAttribute = () => {
+  coolWindow.startNewFileAttribute(getSelectFile().path);
+  hideMenu();
+};
 const fileCompress = () => {
   hideMenu();
   coolWindow.startNewDialogSelect(

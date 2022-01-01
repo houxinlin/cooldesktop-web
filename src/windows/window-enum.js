@@ -14,6 +14,7 @@ export function BaseWindow() {
     this.x = 0;
     this.y = 0;
     this.closeWindowTransition = false
+    this.canResize=true
 }
 // export function EnableCloseWindow(data) {
 //     this.windowType = "folder"
@@ -48,5 +49,9 @@ export function NotifyWindow() {
 
 export function DialogSelect(data) {
     this.windowType = "dialog-select"
+    this.data = data;
+}
+export function FileAttribute(data) {
+    this.windowType = "file-attribute"
     this.data = data;
 }

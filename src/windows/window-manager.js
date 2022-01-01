@@ -71,7 +71,12 @@ class CoolWindowStarter {
         let window = createWindowByType(WindowEnum.DialogSelect, { "targetName": name, callback })
         startNewWindow(window)
     }
+    startNewFileAttribute = (name) => {
+        let window = createWindowByType(WindowEnum.FileAttribute, { "path": name })
+        startNewWindow(window)
+    }
 
+    
 
 }
 export const coolWindow = new CoolWindowStarter();

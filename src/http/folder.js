@@ -58,3 +58,9 @@ export function apiFileCompress(path, targetName, compressType) {
         compressType
     }));
 }
+
+export function apiFileAttribute(path) {
+    return axios.post("/desktop/api/file/getFileAttribute", qs.stringify({
+        path
+    }));
+}

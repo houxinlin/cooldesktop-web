@@ -57,10 +57,10 @@
             <span
               ><input
                 v-model="radioVal"
-                value="tar.xz"
+                value="tar"
                 name="select"
                 type="radio"
-              />.tar.xz</span
+              />tar.xz</span
             >
             <span
               ><input
@@ -68,7 +68,7 @@
                 value="7z"
                 name="select"
                 type="radio"
-              />.7z</span
+              />7z</span
             >
           </form>
         </div>

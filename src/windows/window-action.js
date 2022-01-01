@@ -2,6 +2,9 @@
 import { state } from "./window-manager.js"
 let actionMoveId = '';
 export class WindowActions {
+    setCanResize = (id, can) => {
+        this.getAppById(id).instance.canResize = can
+    }
     closeWindowByType = (windowType) => {
         let ids = []
         for (let index = 0; index < state.windowsCollection.length; index++) {
@@ -10,7 +13,6 @@ export class WindowActions {
             }
         }
         for (const iterator of ids) {
-            console.log("closeWindowByType", iterator, windowType)
             state.windowsCollection.splice(iterator, 1)
         }
     }
@@ -97,7 +99,7 @@ export class WindowActions {
         this.getAppById(id).instance.closeWindowTransition = true;
         setTimeout(() => {
             state.windowsCollection.splice(this.getAppById(id).index, 1);
-            if(state.actionWindowId==id){
+            if (state.actionWindowId == id) {
                 state.actionWindowId = ""
             }
         }, 200);
@@ -160,7 +162,7 @@ export class WindowActions {
         }
         //除了window-body其他都可以移动
         if (
-            [...downDiv.classList].findIndex((item) => item == "window-title") == -1 ) {
+            [...downDiv.classList].findIndex((item) => item == "window-title") == -1) {
             if (downDiv.nodeName != "HEADER") {
                 return;
             }
