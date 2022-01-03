@@ -27,6 +27,11 @@
     </div>
     <div class="work-region">
       <template v-for="item in state.windowsCollection" :key="item">
+        <DialogCreateFile
+          :actionWindowId="state.actionWindowId"
+          :item="item"
+          v-if="item.windowType == 'dialog-create-file'"
+        />
         <FileUploadManagerView
           :actionWindowId="state.actionWindowId"
           :item="item"
@@ -95,6 +100,8 @@
 
 <script  setup >
 import DialogSelect from "./dialog/select-compress.vue";
+import DialogCreateFile from "./dialog/create-file.vue";
+
 import FolderView from "./folder.vue";
 import IWebView from "./iframe.vue";
 import ErrorMessageView from "./error-message.vue";
@@ -133,8 +140,8 @@ import {
 // }
 
 // coolWindow.openFileUploadManager();
-coolWindow.openNewFolder("/home/HouXinLin")
-
+coolWindow.openNewFolder("/home/HouXinLin");
+// coolWindow.startNewDialogCreateFile(function(){})
 onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;

@@ -31,8 +31,8 @@
           <li>在此处打开终端</li>
         </div>
         <div class="item-group">
-          <li>创建文件夹</li>
-          <li>创建文件</li>
+          <li @click="createFile('director')">创建文件夹</li>
+          <li @click="createFile('file')">创建文件</li>
         </div>
         <div class="item-group">
           <li @click="filePaste()">粘贴</li>
@@ -65,6 +65,7 @@
         </div>
         <div class="item-group">
           <li @click="fileCompress()">压缩</li>
+          <li @click="fileDecompression()">解压</li>
         </div>
         <div class="item-group">
           <li @click="openFileAttribute()">属性</li>
@@ -187,22 +188,53 @@ const props = defineProps({
   actionWindowId: String,
   folderInfo: Object,
 });
+const getCurrentDirectory = () => {
+  return state.path.getPath();
+};
+const createFile = (type) => {
+  hideMenu();
+  coolWindow.startNewDialogCreateFile((data) => {
+    console.log(data, state.path.getPath());
+    folderApis
+      .apiCreateFile(getCurrentDirectory(), data.targetName, type)
+      .then((res) => {
+        if (res.data.status != 0) {
+          coolWindow.startNewErrorMessageDialog(res.data.msg);
+        }
+        refresh();
+      });
+  });
+};
 const openFileAttribute = () => {
   coolWindow.startNewFileAttribute(getSelectFile().path);
   hideMenu();
 };
+const fileDecompression = () => {
+  hideMenu();
+  folderApis.apiFileDecompression(getSelectFile().path).then((res) => {});
+};
 const fileCompress = () => {
   hideMenu();
-  coolWindow.startNewDialogSelect(
-    getSelectFile().name,
-    function (data, dialog) {
-      folderApis
-        .apiFileCompress(getSelectFile().path, data.targetName, data.type)
-        .then((res) => {
-          coolWindow.startNewSuccessMessageDialog("任务调用成功");
-        });
+  let file = getSelectFile();
+  let name = "";
+
+  if (!file.baseFileAttribute.directory) {
+    let index = file.name.indexOf(".");
+    if (index == 0) {
+      name = file.name;
+    } else {
+      name = file.name.substring(0, index);
     }
-  );
+  } else {
+    name = file.name;
+  }
+  coolWindow.startNewDialogSelect(name, function (data, dialog) {
+    folderApis
+      .apiFileCompress(getSelectFile().path, data.targetName, data.type)
+      .then((res) => {
+        coolWindow.startNewSuccessMessageDialog("任务调用成功");
+      });
+  });
 };
 const hideMenu = () => {
   state.folderContextMenuVisible = false;
@@ -286,6 +318,9 @@ const fileContextMenu = (e, item) => {
   e.preventDefault();
   e.stopPropagation();
 };
+/**
+ * 文件夹右击
+ */
 const folderContextMenu = (e) => {
   state.currentSelectName = "";
   state.folderContextMenuVisible = true;

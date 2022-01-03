@@ -58,9 +58,18 @@ export function apiFileCompress(path, targetName, compressType) {
         compressType
     }));
 }
-
+export function apiFileDecompression(path) {
+    return axios.post("/desktop/api/file/fileDecompression", qs.stringify({
+        path
+    }));
+}
 export function apiFileAttribute(path) {
     return axios.post("/desktop/api/file/getFileAttribute", qs.stringify({
         path
+    }));
+}
+export function apiCreateFile(parent, name, type) {
+    return axios.post("/desktop/api/file/createFile", qs.stringify({
+        parent, name, type
     }));
 }

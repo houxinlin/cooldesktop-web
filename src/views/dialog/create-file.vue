@@ -9,7 +9,7 @@
       'min-window': item.minState,
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
-      'dialog-select': item.windowType == 'dialog-select',
+      'dialog-create-file': item.windowType == 'dialog-create-file',
     }"
     class="window-item"
     @mousedown="wact.windowMove"
@@ -22,16 +22,8 @@
     ></div>
     <div class="window-content">
       <div class="window-title base-title">
-        <header>压缩</header>
+        <header>新建文件</header>
         <div class="opt">
-          <i
-            class="iconfont icon-tzuixiaohua"
-            @click="wact.windowMin(item.id)"
-          ></i>
-          <i
-            class="iconfont icon-big"
-            @click="wact.windowFullScreen(item.id)"
-          ></i>
           <i
             class="iconfont icon-webicon309"
             @click="wact.closeWindow(item.id)"
@@ -40,39 +32,11 @@
       </div>
       <div class="window-body">
         <div class="item">
-          <header>归档名称:</header>
-          <input v-model="targetName" type="text" />
+          <header>名称:</header>
+          <input class="base-input" v-model="targetName" type="text" />
         </div>
-        <div class="item">
-          <header>归档类型:</header>
-          <form>
-            <span
-              ><input
-                v-model="radioVal"
-                value="zip"
-                name="select"
-                type="radio"
-              />.zip</span
-            >
-            <span
-              ><input
-                v-model="radioVal"
-                value="tar"
-                name="select"
-                type="radio"
-              />tar.xz</span
-            >
-            <span
-              ><input
-                v-model="radioVal"
-                value="7z"
-                name="select"
-                type="radio"
-              />7z</span
-            >
-          </form>
-        </div>
-        <button @click="finish()">确认</button>
+
+        <button class="base-button blue" @click="finish()">创建</button>
       </div>
     </div>
   </div>
@@ -91,11 +55,7 @@ const targetName = ref(props.item.data.targetName);
 
 const finish = () => {
   wact.closeWindow(props.item.id);
-
-  props.item.data.callback(
-    { targetName: targetName.value, type: radioVal.value },
-    props.item
-  );
+  props.item.data.callback({ targetName: targetName.value }, props.item);
 };
 </script>
 

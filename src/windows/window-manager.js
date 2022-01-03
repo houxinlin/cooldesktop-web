@@ -76,7 +76,11 @@ class CoolWindowStarter {
         startNewWindow(window)
     }
 
-    
+    startNewDialogCreateFile = (callback) => {
+        let window = createWindowByType(WindowEnum.DialogCreateFile, { callback })
+        startNewWindow(window)
+    }
+
 
 }
 export const coolWindow = new CoolWindowStarter();

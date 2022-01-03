@@ -55,3 +55,8 @@ export function FileAttribute(data) {
     this.windowType = "file-attribute"
     this.data = data;
 }
+
+export function DialogCreateFile(data) {
+    this.windowType = "dialog-create-file"
+    this.data = data;
+}
