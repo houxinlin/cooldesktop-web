@@ -67,6 +67,11 @@
           :item="item"
           v-if="item.windowType == 'file-attribute'"
         />
+        <TerminalView
+          :actionWindowId="state.actionWindowId"
+          :item="item"
+          v-if="item.windowType == 'terminal'"
+        />
       </template>
     </div>
     <div class="task-bar">
@@ -95,6 +100,7 @@
         </ul>
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -107,11 +113,14 @@ import IWebView from "./iframe.vue";
 import ErrorMessageView from "./error-message.vue";
 import SuccessMessageView from "./success-dialog.vue";
 import FileUploadManagerView from "./fileUpload-manager-view.vue";
-
+import TerminalView from "./terminal.vue";
 import FileAttribute from "./file-attribute.vue";
 import { onMounted } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { Queue } from "../utils/queue";
+
+
+
 
 import {
   addProgress,
@@ -140,7 +149,8 @@ import {
 // }
 
 // coolWindow.openFileUploadManager();
-coolWindow.openNewFolder("/home/HouXinLin");
+// coolWindow.openNewFolder("/home/HouXinLin");
+coolWindow.startNewTerminal("")
 // coolWindow.startNewDialogCreateFile(function(){})
 onMounted(() => {
   setTimeout(() => {

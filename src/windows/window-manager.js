@@ -30,11 +30,10 @@ const startNewWindow = (windowProperty = {}) => {
     state.appStarterVisible = false;
     state.actionWindowId = windowProperty.id;
     state.windowsCollection.push(windowProperty);
-    console.log("活动窗口",windowProperty)
 }
 export const createWindowByType = (windowType, data = {}) => {
     let newWindow = Object.assign(new WindowEnum.BaseWindow(), new windowType(data));
-    newWindow.id = randId();
+    newWindow.id = "window-id"+randId();
     return newWindow;
 }
 class CoolWindowStarter {
@@ -80,7 +79,11 @@ class CoolWindowStarter {
         let window = createWindowByType(WindowEnum.DialogCreateFile, { callback })
         startNewWindow(window)
     }
-
+    startNewTerminal = (callback) => {
+        let window = createWindowByType(WindowEnum.Terminal, { callback })
+        startNewWindow(window)
+    }
+    
 
 }
 export const coolWindow = new CoolWindowStarter();

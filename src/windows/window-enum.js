@@ -60,3 +60,8 @@ export function DialogCreateFile(data) {
     this.windowType = "dialog-create-file"
     this.data = data;
 }
+
+export function Terminal(data) {
+    this.windowType = "terminal"
+    this.data = data;
+}

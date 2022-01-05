@@ -38,7 +38,7 @@
           <li @click="filePaste()">粘贴</li>
         </div>
         <div class="item-group">
-          <li @click="openFileAttribute()">属性</li>
+          <li @click="openFileAttribute(getCurrentDirectory())">属性</li>
         </div>
       </menu>
     </div>
@@ -72,15 +72,15 @@
         </div>
       </menu>
     </div>
-    <div
+    <!-- <div
       @dragover="dragover"
       @dragleave="dragleave"
       @drop="drop"
       @click="wact.setWindowPos(item.id)"
       :class="{ action: actionWindowId == item.id }"
       class="window-mask"
-    ></div>
-    <div class="window-content">
+    ></div> -->
+    <div @click="wact.setWindowPos(item.id)" class="window-content">
       <div class="window-title">
         <header>
           <ul>
@@ -88,10 +88,27 @@
               <li @click="navPathClick(index)">{{ item }}</li>
             </template>
           </ul>
+
           <div class="infos">
+            <div class="search">
+              <input
+                id="searchInput"
+                :class="{ open: state.searchInputVisible }"
+                placeholder="请输入搜索字符"
+                v-model="fileSearchValue"
+                @input="fileSearchEvent"
+                class="base-input close"
+                type="text"
+              />
+              <img
+                @click="showSearchInput()"
+                src="../assets/icon/ic-search.png"
+                alt=""
+              />
+            </div>
             <div
               v-if="uploads.files.length > 0"
-              @click="showUploadView()"
+              @click.stop="showUploadView()"
               class="loader"
             ></div>
           </div>
@@ -172,6 +189,11 @@
 </template>
 
 <script setup>
+const props = defineProps({
+  item: Object,
+  actionWindowId: String,
+  folderInfo: Object,
+});
 import { defineProps, onMounted, reactive, ref } from "vue";
 import { coolWindow, wact } from "../windows/window-manager.js";
 import * as folderApis from "../http/folder.js";
@@ -179,15 +201,22 @@ import { FileUpload } from "../utils/upload/file-upload";
 import { uploads } from "../utils/upload/manager";
 let state = reactive({ ...props.item.data });
 let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
-
+let fileSearchValue = ref("");
+let rawFils = [];
 const showUploadView = () => {
   coolWindow.openFileUploadManager();
 };
-const props = defineProps({
-  item: Object,
-  actionWindowId: String,
-  folderInfo: Object,
-});
+
+const showSearchInput = () => {
+  state.searchInputVisible = !state.searchInputVisible;
+  document.querySelector(`#${props.item.id} #searchInput`).focus();
+};
+const fileSearchEvent = (e) => {
+  let value = fileSearchValue.value;
+  state.child = rawFils.filter((e) => {
+    return e.name.startsWith(value);
+  });
+};
 const getCurrentDirectory = () => {
   return state.path.getPath();
 };
@@ -205,8 +234,9 @@ const createFile = (type) => {
       });
   });
 };
-const openFileAttribute = () => {
-  coolWindow.startNewFileAttribute(getSelectFile().path);
+const openFileAttribute = (defaultPath) => {
+  let obj = getSelectFile() || { path: defaultPath };
+  coolWindow.startNewFileAttribute(obj.path);
   hideMenu();
 };
 const fileDecompression = () => {
@@ -334,6 +364,8 @@ const folderContextMenu = (e) => {
 const listDirector = (path) => {
   folderApis.apiListDirectory(path).then((res) => {
     state.child = res.data.data;
+    state.searchInputVisible = false;
+    rawFils = state.child;
     for (const iterator of state.child) {
       iterator.edit = false;
     }

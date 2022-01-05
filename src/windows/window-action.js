@@ -153,6 +153,7 @@ export class WindowActions {
             list = [...classList];
         }
         actionMoveId = odiv.getAttribute("data-id");
+        this.setWindowPos(actionMoveId)
         //置顶
         odiv.style.zIndex = 9999;
         for (const item of document.querySelectorAll(".window-item")) {
