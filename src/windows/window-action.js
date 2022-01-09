@@ -96,6 +96,7 @@ export class WindowActions {
     };
     //关闭Window
     closeWindow = (id) => {
+        this.postWindowEvents(id, "close", {})
         this.getAppById(id).instance.closeWindowTransition = true;
         setTimeout(() => {
             state.windowsCollection.splice(this.getAppById(id).index, 1);
@@ -130,7 +131,14 @@ export class WindowActions {
     };
 
 
+    postWindowEvents = (id, name, e) => {
+        let events = this.getAppById(id).instance.events
 
+        if (typeof (events) == "function") {
+            events(name, e)
+        }
+
+    }
     windowMove = (e) => {
 
         if (e.which == 3) {
@@ -179,6 +187,7 @@ export class WindowActions {
                 this.windowFullScreen(actionMoveId);
                 return
             }
+            this.postWindowEvents(actionMoveId, "move", { left, top })
             odiv.style.left = left + "px";
             odiv.style.top = top + "px";
         };

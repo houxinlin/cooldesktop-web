@@ -28,7 +28,7 @@
     >
       <menu>
         <div class="item-group">
-          <li>在此处打开终端</li>
+          <li @click="openTerminal()">在此处打开终端</li>
         </div>
         <div class="item-group">
           <li @click="createFile('director')">创建文件夹</li>
@@ -194,6 +194,7 @@ const props = defineProps({
   actionWindowId: String,
   folderInfo: Object,
 });
+import elementResizeDetectorMaker from "element-resize-detector";
 import { defineProps, onMounted, reactive, ref } from "vue";
 import { coolWindow, wact } from "../windows/window-manager.js";
 import * as folderApis from "../http/folder.js";
@@ -203,10 +204,17 @@ let state = reactive({ ...props.item.data });
 let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
 let fileSearchValue = ref("");
 let rawFils = [];
+
 const showUploadView = () => {
   coolWindow.openFileUploadManager();
 };
-
+props.item.events = (name, e) => {
+  // console.log("移动")
+};
+const openTerminal = () => {
+  hideMenu();
+  coolWindow.startNewTerminal();
+};
 const showSearchInput = () => {
   state.searchInputVisible = !state.searchInputVisible;
   document.querySelector(`#${props.item.id} #searchInput`).focus();
@@ -445,6 +453,8 @@ const drop = (event) => {
 };
 onMounted(() => {
   listDirector(state.path.getPath());
+
+
 });
 </script>
 

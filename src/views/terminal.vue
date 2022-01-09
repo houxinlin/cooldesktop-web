@@ -1,5 +1,6 @@
 <template>
   <div
+    :id="item.id"
     :data-id="item.id"
     :class="{
       'hide-window': item.hideWindow,
@@ -11,15 +12,15 @@
       'window-z-height': item.actionWindow,
       terminal: item.windowType == 'terminal',
     }"
-    class="window-item"
+    class="window-item window-item-resize"
     @mousedown="wact.windowMove"
     @mouseup="wact.windowMouseUp"
   >
-    <div
+    <!-- <div
       @click="wact.setWindowPos(item.id)"
       :class="{ action: actionWindowId == item.id }"
       class="window-mask"
-    ></div>
+    ></div> -->
     <div class="window-content">
       <div class="window-title base-title">
         <header>终端</header>
@@ -50,12 +51,18 @@ const props = defineProps({
   item: Object,
   actionWindowId: String,
 });
+import elementResizeDetectorMaker from "element-resize-detector";
+
 import { defineProps, onMounted, reactive, ref, toRef, toRefs } from "vue";
 import { coolWindow, wact } from "../windows/window-manager.js";
 import Stomp from "stompjs";
 let stompClient = null;
 import { Terminal } from "xterm";
-
+props.item.events = function (e, d) {
+  if(e=="close"){
+    stompClient.disconnect()
+  }
+};
 const term = new Terminal({
   fontSize: 17,
   rightClickSelectsWord: true,
@@ -68,7 +75,7 @@ const term = new Terminal({
   cols: 73,
   rows: 23,
   // onCursorMove:(e)=>{
-  //   console.log(e)
+  //   console.log(e)s
   // },
 
   windowOptions: {
@@ -78,27 +85,38 @@ const term = new Terminal({
     background: "#00000000",
   },
 });
+term.onData((e)=>{
+  sendCharToServerTerminal(e);
 
+})
 term.onKey(function (data) {
-  if (data.key == "\x7F") {
-    term.write("\b \b");
-    return;
-  }
-  if (data.key == "\r") {
-    term.writeln("");
-    return;
-  }
-  term.write(data.key);
-  sendCharToServerTerminal(data.key);
-  console.log("ss")
+  // if (data.key == "\x7F") {
+  //   term.write("\b \b");s
+  //   return;
+  // }s
+  // if (data.key == "\r") {
+  //   term.writeln("");
+  //   return;
+  // }
+  // term.write(data.key);ss
 });
 
 const sendCharToServerTerminal = (char) => {
-  stompClient.send("/app/hello", {}, char);
+  stompClient.send("/desktop/desktop", {}, char);
 };
 
 onMounted(() => {
-  term.open(document.getElementById("xterm-container"));
+  const erd = elementResizeDetectorMaker();
+  erd.listenTo(document.getElementById(props.item.id), (element) => {
+    // console.log(element.offsetHeight);s
+    let newCol = parseInt(element.offsetWidth / 10);
+    let newRow = parseInt(element.offsetHeight / 10);
+    console.log(newCol, newRow);
+    term.resize(newCol - 3, newRow - 30);
+  });
+
+  let xterm = document.querySelector("#" + props.item.id + " #xterm-container");
+  term.open(xterm);
   connect();
 });
 
@@ -106,15 +124,18 @@ const connect = () => {
   let url = "http://localhost:8080/desktop-socket-endpoint";
   let socket = new SockJS(url);
   stompClient = Stomp.over(socket);
+
   stompClient.connect(
     {},
     () => {
-      stompClient.subscribe("/topic/a", (response) => {
-        console.log(response);
+      console.log("ok");
+      stompClient.subscribe("/topic/ssh", (response) => {
+        console.log(response.body);
+        term.write(response.body);
       });
     },
     (err) => {
-      console.log("失败");
+      term.writeln("连接已断开！。")
     }
   );
 };
