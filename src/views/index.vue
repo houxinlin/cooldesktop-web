@@ -150,7 +150,7 @@ import {
 
 // coolWindow.openFileUploadManager();
 // coolWindow.openNewFolder("/home/HouXinLin");
-coolWindow.startNewTerminal("")
+coolWindow.startNewTerminal("/home")
 // coolWindow.startNewDialogCreateFile(function(){})
 onMounted(() => {
   setTimeout(() => {

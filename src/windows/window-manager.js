@@ -79,8 +79,8 @@ class CoolWindowStarter {
         let window = createWindowByType(WindowEnum.DialogCreateFile, { callback })
         startNewWindow(window)
     }
-    startNewTerminal = () => {
-        let window = createWindowByType(WindowEnum.Terminal, {  })
+    startNewTerminal = (path) => {
+        let window = createWindowByType(WindowEnum.Terminal, { path })
         startNewWindow(window)
     }
     

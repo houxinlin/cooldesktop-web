@@ -208,12 +208,10 @@ let rawFils = [];
 const showUploadView = () => {
   coolWindow.openFileUploadManager();
 };
-props.item.events = (name, e) => {
-  // console.log("移动")
-};
+
 const openTerminal = () => {
   hideMenu();
-  coolWindow.startNewTerminal();
+  coolWindow.startNewTerminal(getCurrentDirectory());
 };
 const showSearchInput = () => {
   state.searchInputVisible = !state.searchInputVisible;

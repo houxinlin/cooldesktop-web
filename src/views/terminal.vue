@@ -39,7 +39,7 @@
           ></i>
         </div>
       </div>
-      <div style="padding: 10px" class="window-body">
+      <div style="padding: 0px" class="window-body">
         <div id="xterm-container"></div>
       </div>
     </div>
@@ -58,89 +58,83 @@ import { coolWindow, wact } from "../windows/window-manager.js";
 import Stomp from "stompjs";
 let stompClient = null;
 import { Terminal } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
+
 props.item.events = function (e, d) {
-  if(e=="close"){
-    stompClient.disconnect()
+  if (e == "close") {
+    stompClient.disconnect();
   }
 };
+const fitAddon = new FitAddon();
 const term = new Terminal({
-  fontSize: 17,
+  fontSize: 16,
   rightClickSelectsWord: true,
-  // fontFamily:"楷体",
   letterSpacing: 0,
-  fontWeight: 500,
   allowTransparency: true,
   cursorBlink: true,
   cursorStyle: "bar",
-  cols: 73,
-  rows: 23,
-  // onCursorMove:(e)=>{
-  //   console.log(e)s
-  // },
-
-  windowOptions: {
-    fullscreenWin: true,
-  },
+  cols: 80,
+  rows: 24,
   theme: {
     background: "#00000000",
   },
 });
-term.onData((e)=>{
+term.loadAddon(fitAddon);
+
+term.onData((e) => {
   sendCharToServerTerminal(e);
-
-})
-term.onKey(function (data) {
-  // if (data.key == "\x7F") {
-  //   term.write("\b \b");s
-  //   return;
-  // }s
-  // if (data.key == "\r") {
-  //   term.writeln("");
-  //   return;
-  // }
-  // term.write(data.key);ss
 });
+term.onKey(function (data) {});
 
-const sendCharToServerTerminal = (char) => {
+const sendCharToServerTerminal = (char, sender = false) => {
+  if (sender) {char = char + "\r";}
   stompClient.send("/desktop/desktop", {}, char);
 };
 
+const PrefixInteger = (num, n) => {
+  return (Array(n).join(0) + num).slice(-n);
+};
 onMounted(() => {
   const erd = elementResizeDetectorMaker();
   erd.listenTo(document.getElementById(props.item.id), (element) => {
-    // console.log(element.offsetHeight);s
-    let newCol = parseInt(element.offsetWidth / 10);
-    let newRow = parseInt(element.offsetHeight / 10);
-    console.log(newCol, newRow);
-    term.resize(newCol - 3, newRow - 30);
+    fitAddon.fit();
+    var setSizeMessage =
+      "setSize" +
+      PrefixInteger(term.cols, 4) +
+      PrefixInteger(term.rows, 4) +
+      PrefixInteger(element.offsetWidth, 4) +
+      PrefixInteger(element.offsetHeight, 4);
+        console.log(stompClient.connected)
+
+      if(stompClient.connected){
+           stompClient.send("/desktop/desktop", {}, setSizeMessage);
+      }
   });
 
   let xterm = document.querySelector("#" + props.item.id + " #xterm-container");
   term.open(xterm);
   connect();
 });
-
+const websocketConnected = (e) => {
+  stompClient.subscribe("/topic/ssh", (response) => {
+    term.write(response.body);
+  });
+  sendCharToServerTerminal(`cd ${props.item.data.path}`,true);
+};
+const websocketClose = (e) => {
+  term.writeln("连接已断开！。");
+};
 const connect = () => {
-  let url = "http://localhost:8080/desktop-socket-endpoint";
+  let url = import.meta.env.VITE_APP_REQUEST_URL + "desktop-socket-endpoint";
   let socket = new SockJS(url);
   stompClient = Stomp.over(socket);
+  stompClient.connect({}, websocketConnected, websocketClose);
+  stompClient.debug = null;
 
-  stompClient.connect(
-    {},
-    () => {
-      console.log("ok");
-      stompClient.subscribe("/topic/ssh", (response) => {
-        console.log(response.body);
-        term.write(response.body);
-      });
-    },
-    (err) => {
-      term.writeln("连接已断开！。")
-    }
-  );
 };
 </script>
 
 <style>
 @import url("xterm/css/xterm.css");
+@import url("../assets/less/terminal.less");
 </style>

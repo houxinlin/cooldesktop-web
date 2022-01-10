@@ -21,7 +21,8 @@
     "vue-native-websocket-vue3": "^3.1.4",
     "vue-router": "^4.0.0-0",
     "vue-upload-component": "^3.0.50",
-    "xterm": "^4.16.0"
+    "xterm": "^4.16.0",
+    "xterm-addon-fit": "^0.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.9.3",
