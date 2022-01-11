@@ -6,6 +6,11 @@ const constantRoutes = [
     name: "Index",
     component: () => import("../views/index.vue")
   },
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/login.vue")
+  },
  
 ];
 

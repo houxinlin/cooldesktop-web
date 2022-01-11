@@ -22,6 +22,14 @@
               <div class="app-name">上传管理器</div>
             </div>
           </li>
+            <li @dblclick="coolWindow.startNewTerminal('/')">
+            <div class="app-item">
+              <div class="app-icon">
+                <img src="../assets/icon/ic-folder.png" alt="" />
+              </div>
+              <div class="app-name">Terminal</div>
+            </div>
+          </li>
         </ul>
       </div>
     </div>

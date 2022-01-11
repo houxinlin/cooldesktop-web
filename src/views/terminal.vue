@@ -104,7 +104,6 @@ onMounted(() => {
       PrefixInteger(term.rows, 4) +
       PrefixInteger(element.offsetWidth, 4) +
       PrefixInteger(element.offsetHeight, 4);
-        console.log(stompClient.connected)
 
       if(stompClient.connected){
            stompClient.send("/desktop/desktop", {}, setSizeMessage);
