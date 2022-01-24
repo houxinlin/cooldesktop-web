@@ -33,7 +33,7 @@ const startNewWindow = (windowProperty = {}) => {
 }
 export const createWindowByType = (windowType, data = {}) => {
     let newWindow = Object.assign(new WindowEnum.BaseWindow(), new windowType(data));
-    newWindow.id = "window-id"+randId();
+    newWindow.id = "window-id" + randId();
     return newWindow;
 }
 class CoolWindowStarter {
@@ -83,7 +83,10 @@ class CoolWindowStarter {
         let window = createWindowByType(WindowEnum.Terminal, { path })
         startNewWindow(window)
     }
-    
+    startNewWebView = (url,type,handlerApp) => {
+        let window = createWindowByType(WindowEnum.WebWindow, { url,type,handlerApp })
+        startNewWindow(window)
+    }
 
 }
 export const coolWindow = new CoolWindowStarter();

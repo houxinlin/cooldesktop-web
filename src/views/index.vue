@@ -22,12 +22,25 @@
               <div class="app-name">上传管理器</div>
             </div>
           </li>
-            <li @dblclick="coolWindow.startNewTerminal('/')">
+          <li @dblclick="coolWindow.startNewTerminal('/')">
             <div class="app-item">
               <div class="app-icon">
                 <img src="../assets/icon/ic-folder.png" alt="" />
               </div>
               <div class="app-name">Terminal</div>
+            </div>
+          </li>
+
+          <li
+            v-for="item in applicationState.applications"
+            :key="item.applicationId"
+            @dblclick="coolWindow.startNewTerminal('/')"
+          >
+            <div class="app-item">
+              <div class="app-icon">
+                <img src="../assets/icon/ic-folder.png" alt="" />
+              </div>
+              <div class="app-name">{{ item.applicationName }}</div>
             </div>
           </li>
         </ul>
@@ -108,7 +121,7 @@
         </ul>
       </div>
     </div>
-    
+    <vue-notification-list position="top-right"></vue-notification-list>
   </div>
 </template>
 
@@ -123,13 +136,18 @@ import SuccessMessageView from "./success-dialog.vue";
 import FileUploadManagerView from "./fileUpload-manager-view.vue";
 import TerminalView from "./terminal.vue";
 import FileAttribute from "./file-attribute.vue";
-import { onMounted } from "vue";
+import { onMounted, reactive, ref, toRef, toRefs } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { Queue } from "../utils/queue";
 
+import { VueNotificationList } from "@dafcoe/vue-notification";
+import { useNotificationStore } from "@dafcoe/vue-notification";
+const { setNotification } = useNotificationStore();
+import "@dafcoe/vue-notification/dist/vue-notification.css";
 
+import { apiListApplication } from "../http/application.js";
 
-
+import { applicationState } from "../global/application.js";
 import {
   addProgress,
   changeProgress,
@@ -138,7 +156,9 @@ import {
   uploads,
   uploadQueue,
 } from "../utils/upload/manager";
-
+apiListApplication().then((res) => {
+  applicationState.applications = res.data.data;
+});
 // uploadQueue.files.enqueue({ uploadId: "a" });
 // uploadQueue.files.enqueue({ uploadId: "a" });
 // uploadQueue.files.dequeue();
@@ -157,14 +177,26 @@ import {
 // }
 
 // coolWindow.openFileUploadManager();
-// coolWindow.openNewFolder("/home/HouXinLin");
-coolWindow.startNewTerminal("/home")
+// coolWindow.startNewWebView("http://www.baidu.com");
+coolWindow.openNewFolder("/home/HouXinLin");
+// coolWindow.startNewTextEditor("/a");
 // coolWindow.startNewDialogCreateFile(function(){})
 onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;
   }, 10);
+  exportApi();
 });
+const exportApi = () => {
+  window.addEventListener("message", (events) => {
+    if (events.data.action == "notification") {
+      notification(events.data.param);
+    }
+  });
+};
+const notification = (param) => {
+  setNotification(param);
+};
 </script>
 
 <style lang="less">
@@ -175,4 +207,6 @@ onMounted(() => {
 @import "../assets/less/error-message.less";
 @import "../assets/less/success-message.less";
 @import "../assets/less/dialog.less";
+@import "../assets/less/over/text-editor.less";
+@import "../assets/less/iframe.less";
 </style>>

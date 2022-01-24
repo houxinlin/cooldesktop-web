@@ -90,6 +90,7 @@ export class WindowActions {
 
     //最小化
     windowMin = (id) => {
+
         this.getAppById(id).instance.minState = !this.getAppById(id).instance.minState;
         this.getAppById(id).instance.actionWindow = false;
         state.actionWindowId = -1;

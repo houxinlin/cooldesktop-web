@@ -40,8 +40,9 @@ export function SuccessMessage(data) {
     this.windowType = "success-message"
     this.data = data;
 }
-export function WebWindow() {
-    this.windowType = "web-window"
+export function WebWindow(data) {
+    this.windowType = "web"
+    this.data = data;
 }
 export function NotifyWindow() {
     this.windowType = "notif-window"
@@ -58,6 +59,10 @@ export function FileAttribute(data) {
 
 export function DialogCreateFile(data) {
     this.windowType = "dialog-create-file"
+    this.data = data;
+}
+export function TextEditor(data) {
+    this.windowType = "text-editor"
     this.data = data;
 }
 

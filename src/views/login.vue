@@ -17,7 +17,7 @@
 <style lang="less">
 .container{
     position: fixed;
-    background: #e5e4e4;
+     background-image: url('../assets/background/desktop.jpg');
     left: 0px;
     top: 0px;
     bottom: 0px;

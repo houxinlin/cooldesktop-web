@@ -3,14 +3,15 @@
     :id="item.id"
     :data-id="item.id"
     :class="{
+      'min-window': item.minState,
+      'max-window': item.maxState,
       'window-item-resize': item.canResize,
       'action-window-border': item.actionWindow,
       'hide-window': item.hideWindow,
       'close-window-transition': item.closeWindowTransition,
       'window-transition': item.windowTransition,
       'window-scale': item.windowScale,
-      'min-window': item.minState,
-      'max-window': item.maxState,
+
       'window-z-height': item.actionWindow,
       folder: item.windowType == 'folder',
     }"
@@ -80,7 +81,7 @@
       :class="{ action: actionWindowId == item.id }"
       class="window-mask"
     ></div> -->
-    <div @click="wact.setWindowPos(item.id)" class="window-content">
+    <div class="window-content">
       <div class="window-title">
         <header>
           <ul>
@@ -200,6 +201,11 @@ import { coolWindow, wact } from "../windows/window-manager.js";
 import * as folderApis from "../http/folder.js";
 import { FileUpload } from "../utils/upload/file-upload";
 import { uploads } from "../utils/upload/manager";
+import {
+  applicationState,
+  getApplicationByMedia,
+} from "../global/application.js";
+
 let state = reactive({ ...props.item.data });
 let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
 let fileSearchValue = ref("");
@@ -377,8 +383,15 @@ const listDirector = (path) => {
     }
   });
 };
+
+const handlerFileDblClick = (item) => {
+  let handlerApp = getApplicationByMedia("text")[0];
+  let url = request.value+"desktop/webapplication/" + handlerApp.applicationId + "/index.html?path="+item.path;
+  coolWindow.startNewWebView(url,"text-editor",handlerApp);
+};
 const fileDblClick = (item) => {
   if (item.type != "folder") {
+    handlerFileDblClick(item);
     return;
   }
 
@@ -451,8 +464,6 @@ const drop = (event) => {
 };
 onMounted(() => {
   listDirector(state.path.getPath());
-
-
 });
 </script>
 

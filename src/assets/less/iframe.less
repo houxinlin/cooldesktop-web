@@ -1,0 +1,42 @@
+.window-body.iframe{
+    display: flex;
+    flex-direction: column;
+    .menu{
+        position: relative;
+        height: 30px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        .second-menu{
+            cursor: pointer;
+            display: none;
+            position: absolute;
+            background: #1a1622db;
+            padding: 9px;
+            border-radius: 4px;
+            .second-name{
+                padding: 4px 0px;
+                min-width: 100px;
+            }
+        }
+        
+        .menu-item:hover .second-menu{
+            display: flex;
+
+        }
+    }
+
+    iframe{
+        width: 100%;
+        flex: 1;
+        border: none;
+        background: #282c3400;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        
+    }
+    .iframe-pointer-events{
+        pointer-events: none;
+    }
+}
