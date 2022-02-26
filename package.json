@@ -12,6 +12,7 @@
     "axios": "^0.24.0",
     "element-plus": "^1.2.0-beta.1",
     "element-resize-detector": "^1.2.4",
+    "mitt": "^3.0.0",
     "qs": "^6.10.2",
     "sockjs": "^0.3.24",
     "sockjs-client": "^1.0.0",

@@ -1,72 +1,66 @@
-export function BaseWindow() {
-    this.minState = false;
-    this.maxState = false;
-    this.actionWindow = true;
-    this.windowTransition = false;
-    this.windowType = "web";
-    this.pointerEvents = false;
-    this.hideWindow = false;
-    this.canMax = true;
-    this.canMin = true;
-    this.canClose = true;
-    this.icon = "";
-    this.id = "";
-    this.x = 0;
-    this.y = 0;
-    this.closeWindowTransition = false
-    this.canResize=true
+import defaultApps from "../software/default-software.js"
+let BASE_WINDOW_PROPERTYS = {
+    minState: false,
+    maxState: false,
+    actionWindow: true,
+    windowTransition: false,
+    windowType: "web",
+    pointerEvents: false,
+    hideWindow: false,
+    canMax: true,
+    canMin: true,
+    canClose: true,
+    icon: "",
+    id: "",
+    x: 0,
+    y: 0,
+    closeWindowTransition: false,
+    canResize: true
 }
-// export function EnableCloseWindow(data) {
-//     this.windowType = "folder"
-//     this.icon = "/src/assets/icon/ic-folder.png"
-//     this.data = data;
-// }
-export function Folder(data) {
-    this.windowType = "folder"
-    this.icon = "/src/assets/icon/ic-folder.png"
-    this.data = data;
+
+function getWindowProperty(windowProperty, data = {}) {
+    return Object.assign({}, BASE_WINDOW_PROPERTYS, windowProperty, { data })
 }
-export function UploadManager(data) {
-    this.windowType = "upload-manager"
-    this.icon = "/src/assets/icon/ic-folder.png"
-    this.data = data;
-    this.canClose=false
-}
+
 export function ErrorMessage(data) {
-    this.windowType = "error-message"
-    this.data = data;
+    return getWindowProperty({ windowType: "error-message" }, data)
 }
 export function SuccessMessage(data) {
-    this.windowType = "success-message"
-    this.data = data;
+    return getWindowProperty({ windowType: "success-message" }, data)
 }
 export function WebWindow(data) {
-    this.windowType = "web"
-    this.data = data;
+    return getWindowProperty({ windowType: "web" }, data)
 }
 export function NotifyWindow() {
-    this.windowType = "notif-window"
+    return getWindowProperty({ windowType: "notif-window" }, data)
 }
 
 export function DialogSelect(data) {
-    this.windowType = "dialog-select"
-    this.data = data;
+    return getWindowProperty({ windowType: "dialog-select" }, data)
 }
 export function FileAttribute(data) {
-    this.windowType = "file-attribute"
-    this.data = data;
+    return getWindowProperty({ windowType: "file-attribute" }, data)
 }
-
 export function DialogCreateFile(data) {
-    this.windowType = "dialog-create-file"
-    this.data = data;
+    return getWindowProperty({ windowType: "dialog-create-file" }, data)
 }
 export function TextEditor(data) {
-    this.windowType = "text-editor"
-    this.data = data;
+    return getWindowProperty({ windowType: "text-editor" }, data)
 }
 
+export function LoadingView(data) {
+    return getWindowProperty({ windowType: "loading-view", "canClose": false }, data)
+}
+export function FolderWindow(data = {}) {
+    return getWindowProperty({ windowType: "folder", "icon": defaultApps[0].icon }, data)
+}
+
+export function UploadManager(data) {
+    return getWindowProperty({ windowType: "upload-manager", "icon": defaultApps[1].icon }, data)
+}
 export function Terminal(data) {
-    this.windowType = "terminal"
-    this.data = data;
+    return getWindowProperty({ windowType: "terminal", "icon": defaultApps[2].icon }, data)
+}
+export function Software(data) {
+    return getWindowProperty({ windowType: "software", "icon": defaultApps[3].icon }, data)
 }

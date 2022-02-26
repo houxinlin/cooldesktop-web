@@ -1,0 +1,139 @@
+div.software.window-item{
+    height: 560px  ;
+    width: 870px ;
+    left: calc(50% - 435px);
+    top: calc(50% - 280px);
+}
+.software{
+    .window-body{
+        display: flex;
+        position: relative;
+
+        aside{
+            min-width: 120px;
+            color: #d1d1d1;
+            background: #d3d1d10f;
+            font-size: 16px;
+            
+            ul {
+              li{
+                cursor: pointer;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              li.select{
+                background: #d9d4d40d;
+              }
+            }
+         
+        }
+        .container{
+            flex: 1;
+            color: #ffffff;
+            .app-install-container{
+                padding: 70px;
+                .screenshot{
+                    overflow-x: auto;
+                    display: flex;
+                    width: 600px;
+                    img{
+                        width: 200px;
+                        height: 200px;
+                        border-radius: 8px;
+                        margin-right: 10px;
+                        object-fit: contain;
+                    }
+                }
+                .header-info{
+                    display: flex;
+                    .logo{
+                        display: flex;
+                        flex-direction: column;
+                        color: #ffffff;
+                        align-items: center;
+                        button{
+                            cursor: pointer;
+                            border: none;
+                            padding: 6px 12px;
+                            width: 102px;
+                            background: #258799;
+                            border-radius: 5px;
+                            color: #ffffff;
+                        }
+                        img{
+                            width: 72px;
+                        }
+                    }
+                    .introduce{
+                        flex: 1;
+                        margin-left: 120px;
+                       .introduce-item{
+                            display: flex;
+                            color: #e3dfdf;
+                            font-size: 17px;
+                            margin-bottom: 20px;
+                            span{
+                                display: block;
+                            }
+                            span.key{
+                                width: 66px;
+                            }
+                       }
+                    }
+                }
+            }
+            .app-list-container ul{
+                padding: 6px;
+                display: grid;
+                justify-content: center;
+                grid-template-columns: repeat(auto-fill, 86px);
+                li{
+                    cursor: pointer;
+                    width: 90px;
+                    height: 90px;
+                    margin: 1px 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+        
+                    .file-item{
+                        position: relative;
+                        align-items: center;
+                        justify-content: center;
+                        color: #ffffff;
+                        display: flex;
+                        flex-direction: column;
+                        width: 100%;
+                        img{
+                            width: 40px;
+                            height: 40px;
+                            object-fit: cover;
+                        }
+    
+                        span{
+                            margin-top: 6px;
+                            font-size: 13px;
+                            color: #ffffff;
+                            width: 100%;
+                            display: block;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            text-align: center;
+                        }
+                        span.contenteditable{
+                            white-space: normal !important
+                        }
+                    }
+                }
+                li:hover{
+                    background: #ffffff26;
+                    border-radius: 6px;
+                }
+            }
+        }
+        
+    }
+}

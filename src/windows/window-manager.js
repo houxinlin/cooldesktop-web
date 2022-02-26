@@ -16,7 +16,6 @@ export const state = reactive({
     windowVisibleState: [],
 });;
 
-export const wact = new WindowActions();
 
 const removeWindowActionState = () => {
     for (const iterator of state.windowsCollection) {
@@ -31,62 +30,59 @@ const startNewWindow = (windowProperty = {}) => {
     state.actionWindowId = windowProperty.id;
     state.windowsCollection.push(windowProperty);
 }
-export const createWindowByType = (windowType, data = {}) => {
-    let newWindow = Object.assign(new WindowEnum.BaseWindow(), new windowType(data));
-    newWindow.id = "window-id" + randId();
-    return newWindow;
+export const createWindowByType = (desktopWindow, data = {}) => {
+    let windowProperty = desktopWindow(data)
+    windowProperty.id = "window-id" + randId();
+    windowProperty.closeWindow = () => { wact.closeWindow(windowProperty.id) }
+    return windowProperty;
 }
 class CoolWindowStarter {
 
     openStarter = () => {
-        //如果启动器已经显示
-        if (state.appStarterVisible) {
-            wact.hideWindow(false);
-        } else {
-            wact.hideWindow(true);
-        }
+        wact.hideWindow(!state.appStarterVisible)
         state.appStarterVisible = !state.appStarterVisible;
     };
 
-    //打开文件夹
     openNewFolder = (path = "/") => {
-        let window = createWindowByType(WindowEnum.Folder, createFolder(path, []))
-        startNewWindow(window)
+        startNewWindow(createWindowByType(WindowEnum.FolderWindow, createFolder(path, [])))
     };
     openFileUploadManager = () => {
-        let window = createWindowByType(WindowEnum.UploadManager, uploads)
-        startNewWindow(window)
+        startNewWindow(createWindowByType(WindowEnum.UploadManager, uploads))
     };
     startNewErrorMessageDialog = (msg) => {
-        let window = createWindowByType(WindowEnum.ErrorMessage, { "message": msg })
-        startNewWindow(window)
+        startNewWindow(createWindowByType(WindowEnum.ErrorMessage, { "message": msg }))
     }
 
     startNewSuccessMessageDialog = (msg) => {
-        let window = createWindowByType(WindowEnum.SuccessMessage, { "message": msg })
-        startNewWindow(window)
+        startNewWindow(createWindowByType(WindowEnum.SuccessMessage, { "message": msg }))
     }
     startNewDialogSelect = (name, callback) => {
-        let window = createWindowByType(WindowEnum.DialogSelect, { "targetName": name, callback })
-        startNewWindow(window)
+        startNewWindow(createWindowByType(WindowEnum.DialogSelect, { "targetName": name, callback }))
     }
     startNewFileAttribute = (name) => {
-        let window = createWindowByType(WindowEnum.FileAttribute, { "path": name })
-        startNewWindow(window)
+        startNewWindow(createWindowByType(WindowEnum.FileAttribute, { "path": name }))
     }
 
     startNewDialogCreateFile = (callback) => {
-        let window = createWindowByType(WindowEnum.DialogCreateFile, { callback })
+        startNewWindow(createWindowByType(WindowEnum.DialogCreateFile, { callback }))
+    }
+    startNewTerminal = (path = null) => {
+        startNewWindow(createWindowByType(WindowEnum.Terminal, { path }))
+    }
+    startNewWebView = (url, type, handlerApp, icon) => {
+        let window = createWindowByType(WindowEnum.WebWindow, { url, type, handlerApp })
+        window.icon = icon
         startNewWindow(window)
     }
-    startNewTerminal = (path) => {
-        let window = createWindowByType(WindowEnum.Terminal, { path })
+    startNewLoadingView = (msg = "") => {
+        let window = createWindowByType(WindowEnum.LoadingView, { message: msg })
         startNewWindow(window)
+        return window
     }
-    startNewWebView = (url,type,handlerApp) => {
-        let window = createWindowByType(WindowEnum.WebWindow, { url,type,handlerApp })
-        startNewWindow(window)
-    }
+    startSoftware = (data = {}) => {
+        startNewWindow(createWindowByType(WindowEnum.Software, { data }))
 
+    }
 }
 export const coolWindow = new CoolWindowStarter();
+export const wact = new WindowActions();

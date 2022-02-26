@@ -2,7 +2,6 @@ import { reactive } from "vue";
 let applicationState = reactive({ applications: [] });
 
 export { applicationState }
-
 export const getApplicationByMedia = (tp) => {
     let result = []
     for (let item of applicationState.applications) {

@@ -1,8 +1,5 @@
 <template>
-  <div
-    :id="item.id"
-    :data-id="item.id"
-    :class="{
+  <div :id="item.id" :data-id="item.id" :class="{
       'hide-window': item.hideWindow,
       'close-window-transition': item.closeWindowTransition,
       'window-transition': item.windowTransition,
@@ -11,12 +8,7 @@
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
       web: item.windowType == 'web',
-      'text-editor': state.type == 'text-editor',
-    }"
-    class="window-item window-item-resize"
-    @mousedown="wact.windowMove"
-    @mouseup="wact.windowMouseUp"
-  >
+    }" class="window-item window-item-resize" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
     <!-- <div
       @click="wact.setWindowPos(item.id)"
       :class="{ action: actionWindowId == item.id }"
@@ -26,33 +18,17 @@
       <div class="window-title base-title">
         <header></header>
         <div class="opt">
-          <i
-            class="iconfont icon-tzuixiaohua"
-            @click="wact.windowMin(item.id)"
-          ></i>
-          <i
-            class="iconfont icon-big"
-            @click="wact.windowFullScreen(item.id)"
-          ></i>
-          <i
-            class="iconfont icon-webicon309"
-            @click="wact.closeWindow(item.id)"
-          ></i>
+          <i class="iconfont icon-tzuixiaohua" @click="wact.windowMin(item.id)"></i>
+          <i class="iconfont icon-big" @click="wact.windowFullScreen(item.id)"></i>
+          <i class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
         </div>
       </div>
       <div style="padding: 0px" class="iframe window-body">
-        <menu class="menu">
+        <menu v-if="menuState.length != 0" class="menu">
           <li v-for="item in menuState" :key="item.name" class="menu-item">
             <div class="first-menu">{{ item.name }}</div>
-            <menu
-              v-for="subMenu in item.subMenu"
-              :key="subMenu"
-              class="second-menu"
-            >
-              <div
-                @click="menuClick(item.name + '/' + subMenu)"
-                class="second-name"
-              >
+            <menu v-for="subMenu in item.subMenu" :key="subMenu" class="second-menu">
+              <div @click="menuClick(item.name + '/' + subMenu)" class="second-name">
                 {{ subMenu }}
               </div>
             </menu>
@@ -66,17 +42,16 @@
             </menu>
           </li>
         </menu> -->
-        <iframe
-          id="iframe"
-          :class="{ 'iframe-pointer-events': state.pointerEvents }"
-          :src="state.url"
-        ></iframe>
+        <iframe id="iframe" :class="{ 'iframe-pointer-events': state.pointerEvents }" :src="state.url"></iframe>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { defineProps, onMounted, reactive, ref, toRef, toRefs } from "vue";
+import { coolWindow, wact } from "../windows/window-manager.js";
+
 const props = defineProps({
   item: Object,
   actionWindowId: String,
@@ -93,26 +68,25 @@ const menuClick = (menuPath) => {
   let iframe = document.getElementById("iframe").contentWindow;
   iframe.postMessage({ "menu-event": { action: menuPath } }, "*");
 };
-import { defineProps, onMounted, reactive, ref, toRef, toRefs } from "vue";
-import { coolWindow, wact } from "../windows/window-manager.js";
 
 let state = reactive({ ...props.item.data });
 let menus = state.handlerApp.menus;
 let menuState = reactive([]);
 let menuMap = new Map();
+const initMenus = () => {
+  for (const menuItem of menus) {
+    let menuSplit = menuItem.split("/");
+    let source = menuMap.get(menuSplit[0]) || [];
+    source.push(menuSplit[1]);
+    menuMap.set(menuSplit[0], source);
+  }
+  for (var [key, value] of menuMap) {
+    menuState.push({ name: key, subMenu: value });
+  }
+};
 
-for (const menuItem of menus) {
-  let menuSplit = menuItem.split("/");
-  let source = menuMap.get(menuSplit[0]) || [];
-  source.push(menuSplit[1]);
-  menuMap.set(menuSplit[0], source);
-}
-for (var [key, value] of menuMap) {
-  menuState.push({ name: key, subMenu: value });
-}
+initMenus();
 </script>
 
 <style>
-@import url("xterm/css/xterm.css");
-@import url("../assets/less/terminal.less");
 </style>

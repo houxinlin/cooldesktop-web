@@ -1,8 +1,5 @@
 <template>
-  <div
-    :id="item.id"
-    :data-id="item.id"
-    :class="{
+  <div :id="item.id" :data-id="item.id" :class="{
       'hide-window': item.hideWindow,
       'close-window-transition': item.closeWindowTransition,
       'window-transition': item.windowTransition,
@@ -11,11 +8,7 @@
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
       terminal: item.windowType == 'terminal',
-    }"
-    class="window-item window-item-resize"
-    @mousedown="wact.windowMove"
-    @mouseup="wact.windowMouseUp"
-  >
+    }" class="window-item window-item-resize" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
     <!-- <div
       @click="wact.setWindowPos(item.id)"
       :class="{ action: actionWindowId == item.id }"
@@ -25,18 +18,9 @@
       <div class="window-title base-title">
         <header>终端</header>
         <div class="opt">
-          <i
-            class="iconfont icon-tzuixiaohua"
-            @click="wact.windowMin(item.id)"
-          ></i>
-          <i
-            class="iconfont icon-big"
-            @click="wact.windowFullScreen(item.id)"
-          ></i>
-          <i
-            class="iconfont icon-webicon309"
-            @click="wact.closeWindow(item.id)"
-          ></i>
+          <i class="iconfont icon-tzuixiaohua" @click="wact.windowMin(item.id)"></i>
+          <i class="iconfont icon-big" @click="wact.windowFullScreen(item.id)"></i>
+          <i class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
         </div>
       </div>
       <div style="padding: 0px" class="window-body">
@@ -87,7 +71,9 @@ term.onData((e) => {
 term.onKey(function (data) {});
 
 const sendCharToServerTerminal = (char, sender = false) => {
-  if (sender) {char = char + "\r";}
+  if (sender) {
+    char = char + "\r";
+  }
   stompClient.send("/desktop/desktop", {}, char);
 };
 
@@ -105,31 +91,32 @@ onMounted(() => {
       PrefixInteger(element.offsetWidth, 4) +
       PrefixInteger(element.offsetHeight, 4);
 
-      if(stompClient.connected){
-           stompClient.send("/desktop/desktop", {}, setSizeMessage);
-      }
+    if (stompClient.connected) {
+      stompClient.send("/desktop/desktop", {}, setSizeMessage);
+    }
   });
 
   let xterm = document.querySelector("#" + props.item.id + " #xterm-container");
   term.open(xterm);
-  connect();
+  connectWebSocket();
 });
 const websocketConnected = (e) => {
   stompClient.subscribe("/topic/ssh", (response) => {
     term.write(response.body);
   });
-  sendCharToServerTerminal(`cd ${props.item.data.path}`,true);
+  if (props.item.data.path != null) {
+    sendCharToServerTerminal(`cd ${props.item.data.path}`, true);
+  }
 };
 const websocketClose = (e) => {
   term.writeln("连接已断开！。");
 };
-const connect = () => {
-  let url = import.meta.env.VITE_APP_REQUEST_URL + "desktop-socket-endpoint";
+const connectWebSocket = () => {
+  let url = `${import.meta.env.VITE_APP_REQUEST_URL}desktop-socket-endpoint`;
   let socket = new SockJS(url);
   stompClient = Stomp.over(socket);
   stompClient.connect({}, websocketConnected, websocketClose);
   stompClient.debug = null;
-
 };
 </script>
 
