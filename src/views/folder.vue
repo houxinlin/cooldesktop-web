@@ -88,7 +88,7 @@
           <i class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
         </div>
       </div>
-      <div @dragover="dragover" @dragleave="dragleave" @drop="drop" @contextmenu.prevent="folderContextMenu($event)" @click="
+      <div @dragstart="dragstart" @dragover="dragover" @dragleave="dragleave" @drop="drop" @contextmenu.prevent="folderContextMenu($event)" @click="
           state.contextMenuVisible = false;
           state.folderContextMenuVisible = false;
         " class="window-body">
@@ -382,6 +382,10 @@ const deleteFile = () => {
     coolWindow.startNewErrorMessageDialog(res.data.msg);
   });
 };
+const dragstart = (event) => {
+  event.dataTransfer.effectAllowed = "all";
+  event.dataTransfer.dropEffect = "move"
+}
 const dragover = (event) => {
   console.log("enter");
   event.preventDefault();
@@ -392,6 +396,7 @@ const dragleave = (event) => {
 
 const drop = (event) => {
   event.preventDefault();
+  console.log(event)
   let files = event.dataTransfer.files;
   let inPath = state.path.path;
   let upload = new FileUpload();

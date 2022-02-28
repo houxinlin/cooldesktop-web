@@ -3,6 +3,15 @@ div.software.window-item{
     width: 870px ;
     left: calc(50% - 435px);
     top: calc(50% - 280px);
+    header{
+        display: flex;
+        align-items: center;
+        img{
+            cursor: pointer;
+            margin-left: 10px;
+            width: 30px;
+        }
+    }
 }
 .software{
     .window-body{
@@ -56,14 +65,39 @@ div.software.window-item{
                         button{
                             cursor: pointer;
                             border: none;
-                            padding: 6px 12px;
-                            width: 102px;
+                            height: 30px;
+                            width: 100px;
                             background: #258799;
                             border-radius: 5px;
                             color: #ffffff;
                         }
                         img{
                             width: 72px;
+                        }
+                        .progress{
+                            font-size: 13px;
+                            position: relative;
+                            width: 100px;
+                            height: 30px;
+                            background: #fafafa;
+                            border-radius: 5px;
+                            background: #bfbfbf14;
+                            overflow: hidden;
+                            div{
+                                width: 10%;
+                                background: #2d7230;
+                                height: 100%;
+                            }
+                            span{
+                                position: absolute;
+                                left: 0px;
+                                top: 0px;
+                                right: 0px;
+                                bottom: 0px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
                         }
                     }
                     .introduce{

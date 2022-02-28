@@ -97,20 +97,27 @@ onMounted(() => {
   }, 10);
   exportApi();
 });
-apiListApplication().then((res) => {
-  applicationState.applications = res.data.data;
-});
+
 let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
 
 let { proxy } = getCurrentInstance();
 
 
 coolWindow.startSoftware()
+
 // coolWindow.openNewFolder("/home/HouXinLin");
 getSocketConnection("/topic/events", (response) => {
   let event = JSON.parse(response.body)
   proxy.eventBus.emit(event["subject"], event)
 }, (e) => { });
+proxy.eventBus.on("/event/refresh/application", (e) => {
+  refreshApplication()
+})
+const refreshApplication = () => {
+  apiListApplication().then((res) => {
+    applicationState.applications = res.data.data;
+  });
+}
 const exportApi = () => {
   window.addEventListener("message", (events) => {
     if (events.data.action == "notification") {
@@ -119,7 +126,7 @@ const exportApi = () => {
     }
   });
 };
-
+refreshApplication()
 const notification = (param) => {
   setNotification(param);
 };
