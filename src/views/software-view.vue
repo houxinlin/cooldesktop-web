@@ -38,43 +38,38 @@
           <div v-if="layerIndex==LAYER_DETAIL" class="app-install-container">
             <div class="header-info">
               <div class="logo">
-                <img src="../assets/icon/ic-upload-manager.png" />
-                <button v-if="installButtonVisable" @click="doInstallSoftware">安装</button>
-                <div v-if="!installButtonVisable" class="progress">
-                  <div :style="{width:installProgressWidth}"></div>
-                  <span v-if="installProgress<=100">{{installProgress}}%</span>
-                  <span v-if="installProgress==101">已安装</span>
+                <img :src="softwareServerHost+softwares.current.software.softwareLogoUrl" />
+                <button v-if="installStatus.value==0" @click="doInstallSoftware">安装</button>
+                <button v-if="installStatus.value==-1">已安装</button>
+                <div v-if="installStatus.value>0" class="progress">
+                  <div :style="{width:installStatus.value+'%'}"></div>
+                  <span v-if="installStatus.value<100">{{installStatus}}%</span>
+                  <span v-if="installStatus.value==100">安装中...</span>
                 </div>
               </div>
               <div class="introduce">
                 <div class="introduce-item">
                   <span class="key">名称:</span>
-                  <span class="value">{{softwares.current.softwareName}}</span>
+                  <span class="value">{{softwares.current.software.softwareName}}</span>
                 </div>
                 <div class="introduce-item">
                   <span class="key">大小:</span>
-                  <span class="value">{{softwares.current.softwareSize}}MB</span>
+                  <span class="value">{{softwares.current.software.softwareSize}}MB</span>
                 </div>
                 <div class="introduce-item">
                   <span class="key">作者:</span>
-                  <span class="value">{{softwares.current.softwareAuthor}}</span>
+                  <span class="value">{{softwares.current.software.softwareAuthor}}</span>
                 </div>
                 <div class="introduce-item">
                   <span class="key">简介:</span>
-                  <span class="value">{{softwares.current.softwareDesc}}</span>
+                  <span class="value">{{softwares.current.software.softwareDesc}}</span>
                 </div>
               </div>
             </div>
             <div class="screenshot">
-              <img src="https://img1.baidu.com/it/u=3975382827,1203451323&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=500" alt="">
-
-              <img src="https://img1.baidu.com/it/u=3975382827,1203451323&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=500" alt="">
-
-              <img src="https://img1.baidu.com/it/u=3975382827,1203451323&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=500" alt="">
-
-              <img src="https://img1.baidu.com/it/u=3975382827,1203451323&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=500" alt="">
-
-              <img src="https://img1.baidu.com/it/u=3975382827,1203451323&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=500" alt="">
+              <template v-for="item in softwares.current.screenshots" :key="item">
+                <img :src="softwareServerHost+item.imageUrl" alt="">
+              </template>
             </div>
           </div>
           <div v-if="layerIndex==LAYER_LIST" class="app-list-container">
@@ -82,8 +77,8 @@
               <template v-for="(item,index) in softwares.list" :key="index">
                 <li @click="softwareDetail(index)" class="app-item">
                   <div class="file-item">
-                    <img src="../assets/icon/ic-upload-manager.png" />
-                    <span>{{item.softwareName}}</span>
+                    <img :src="softwareServerHost+item.software.softwareLogoUrl" />
+                    <span>{{item.software.softwareName}}</span>
                   </div>
                 </li>
               </template>
@@ -108,35 +103,18 @@ const props = defineProps({
 
 const LAYER_LIST = 1;
 const LAYER_DETAIL = 2;
-const STATE_INSTALL = 1;
-
+const STATE_INSTALLING = 1;
 import * as softworeApi from "../http/software.js";
 
 let state = reactive({ ...props.item.data });
 let layerIndex = ref(LAYER_LIST)
-let { proxy } = getCurrentInstance()
-const installButtonVisable = ref(true)
-const installProgress = ref(0)
-const installProgressWidth = ref("0%")
-const installState = ref(0)
 let softwares = reactive({ types: [], list: [], current: {}, typeIndex: 0 })
+let softwareServerHost = import.meta.env.VITE_APP_SOFTWARE_SERVER_URL
+let installStatus = ref(null);
+import { beginInstall, getRefProgressValue } from "../utils/install-progress-manager.js"
 
 
-const initEvent = () => {
-  proxy.eventBus.on("/event/install/progress", (e) => {
-    let downloadProgressValue = parseInt(e["data"])
-    installProgress.value = downloadProgressValue
-    installProgressWidth.value = downloadProgressValue + "%"
-    if (downloadProgressValue == 100) {
-      proxy.eventBus.emit("/refresh/application", {})
-    }
-  })
-  proxy.eventBus.on("/event/refresh/application", (e) => {
-    installState.value = 0
-    installProgress.value = 101
-  })
-}
-
+//初始化软件类型
 const initSoftwareList = () => {
   softworeApi.apiListAllSoftwareTypes().then((res) => {
     softwares.types = res.data
@@ -144,35 +122,33 @@ const initSoftwareList = () => {
   })
 
 }
+//更具类型获取所有软件
 const listSoftwareByType = (index, name) => {
-  if (installState.value == STATE_INSTALL) {
-    return
-  }
+
+  layerIndex.value = LAYER_LIST
+  softwares.list = []
   softwares.typeIndex = index
   softworeApi.apiListAllSoftware(name).then((res) => {
     softwares.list = res.data
   })
 }
+//安装软件
 const doInstallSoftware = () => {
-  installButtonVisable.value = false
-  installState.value = STATE_INSTALL
-  softworeApi.apiInstallSoftware(softwares.current.id).then((res) => {
-    softwares.list = res.data
-  })
+  beginInstall(softwares.current.software.softwareId)
 }
+//返回主页
 const goBackPage = () => {
-  if (installState.value == STATE_INSTALL) {
-    alert("a")
-    return
-  }
   layerIndex.value = LAYER_LIST
 }
+//查看详细
 const softwareDetail = (index) => {
   layerIndex.value = LAYER_DETAIL
   softwares.current = softwares.list[index]
+  installStatus.value = getRefProgressValue(softwares.current.software.softwareId)
 }
+
 initSoftwareList()
-initEvent()
+// initEvent()
 </script>
 <style lang="less">
 @import "../assets/less/software.less";

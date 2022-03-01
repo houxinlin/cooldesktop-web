@@ -78,10 +78,11 @@ import FileUploadManagerView from "./fileUpload-manager-view.vue";
 import TerminalView from "./terminal.vue";
 import FileAttribute from "./file-attribute.vue";
 import SoftwareView from "./software-view.vue";
+
 import { onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { Queue } from "../utils/queue";
-
+import { initInstallProgressManager } from "../utils/install-progress-manager.js"
 import { VueNotificationList } from "@dafcoe/vue-notification";
 import { useNotificationStore } from "@dafcoe/vue-notification";
 const { setNotification } = useNotificationStore();
@@ -89,12 +90,13 @@ import "@dafcoe/vue-notification/dist/vue-notification.css";
 
 import { apiListApplication } from "../http/application.js";
 import defaultAppList from "../software/default-software.js"
-import { applicationState } from "../global/application.js";
+import { refreshApplication, applicationState } from "../global/application.js";
 import getSocketConnection from "../utils/socket.js";
 onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;
   }, 10);
+  initInstallProgressManager()
   exportApi();
 });
 
@@ -106,18 +108,17 @@ let { proxy } = getCurrentInstance();
 coolWindow.startSoftware()
 
 // coolWindow.openNewFolder("/home/HouXinLin");
+//主程序通信
 getSocketConnection("/topic/events", (response) => {
   let event = JSON.parse(response.body)
   proxy.eventBus.emit(event["subject"], event)
+
 }, (e) => { });
+//刷新应用程序
 proxy.eventBus.on("/event/refresh/application", (e) => {
   refreshApplication()
 })
-const refreshApplication = () => {
-  apiListApplication().then((res) => {
-    applicationState.applications = res.data.data;
-  });
-}
+
 const exportApi = () => {
   window.addEventListener("message", (events) => {
     if (events.data.action == "notification") {

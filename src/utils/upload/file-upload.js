@@ -51,7 +51,6 @@ const handlerItem = (item) => {
         .catch((res) => { if (limit.current > 0) limit.current-- })
 }
 const fileDequeue = () => {
-    console.log("limit", limit)
     if (limit.current < limit.max) {
         let item = uploadQueue.files.dequeue();
         if (item != undefined) {
