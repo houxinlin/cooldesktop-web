@@ -105,8 +105,8 @@ let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
 let { proxy } = getCurrentInstance();
 
 
-coolWindow.startSoftware()
-
+// coolWindow.startSoftware()
+coolWindow.startNewTerminal()
 // coolWindow.openNewFolder("/home/HouXinLin");
 //主程序通信
 getSocketConnection("/topic/events", (response) => {
@@ -118,7 +118,6 @@ getSocketConnection("/topic/events", (response) => {
 proxy.eventBus.on("/event/refresh/application", (e) => {
   refreshApplication()
 })
-
 const exportApi = () => {
   window.addEventListener("message", (events) => {
     if (events.data.action == "notification") {
@@ -131,6 +130,8 @@ refreshApplication()
 const notification = (param) => {
   setNotification(param);
 };
+
+
 </script>
 
 <style lang="less">

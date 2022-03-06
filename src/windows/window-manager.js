@@ -66,7 +66,7 @@ class CoolWindowStarter {
     startNewDialogCreateFile = (callback) => {
         startNewWindow(createWindowByType(WindowEnum.DialogCreateFile, { callback }))
     }
-    startNewTerminal = (path = null) => {
+    startNewTerminal = (path) => {
         startNewWindow(createWindowByType(WindowEnum.Terminal, { path }))
     }
     startNewWebView = (url, type, handlerApp, icon) => {
