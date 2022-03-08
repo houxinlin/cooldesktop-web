@@ -1,7 +1,5 @@
 <template>
-  <div
-    :data-id="item.id"
-    :class="{
+  <div :data-id="item.id" :class="{
       'hide-window': item.hideWindow,
       'close-window-transition': item.closeWindowTransition,
       'window-transition': item.windowTransition,
@@ -10,32 +8,15 @@
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
       'dialog-select': item.windowType == 'dialog-select',
-    }"
-    class="window-item"
-    @mousedown="wact.windowMove"
-    @mouseup="wact.windowMouseUp"
-  >
-    <div
-      @click="wact.setWindowPos(item.id)"
-      :class="{ action: actionWindowId == item.id }"
-      class="window-mask"
-    ></div>
+    }" class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
+    <div @click="wact.setWindowPos(item.id)" :class="{ action: actionWindowId == item.id }" class="window-mask"></div>
     <div class="window-content">
       <div class="window-title base-title">
         <header>压缩</header>
         <div class="opt">
-          <i
-            class="iconfont icon-tzuixiaohua"
-            @click="wact.windowMin(item.id)"
-          ></i>
-          <i
-            class="iconfont icon-big"
-            @click="wact.windowFullScreen(item.id)"
-          ></i>
-          <i
-            class="iconfont icon-webicon309"
-            @click="wact.closeWindow(item.id)"
-          ></i>
+          <i class="iconfont icon-tzuixiaohua" @click="wact.windowMin(item.id)"></i>
+          <i class="iconfont icon-big" @click="wact.windowFullScreen(item.id)"></i>
+          <i class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
         </div>
       </div>
       <div class="window-body">
@@ -46,31 +27,9 @@
         <div class="item">
           <header>归档类型:</header>
           <form>
-            <span
-              ><input
-            
-                v-model="radioVal"
-                value="zip"
-                name="select"
-                type="radio"
-              />.zip</span
-            >
-            <span
-              ><input
-                v-model="radioVal"
-                value="tar"
-                name="select"
-                type="radio"
-              />tar.xz</span
-            >
-            <span
-              ><input
-                v-model="radioVal"
-                value="7z"
-                name="select"
-                type="radio"
-              />7z</span
-            >
+            <span><input v-model="radioVal" value="zip" name="select" type="radio" />.zip</span>
+            <span><input v-model="radioVal" value="tar" name="select" type="radio" />tar.xz</span>
+            <span><input v-model="radioVal" value="7z" name="select" type="radio" />7z</span>
           </form>
         </div>
         <button @click="finish()">确认</button>

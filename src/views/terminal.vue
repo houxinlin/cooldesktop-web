@@ -1,36 +1,16 @@
 <template>
-  <div :id="item.id" :data-id="item.id" :class="{
-      'hide-window': item.hideWindow,
-      'close-window-transition': item.closeWindowTransition,
-      'window-transition': item.windowTransition,
-      'window-scale': item.windowScale,
-      'min-window': item.minState,
-      'max-window': item.maxState,
-      'window-z-height': item.actionWindow,
-      terminal: item.windowType == 'terminal',
-    }" class="window-item window-item-resize" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
-    <!-- <div
-      @click="wact.setWindowPos(item.id)"
-      :class="{ action: actionWindowId == item.id }"
-      class="window-mask"
-    ></div> -->
-    <div class="window-content">
-      <div class="window-title base-title">
-        <header>{{windowTitle}}</header>
-        <div class="opt">
-          <i class="iconfont icon-tzuixiaohua" @click="wact.windowMin(item.id)"></i>
-          <i class="iconfont icon-big" @click="wact.windowFullScreen(item.id)"></i>
-          <i class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
-        </div>
-      </div>
-      <div style="padding: 0px" class="window-body">
-        <div id="xterm-container"></div>
-      </div>
-    </div>
-  </div>
+  <BaseWindow :item="item" className="terminal">
+    <template v-slot:body>
+      <div id="xterm-container"></div>
+    </template>
+    <template v-slot:header>
+      <header>{{windowTitle}}</header>
+    </template>
+  </BaseWindow>
 </template>
 
 <script setup>
+import BaseWindow from "../components/window.vue";
 const props = defineProps({
   item: Object,
   actionWindowId: String,
@@ -45,8 +25,7 @@ props.item.events = function (e, d) {
 
 import elementResizeDetectorMaker from "element-resize-detector";
 
-import { defineProps, onMounted, reactive, ref, toRef, toRefs } from "vue";
-import { coolWindow, wact } from "../windows/window-manager.js";
+import { defineProps, onMounted, ref, getCurrentInstance } from "vue";
 import Stomp from "stompjs";
 let stompClient = null;
 import { Terminal } from "xterm";
@@ -66,9 +45,17 @@ const term = new Terminal({
   cols: 92,
   rows: 24,
   theme: {
-    background: "#00000000",
+    foreground: "#ffffff",
+    background: "#3838389e",
   },
 });
+
+let { proxy } = getCurrentInstance()
+proxy.eventBus.on("/event/message/terminal", (e) => {
+  writeMegToTerm(e.msg)
+})
+
+
 let terminalWindowSizeData = ""
 //宽度自适应
 term.loadAddon(fitAddon);
@@ -102,8 +89,11 @@ onMounted(() => {
 });
 
 const websocketClose = (e) => {
-  term.writeln("连接已断开！。");
+  writeMegToTerm("连接已断开！。")
 };
+const writeMegToTerm = (msg) => {
+  term.writeln(msg);
+}
 const websocketOpen = (e) => {
   windowTitle.value = "终端"
   if (props.item.data.path != null) {

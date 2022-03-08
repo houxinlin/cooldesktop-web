@@ -8,8 +8,7 @@
         border-radius: 5px;
         backdrop-filter: blur(7px);
         z-index: 5;
-        
-        box-shadow: 3px 8px 9px 0px #00000085;
+        box-shadow: 3px 7px 14px 0px #00000042;
         li{
             cursor: pointer;
             padding: 6px 29px;
@@ -27,6 +26,9 @@
     }
 }
 .folder .window-body{
+    .folder-global{
+        height: 100%;
+    }
     ul{
         padding: 6px;
         display: grid;
@@ -97,7 +99,7 @@
        
     }
 }
-.folder header{
+.desktop .window-item.folder .window-content .window-title  header{
     height: 100%;
     max-width: 85%;
     overflow: hidden;
@@ -193,9 +195,6 @@
         border-bottom: 1px #2222228a solid;
         .name{
             width: 130px;
-        }
-        .value{
-
         }
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'desktop-none': state.desktopScale }" class="desktop">
+  <div :class="{ 'desktop-none': state.desktopScale }" :style="{'background-image':defaultBackgroundImageUrl}" class="desktop">
     <div class="app-starter" :class="{ 'app-starter-visible': state.appStarterVisible }">
       <div class="app-list">
         <ul>
@@ -39,7 +39,7 @@
         <TerminalView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'terminal'" />
         <LoadingView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'loading-view'" />
         <SoftwareView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'software'" />
-
+        <Setting :test="a" :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'setting'" />
       </template>
     </div>
     <div class="task-bar">
@@ -52,7 +52,7 @@
             </div>
           </li>
           <template v-for="item in state.windowsCollection" :key="item">
-            <li @click="wact.showWindow(item.id)">
+            <li v-if="item.showWindowInTaskBar" @click="wact.showWindow(item.id)">
               <div class="task-item">
                 <img :class="{ select: item.id == state.actionWindowId }" :src="item.icon" alt="" />
                 <span :class="{ select: item.id == state.actionWindowId }"></span>
@@ -72,8 +72,9 @@ import DialogCreateFile from "./dialog/create-file.vue";
 import LoadingView from "./loading-view.vue";
 import FolderView from "./folder.vue";
 import IWebView from "./iframe.vue";
-import ErrorMessageView from "./error-message.vue";
-import SuccessMessageView from "./success-dialog.vue";
+import ErrorMessageView from "./dialog/error-message.vue";
+import SuccessMessageView from "./dialog/success-dialog.vue";
+import Setting from "./setting.vue";
 import FileUploadManagerView from "./fileUpload-manager-view.vue";
 import TerminalView from "./terminal.vue";
 import FileAttribute from "./file-attribute.vue";
@@ -92,6 +93,9 @@ import { apiListApplication } from "../http/application.js";
 import defaultAppList from "../software/default-software.js"
 import { refreshApplication, applicationState } from "../global/application.js";
 import getSocketConnection from "../utils/socket.js";
+import * as systemApi from "../http/system"
+
+let defaultBackgroundImageUrl = ref(`url('${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}')`)
 onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;
@@ -103,20 +107,34 @@ onMounted(() => {
 let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
 
 let { proxy } = getCurrentInstance();
+//获取系统配置
 
 
+/**
+ * 以下是测试区域
+ */
 // coolWindow.startSoftware()
-coolWindow.startNewTerminal()
-// coolWindow.openNewFolder("/home/HouXinLin");
+// coolWindow.startNewSuccessMessageDialog("asd")
+coolWindow.openNewFolder("/home/HouXinLin");
+/**
+ * 测试区域结束
+ */
 //主程序通信
 getSocketConnection("/topic/events", (response) => {
   let event = JSON.parse(response.body)
+  console.log(event)
   proxy.eventBus.emit(event["subject"], event)
 
 }, (e) => { });
-//刷新应用程序
+//刷新应用程序列表
 proxy.eventBus.on("/event/refresh/application", (e) => {
   refreshApplication()
+})
+proxy.eventBus.on("/event/refresh/wallpaper", (e) => {
+  refreshWallpaper()
+})
+proxy.eventBus.on("/event/open/directory", (e) => {
+    coolWindow.openNewFolder(e.data)
 })
 const exportApi = () => {
   window.addEventListener("message", (events) => {
@@ -126,6 +144,19 @@ const exportApi = () => {
     }
   });
 };
+const refreshWallpaper = () => {
+  systemApi.apiGetSystemProperty().then((response) => {
+    let wallpaper = response.data.data["wallpaper"]
+    if (wallpaper != '') {
+      console.log(wallpaper)
+      wallpaper = wallpaper.substr(1)
+      let id = Math.round(Math.random() * 100)
+      defaultBackgroundImageUrl.value = `url('${serverDomain.value}${wallpaper}?id=${id}')`
+    }
+  })
+
+}
+refreshWallpaper()
 refreshApplication()
 const notification = (param) => {
   setNotification(param);
@@ -143,6 +174,5 @@ const notification = (param) => {
 @import "../assets/less/success-message.less";
 @import "../assets/less/dialog.less";
 @import "../assets/less/over/text-editor.less";
-@import "../assets/less/iframe.less";
 @import "../assets/less/loading.less";
 </style>>

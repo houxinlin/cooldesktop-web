@@ -13,6 +13,8 @@ export function apiListAllSoftwareTypes(params) {
 
 
 export function apiInstallSoftware(id) {
-    return defaultAxios.get("/desktop/api/application/install", { params: { id: id } });
+    return axios.post("/desktop/api/application/install", qs.stringify({
+        id: id
+    }));
 }
 

@@ -69,8 +69,8 @@ class CoolWindowStarter {
     startNewTerminal = (path) => {
         startNewWindow(createWindowByType(WindowEnum.Terminal, { path }))
     }
-    startNewWebView = (url, type, handlerApp, icon) => {
-        let window = createWindowByType(WindowEnum.WebWindow, { url, type, handlerApp })
+    startNewWebView = (url, handlerApp, icon) => {
+        let window = createWindowByType(WindowEnum.WebWindow, { url, handlerApp })
         window.icon = icon
         startNewWindow(window)
     }
@@ -81,6 +81,10 @@ class CoolWindowStarter {
     }
     startSoftware = (data = {}) => {
         startNewWindow(createWindowByType(WindowEnum.Software, { data }))
+
+    }
+    startSetting = (data = {}) => {
+        startNewWindow(createWindowByType(WindowEnum.Setting, { data }))
 
     }
 }

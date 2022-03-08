@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-export function randId(){
+export function randId() {
    return uuidv4()
 }
+

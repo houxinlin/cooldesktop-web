@@ -30,5 +30,13 @@ let defaultAppList = [
         },
 
     },
+    {
+        name: "系统设置",
+        icon: new URL(`../assets/icon/ic-setting.png`, import.meta.url).href,
+        action: () => {
+            coolWindow.startSetting()
+        },
+
+    },
 ];
 export default defaultAppList

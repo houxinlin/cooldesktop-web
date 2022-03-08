@@ -1,29 +1,7 @@
 <template>
-  <div :id="item.id" :data-id="item.id" :class="{
-      'hide-window': item.hideWindow,
-      'close-window-transition': item.closeWindowTransition,
-      'window-transition': item.windowTransition,
-      'window-scale': item.windowScale,
-      'min-window': item.minState,
-      'max-window': item.maxState,
-      'window-z-height': item.actionWindow,
-      web: item.windowType == 'web',
-    }" class="window-item window-item-resize" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
-    <!-- <div
-      @click="wact.setWindowPos(item.id)"
-      :class="{ action: actionWindowId == item.id }"
-      class="window-mask"
-    ></div> -->
-    <div class="window-content">
-      <div class="window-title base-title">
-        <header></header>
-        <div class="opt">
-          <i class="iconfont icon-tzuixiaohua" @click="wact.windowMin(item.id)"></i>
-          <i class="iconfont icon-big" @click="wact.windowFullScreen(item.id)"></i>
-          <i class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
-        </div>
-      </div>
-      <div style="padding: 0px" class="iframe window-body">
+  <BaseWindow :item="item" className="web">
+    <template v-slot:body>
+      <div class="iframe">
         <menu v-if="menuState.length != 0" class="menu">
           <li v-for="item in menuState" :key="item.name" class="menu-item">
             <div class="first-menu">{{ item.name }}</div>
@@ -44,11 +22,19 @@
         </menu> -->
         <iframe id="iframe" :class="{ 'iframe-pointer-events': state.pointerEvents }" :src="state.url"></iframe>
       </div>
-    </div>
-  </div>
+    </template>
+    <template v-slot:header>
+      <header></header>
+    </template>
+  </BaseWindow>
+
 </template>
 
+
 <script setup>
+
+import BaseWindow from "../components/window.vue";
+
 import { defineProps, onMounted, reactive, ref, toRef, toRefs } from "vue";
 import { coolWindow, wact } from "../windows/window-manager.js";
 
@@ -88,5 +74,6 @@ const initMenus = () => {
 initMenus();
 </script>
 
-<style>
+<style lang="less">
+@import "../assets/less/iframe.less";
 </style>

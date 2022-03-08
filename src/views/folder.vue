@@ -1,97 +1,58 @@
 <template>
-  <div :id="item.id" :data-id="item.id" :class="{
-      'min-window': item.minState,
-      'max-window': item.maxState,
-      'window-item-resize': item.canResize,
-      'action-window-border': item.actionWindow,
-      'hide-window': item.hideWindow,
-      'close-window-transition': item.closeWindowTransition,
-      'window-transition': item.windowTransition,
-      'window-scale': item.windowScale,
-      'window-z-height': item.actionWindow,
-      folder: item.windowType == 'folder',
-    }" class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
-    <div v-if="state.folderContextMenuVisible" :style="{
+  <BaseWindow :item="item" className="folder">
+    <template v-slot:extend>
+      <div v-if="state.folderContextMenuVisible" :style="{
         left: state.folderContextMenuPoint.x + 'px',
         top: state.folderContextMenuPoint.y + 'px',
       }" class="file-menu">
-      <menu>
-        <div class="item-group">
-          <li @click="openTerminal()">在此处打开终端</li>
-        </div>
-        <div class="item-group">
-          <li @click="createFile('director')">创建文件夹</li>
-          <li @click="createFile('file')">创建文件</li>
-        </div>
-        <div class="item-group">
-          <li @click="filePaste()">粘贴</li>
-        </div>
-        <div class="item-group">
-          <li @click="openFileAttribute(getCurrentDirectory())">属性</li>
-        </div>
-      </menu>
-    </div>
-    <div v-if="state.contextMenuVisible" :style="{
+        <menu>
+          <div class="item-group">
+            <li @click="openTerminal()">在此处打开终端</li>
+          </div>
+          <div class="item-group">
+            <li @click="createFile('director')">创建文件夹</li>
+            <li @click="createFile('file')">创建文件</li>
+          </div>
+          <div class="item-group">
+            <li @click="filePaste()">粘贴</li>
+          </div>
+          <div class="item-group">
+            <li @click="openFileAttribute(getCurrentDirectory())">属性</li>
+          </div>
+        </menu>
+      </div>
+      <div v-if="state.contextMenuVisible" :style="{
         left: state.contextMenuPoint.x + 'px',
         top: state.contextMenuPoint.y + 'px',
       }" class="file-menu">
-      <menu>
-        <div v-if="state.selectFileItem.type == 'folder'" class="item-group">
-          <li @click="openNewFolderWhitThis()">在新窗口打开</li>
-        </div>
-        <div class="item-group">
-          <li @click="deleteFile()">删除</li>
-          <li @click="fileCopy()">复制</li>
-          <li @click="fileCut()">剪切</li>
-          <li @click="reName()">重复名</li>
-        </div>
-        <div class="item-group">
-          <li @click="download()">下载</li>
-        </div>
-        <div class="item-group">
-          <li @click="fileCompress()">压缩</li>
-          <li @click="fileDecompression()">解压</li>
-        </div>
-        <div class="item-group">
-          <li @click="openFileAttribute()">属性</li>
-        </div>
-      </menu>
-    </div>
-    <!-- <div
-      @dragover="dragover"
-      @dragleave="dragleave"
-      @drop="drop"
-      @click="wact.setWindowPos(item.id)"
-      :class="{ action: actionWindowId == item.id }"
-      class="window-mask"
-    ></div> -->
-    <div class="window-content">
-      <div class="window-title">
-        <header>
-          <ul>
-            <template v-for="(item, index) in state.path.pathBlock" :key="item">
-              <li @click="navPathClick(index)">{{ item }}</li>
-            </template>
-          </ul>
-
-          <div class="infos">
-            <div class="search">
-              <input id="searchInput" :class="{ open: state.searchInputVisible }" placeholder="请输入搜索字符" v-model="fileSearchValue" @input="fileSearchEvent" class="base-input close" type="text" />
-              <img @click="showSearchInput()" src="../assets/icon/ic-search.png" alt="" />
-            </div>
-            <div v-if="uploads.files.length > 0" @click.stop="showUploadView()" class="loader"></div>
+        <menu>
+          <div v-if="state.selectFileItem.type == 'folder'" class="item-group">
+            <li @click="openNewFolderWhitThis()">在新窗口打开</li>
           </div>
-        </header>
-        <div class="opt">
-          <i class="iconfont icon-tzuixiaohua" @click="wact.windowMin(item.id)"></i>
-          <i class="iconfont icon-big" @click="wact.windowFullScreen(item.id)"></i>
-          <i class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
-        </div>
+          <div class="item-group">
+            <li @click="deleteFile()">删除</li>
+            <li @click="fileCopy()">复制</li>
+            <li @click="fileCut()">剪切</li>
+            <li @click="reName()">重复名</li>
+          </div>
+          <div class="item-group">
+            <li @click="downloadCurSelectFile()">下载</li>
+          </div>
+          <div class="item-group">
+            <li @click="fileCompress()">压缩</li>
+            <li @click="fileDecompression()">解压</li>
+          </div>
+          <div class="item-group">
+            <li @click="openFileAttribute()">属性</li>
+          </div>
+        </menu>
       </div>
+    </template>
+    <template v-slot:body>
       <div @dragstart="dragstart" @dragover="dragover" @dragleave="dragleave" @drop="drop" @contextmenu.prevent="folderContextMenu($event)" @click="
-          state.contextMenuVisible = false;
-          state.folderContextMenuVisible = false;
-        " class="window-body">
+           state.contextMenuVisible = false;
+           state.folderContextMenuVisible = false;
+        " class="folder-global">
         <ul v-if="item.windowType == 'folder'">
           <template v-for="(item, index) in state.child" :key="item">
             <li @contextmenu.prevent="fileContextMenu($event, item)" :class="{ select: state.currentSelectName == item.name }" @click="
@@ -117,9 +78,32 @@
           </template>
         </ul>
       </div>
-    </div>
-  </div>
+
+    </template>
+    <template v-slot:header>
+      <header>
+        <ul>
+          <template v-for="(item, index) in state.path.pathBlock" :key="item">
+            <li @click="navPathClick(index)">{{ item }}</li>
+          </template>
+        </ul>
+
+        <div class="infos">
+          <div class="search">
+            <input id="searchInput" :class="{ open: state.searchInputVisible }" placeholder="请输入搜索字符" v-model="fileSearchValue" @input="fileSearchInputEvent" class="base-input close" type="text" />
+            <img @click="showSearchInput()" src="../assets/icon/ic-search.png" alt="" />
+          </div>
+          <div v-if="uploads.files.length > 0" @click.stop="showUploadView()" class="loader"></div>
+        </div>
+      </header>
+
+    </template>
+  </BaseWindow>
+
 </template>
+
+
+
 
 <script setup>
 const props = defineProps({
@@ -127,43 +111,61 @@ const props = defineProps({
   actionWindowId: String,
   folderInfo: Object,
 });
+import BaseWindow from "../components/window.vue";
+//字符串常量
 import * as string from "../global/strings.js";
 import { defineProps, onMounted, reactive, ref, getCurrentInstance } from "vue";
+//窗口操作
 import { coolWindow, wact } from "../windows/window-manager.js";
+//文件API
 import * as folderApis from "../http/folder.js";
+//文件上传组建
 import { FileUpload } from "../utils/upload/file-upload";
+//用于判断有没有文件上传记录
 import { uploads } from "../utils/upload/manager";
 import { applicationState, getApplicationByMedia, } from "../global/application.js";
-
+import { randId } from "../utils/utils.js"
+//传递过来的数据
 let state = reactive({ ...props.item.data });
+//服务器域名
 let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
+//文件搜索值
 let fileSearchValue = ref("");
+//原始文件列表，搜索的时候这里保存原来记录
 let rawFils = [];
+//这里主要用于eventbus
 let { proxy } = getCurrentInstance();
+//任务完成后会掉
 let taskDoneExecuteMap = new Map()
-let filePasteFlag = false
+//文件粘贴标识
+let loadingWindows = new Map()
 
+//显示文件上传管理器
 const showUploadView = () => {
   coolWindow.openFileUploadManager();
 };
-
+//打开终端
 const openTerminal = () => {
-  hideMenu();
+  hideAllPopupMenu();
   coolWindow.startNewTerminal(getCurrentDirectory());
 };
+//显示文件搜索框
 const showSearchInput = () => {
   state.searchInputVisible = !state.searchInputVisible;
   document.querySelector(`#${props.item.id} #searchInput`).focus();
 };
-const fileSearchEvent = (e) => {
+//文件搜索
+const fileSearchInputEvent = (e) => {
   let value = fileSearchValue.value;
   state.child = rawFils.filter((e) => { return e.name.startsWith(value) });
 };
+//获取当前目录
 const getCurrentDirectory = () => {
   return state.path.getPath();
 };
-const download = () => {
-  hideMenu();
+//下载当前选中的文件
+const downloadCurSelectFile = () => {
+  hideAllPopupMenu();
   var link = document.createElement("a");
   link.download;
   link.style.display = "none";
@@ -171,8 +173,9 @@ const download = () => {
   document.body.appendChild(link);
   link.click();
 };
+//创建文件
 const createFile = (type) => {
-  hideMenu();
+  hideAllPopupMenu();
   coolWindow.startNewDialogCreateFile((data) => {
     console.log(data, state.path.getPath());
     folderApis
@@ -185,21 +188,25 @@ const createFile = (type) => {
       });
   });
 };
+//打开文件属性
 const openFileAttribute = (defaultPath) => {
   let obj = getSelectFile() || { path: defaultPath };
   coolWindow.startNewFileAttribute(obj.path);
-  hideMenu();
+  hideAllPopupMenu();
 };
+//文件解压
 const fileDecompression = () => {
-  hideMenu();
+  hideAllPopupMenu();
   folderApis.apiFileDecompression(getSelectFile().path).then((res) => { });
 };
+//文件压缩
 const fileCompress = () => {
-  hideMenu();
+  hideAllPopupMenu();
   let file = getSelectFile();
   let name = "";
 
-  if (!file.baseFileAttribute.directory) {
+  //如果是文件
+  if (file.isFile) {
     let index = file.name.indexOf(".");
     if (index == 0) {
       name = file.name;
@@ -215,34 +222,43 @@ const fileCompress = () => {
     });
   });
 };
-const hideMenu = () => {
+//隐藏所有弹出菜单
+const hideAllPopupMenu = () => {
   state.folderContextMenuVisible = false;
   state.contextMenuVisible = false;
 };
+//文件复制
 const fileCopy = () => {
-  hideMenu();
+  hideAllPopupMenu();
   folderApis.apiFileCopy(getSelectFile().path).then((res) => { });
 };
+//文件粘贴
 const filePaste = () => {
-  hideMenu();
-  let windowProperty = coolWindow.startNewLoadingView("文件复制中...")
-  filePasteFlag = true
-  folderApis.apiFilePaste(state.path.getPath()).then((res) => {
-    addDoneTask(res.data.data, () => {
-      windowProperty.closeWindow()
+  hideAllPopupMenu();
+  let windowLoadingProperty = coolWindow.startNewLoadingView("文件复制中...")
+  let taskId = randId()
+  //由于不知道什么时候复制完成，先将完成后的事情做个回调
+  //服务器会返回一个id，当文件处理完成后，会回调这个id
+  //文件处理完成后会回调到doneFunction
+  loadingWindows.set(taskId, {
+    "window": windowLoadingProperty, "doneFunction": () => {
+      windowLoadingProperty.closeWindow()
       refresh();
-    })
-    if (res.data.status != 0) {
+    }
+  })
+  folderApis.apiFilePaste(state.path.getPath(), taskId).then((res) => {
+    if (res.data.code != 0) {
       coolWindow.startNewErrorMessageDialog(res.data.msg);
     }
-    filePasteFlag = false
 
-  }).catch((e) => { filePasteFlag = false });
+  }).catch((e) => { });
 };
+//文件剪切
 const fileCut = () => {
   folderApis.apiFileCut(getSelectFile().path).then((res) => { });
-  hideMenu();
+  hideAllPopupMenu();
 };
+
 const selectText = (element) => {
   var text = document.querySelector(element);
   if (document.body.createTextRange) {
@@ -291,7 +307,7 @@ const reName = () => {
     selectText(`.window-body ul li:nth-child(${index + 1}) span`);
   }, 0);
   state.child[index].edit = true;
-  hideMenu();
+  hideAllPopupMenu();
 };
 const fileContextMenu = (e, item) => {
   state.selectFileItem = item;
@@ -325,24 +341,30 @@ const listDirector = (path) => {
     }
   });
 };
-
-const handlerFileDblClick = (item) => {
+//处理双击事件
+const doHandlerFileDblClick = (item) => {
+  //不知道文件类型
   if (item.type == "none") {
     postMessage({ action: "notification", param: { message: string.CANTHANDLE_FILE_TYPE, type: "error" } });
     return;
   }
+  //查找能处理这个应用的app
   let handlerApp = getApplicationByMedia(item.type)[0];
   if (handlerApp == null) {
+    //没有找到
     postMessage({ action: "notification", param: { message: string.NOTFOUND_APPLICATION, type: "error" } });
     return;
   }
+  //打开首页
   let url = `${serverDomain.value}desktop/webapplication/${handlerApp.applicationId}/index.html?path=${item.path}`;
-  coolWindow.startNewWebView(url, "text-editor", handlerApp, `${serverDomain.value}desktop/webapplication/${handlerApp.applicationId}/logo.png`
+  coolWindow.startNewWebView(url, handlerApp, `${serverDomain.value}desktop/webapplication/${handlerApp.applicationId}/logo.png`
   );
 };
+//文件双击
 const fileDblClick = (item) => {
+  //不是文件夹
   if (item.type != "folder") {
-    handlerFileDblClick(item);
+    doHandlerFileDblClick(item);
     return;
   }
 
@@ -355,7 +377,7 @@ const navPathClick = (index) => {
   state.path.range(index);
   state.contextMenuVisible = false;
   listDirector(state.path.getPath());
-  hideMenu();
+  hideAllPopupMenu();
 };
 const getSelectFile = () => {
   return state.selectFileItem;
@@ -365,13 +387,15 @@ const openNewFolderWhitThis = () => {
   if (getSelectFile().type != "folder") {
     return;
   }
-  hideMenu();
+  hideAllPopupMenu();
   coolWindow.openNewFolder(getSelectFile().path);
 };
+//刷新
 const refresh = () => {
-  hideMenu();
+  hideAllPopupMenu();
   listDirector(state.path.getPath());
 };
+//删除文件
 const deleteFile = () => {
   state.contextMenuVisible = false;
   folderApis.apiDeleteFileOrFolder(getSelectFile().path).then((res) => {
@@ -387,16 +411,13 @@ const dragstart = (event) => {
   event.dataTransfer.dropEffect = "move"
 }
 const dragover = (event) => {
-  console.log("enter");
   event.preventDefault();
 };
 const dragleave = (event) => {
-  console.log("leaver");
 };
 
 const drop = (event) => {
   event.preventDefault();
-  console.log(event)
   let files = event.dataTransfer.files;
   let inPath = state.path.path;
   let upload = new FileUpload();
@@ -417,22 +438,21 @@ const addDoneTask = (taskId, func) => {
 }
 
 const doHandlerTaskEvent = (data) => {
-  if (filePasteFlag) {
-    setTimeout(() => {
-      doHandlerTaskEvent(data)
-    }, 50);
-    return
+  if (data.action == "paste") {
+    let fun = loadingWindows.get(data.id)["doneFunction"]
+    if (data.result.code != 0) {
+      coolWindow.startNewErrorMessageDialog(data.result.msg)
+    }
+    if (fun instanceof Function) { fun() }
   }
-  if (data.result.code != 0) {
-    coolWindow.startNewErrorMessageDialog(data.result.msg)
+  if (data.action == "refresh") {
+    refresh()
   }
-  let fun = taskDoneExecuteMap.get(data.id) || {}
-  if (fun instanceof Function) { fun() }
-  taskDoneExecuteMap.delete(data.id)
 
 }
 const initEventListener = () => {
-  proxy.eventBus.on("/file/events", (data) => { doHandlerTaskEvent(data) })
+  proxy.eventBus.on("/event/file", (data) => { doHandlerTaskEvent(data) })
+
 }
 initEventListener();
 

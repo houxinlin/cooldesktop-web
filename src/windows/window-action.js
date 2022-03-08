@@ -65,6 +65,7 @@ export class WindowActions {
 
     //显示Window
     showWindow = (id) => {
+   
         //如果起动器是显示状态
         if (state.appStarterVisible) {
             hideWindow(false);

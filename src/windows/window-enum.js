@@ -1,5 +1,6 @@
 import defaultApps from "../software/default-software.js"
 let BASE_WINDOW_PROPERTYS = {
+    showWindowInTaskBar: true,
     minState: false,
     maxState: false,
     actionWindow: true,
@@ -23,10 +24,10 @@ function getWindowProperty(windowProperty, data = {}) {
 }
 
 export function ErrorMessage(data) {
-    return getWindowProperty({ windowType: "error-message" }, data)
+    return getWindowProperty({ windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
 }
 export function SuccessMessage(data) {
-    return getWindowProperty({ windowType: "success-message" }, data)
+    return getWindowProperty({ windowType: "success-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
 }
 export function WebWindow(data) {
     return getWindowProperty({ windowType: "web" }, data)
@@ -64,3 +65,7 @@ export function Terminal(data) {
 export function Software(data) {
     return getWindowProperty({ windowType: "software", "icon": defaultApps[3].icon }, data)
 }
+export function Setting(data) {
+    return getWindowProperty({ windowType: "setting", "icon": defaultApps[4].icon }, data)
+}
+
