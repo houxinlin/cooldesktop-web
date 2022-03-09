@@ -57,7 +57,7 @@ class CoolWindowStarter {
         startNewWindow(createWindowByType(WindowEnum.SuccessMessage, { "message": msg }))
     }
     startNewDialogSelect = (name, callback) => {
-        startNewWindow(createWindowByType(WindowEnum.DialogSelect, { "targetName": name, callback }))
+        startNewWindow(createWindowByType(WindowEnum.DialogCompressSelect, { "targetName": name, callback }))
     }
     startNewFileAttribute = (name) => {
         startNewWindow(createWindowByType(WindowEnum.FileAttribute, { "path": name }))

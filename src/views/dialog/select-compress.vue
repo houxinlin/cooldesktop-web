@@ -7,7 +7,7 @@
       'min-window': item.minState,
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
-      'dialog-select': item.windowType == 'dialog-select',
+      'dialog-compress-select': item.windowType == 'dialog-compress-select',
     }" class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
     <div @click="wact.setWindowPos(item.id)" :class="{ action: actionWindowId == item.id }" class="window-mask"></div>
     <div class="window-content">
@@ -59,5 +59,6 @@ const finish = () => {
 };
 </script>
 
-<style>
+<style lang="less">
+@import "../../assets/less/dialog-compress-select.less";
 </style>

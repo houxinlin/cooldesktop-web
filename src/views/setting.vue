@@ -20,12 +20,13 @@
           </div>
           <div class="form-item">
             <div class="tip">
-              <label>为了保证安全，系统将采用RSA认证，您只需要提供用户名即可。</label>
+              <label>为了保证安全，系统将采用RSA认证，您只需要提供用户名即可，但这里我们不会过多传输您的用户名</label>
               <br>
-              <label>但当前未将公钥保存至"authorized_keys"文件中，可点击下方按钮自动生成公/私钥并保存至此文件中。</label>
+              <br>
+              <label>点击下方重置按钮将自动生成公/私钥并保存至"authorized_keys"文件中</label>
             </div>
           </div>
-          <button @click="configSecureShellClick" class="button base-button">配置</button>
+          <button @click="configSecureShellClick" class="button base-button">重置</button>
         </div>
         <div :style="[navIndex==1?'':'display:none']" class="page-background">
           <div class="perview">
@@ -91,12 +92,15 @@ const selectBackground = () => {
 
 }
 const apiConfigSecureShellUser = () => {
-  systemApi.apiConfigSecureShellUser(secureShellUser.value).then * ((response) => {
-
+  let window = coolWindow.startNewLoadingView("保存中")
+  systemApi.apiConfigSecureShellUser(secureShellUser.value).then((response) => {
+    window.closeWindow()
+    coolWindow.startNewSuccessMessageDialog(response.data.data)
   })
 }
 //配置系统ssh
 const configSecureShellClick = () => {
+  let window = coolWindow.startNewLoadingView("重置中")
   systemApi.apiConfigSecureShell().then((response) => {
     // if(response.)
     coolWindow.startNewSuccessMessageDialog(response.data.data)

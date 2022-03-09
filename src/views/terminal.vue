@@ -19,6 +19,11 @@ props.item.events = function (e, d) {
   if (e == "close") {
     //断开连接
     terminalSocket.close()
+    terminalSocket = null
+    term.dispose()
+    term.clear()
+    term.clearSelection()
+    term.reset()
     clearInterval(listenerWindowSizeEventTimerId)
   }
 };
@@ -46,7 +51,7 @@ const term = new Terminal({
   rows: 24,
   theme: {
     foreground: "#ffffff",
-    background: "#3838389e",
+    background: "#00000000",
   },
 });
 
@@ -82,14 +87,16 @@ onMounted(() => {
     terminalWindowSizeData = setSizeMessage
 
   });
-
   let xterm = document.querySelector("#" + props.item.id + " #xterm-container");
+  term.clear()
+  term.clearSelection()
+  term.reset()
   term.open(xterm);
   connectWebSocket();
 });
 
 const websocketClose = (e) => {
-  writeMegToTerm("连接已断开！。")
+  writeMegToTerm("连接已断开！。" + e)
 };
 const writeMegToTerm = (msg) => {
   term.writeln(msg);

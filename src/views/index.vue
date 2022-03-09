@@ -34,7 +34,7 @@
         <IWebView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'web'" />
         <ErrorMessageView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'error-message'" />
         <SuccessMessageView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'success-message'" />
-        <DialogSelect :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'dialog-select'" />
+        <DialogCompressSelect :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'dialog-compress-select'" />
         <FileAttribute :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'file-attribute'" />
         <TerminalView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'terminal'" />
         <LoadingView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'loading-view'" />
@@ -67,7 +67,7 @@
 </template>
 
 <script  setup >
-import DialogSelect from "./dialog/select-compress.vue";
+import DialogCompressSelect from "./dialog/select-compress.vue";
 import DialogCreateFile from "./dialog/create-file.vue";
 import LoadingView from "./loading-view.vue";
 import FolderView from "./folder.vue";
@@ -134,7 +134,7 @@ proxy.eventBus.on("/event/refresh/wallpaper", (e) => {
   refreshWallpaper()
 })
 proxy.eventBus.on("/event/open/directory", (e) => {
-    coolWindow.openNewFolder(e.data)
+  coolWindow.openNewFolder(e.data)
 })
 const exportApi = () => {
   window.addEventListener("message", (events) => {
@@ -172,7 +172,5 @@ const notification = (param) => {
 @import "../assets/less/folder.less";
 @import "../assets/less/error-message.less";
 @import "../assets/less/success-message.less";
-@import "../assets/less/dialog.less";
-@import "../assets/less/over/text-editor.less";
 @import "../assets/less/loading.less";
 </style>>

@@ -36,8 +36,8 @@ export function NotifyWindow() {
     return getWindowProperty({ windowType: "notif-window" }, data)
 }
 
-export function DialogSelect(data) {
-    return getWindowProperty({ windowType: "dialog-select" }, data)
+export function DialogCompressSelect(data) {
+    return getWindowProperty({ windowType: "dialog-compress-select" }, data)
 }
 export function FileAttribute(data) {
     return getWindowProperty({ windowType: "file-attribute" }, data)
