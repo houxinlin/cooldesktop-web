@@ -20,13 +20,14 @@
           </div>
           <div class="form-item">
             <div class="tip">
-              <label>为了保证安全，系统将采用RSA认证，您只需要提供用户名即可，但这里我们不会过多传输您的用户名</label>
+              <div>为了保证安全，系统将采用RSA认证，您只需要提供用户名即可，但这里我们不会过多传输您的用户名</div>
               <br>
-              <br>
-              <label>点击下方重置按钮将自动生成公/私钥并保存至"authorized_keys"文件中</label>
+              <div>点击下方重置按钮将自动生成公/私钥并保存至"authorized_keys"文件中</div>
             </div>
           </div>
-          <button @click="configSecureShellClick" class="button base-button">重置</button>
+          <div class="form-item">
+            <button @click="configSecureShellClick" class="button base-button">重置</button>
+          </div>
         </div>
         <div :style="[navIndex==1?'':'display:none']" class="page-background">
           <div class="perview">

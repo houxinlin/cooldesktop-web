@@ -41,14 +41,14 @@ let terminalSocket = null
 let listenerWindowSizeEventTimerId = null
 const fitAddon = new FitAddon();
 const term = new Terminal({
-  fontSize: 16,
+  fontSize: 17,
   rightClickSelectsWord: true,
   letterSpacing: 0,
   allowTransparency: true,
   cursorBlink: true,
   cursorStyle: "bar",
-  cols: 92,
-  rows: 24,
+  cols: 65,
+  rows: 20,
   theme: {
     foreground: "#ffffff",
     background: "#00000000",
@@ -74,7 +74,8 @@ onMounted(() => {
       terminalSocket.send(terminalWindowSizeData)
       terminalWindowSizeData = ""
     }
-  }, 2000);
+  }, 1000);
+
   const erd = elementResizeDetectorMaker();
   erd.listenTo(document.getElementById(props.item.id), (element) => {
     fitAddon.fit();
@@ -118,7 +119,7 @@ const connectWebSocket = () => {
 };
 </script>
 
-<style>
+<style lang="less">
 @import url("xterm/css/xterm.css");
 @import url("../assets/less/terminal.less");
 </style>
