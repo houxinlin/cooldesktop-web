@@ -27,6 +27,9 @@ export const beginInstall = (softwareId) => {
         getRefProgressValue(softwareId).value = 1
     })
 }
+export const clearRefProgressValue = (softwareId) => {
+    progressMap.delete(softwareId)
+}
 //获取进度值
 export const getRefProgressValue = (softwareId) => {
     if (!progressMap.has(softwareId)) {

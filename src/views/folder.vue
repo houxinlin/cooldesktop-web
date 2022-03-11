@@ -350,7 +350,7 @@ const doHandlerFileDblClick = (item) => {
   }
   //查找能处理这个应用的app
   let handlerApp = getApplicationByMedia(item.type)[0];
-  if (handlerApp == null) {
+  if (handlerApp == undefined) {
     //没有找到
     postMessage({ action: "notification", param: { message: string.NOTFOUND_APPLICATION, type: "error" } });
     return;

@@ -37,13 +37,13 @@ export function NotifyWindow() {
 }
 
 export function DialogCompressSelect(data) {
-    return getWindowProperty({ windowType: "dialog-compress-select" }, data)
+    return getWindowProperty({ windowType: "dialog-compress-select", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
 }
 export function FileAttribute(data) {
     return getWindowProperty({ windowType: "file-attribute" }, data)
 }
 export function DialogCreateFile(data) {
-    return getWindowProperty({ windowType: "dialog-create-file" }, data)
+    return getWindowProperty({ windowType: "dialog-create-file", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
 }
 export function TextEditor(data) {
     return getWindowProperty({ windowType: "text-editor" }, data)

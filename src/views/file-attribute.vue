@@ -1,86 +1,50 @@
 <template>
-  <div
-    :data-id="item.id"
-    :class="{
-      'hide-window': item.hideWindow,
-      'close-window-transition': item.closeWindowTransition,
-      'window-transition': item.windowTransition,
-      'window-scale': item.windowScale,
-      'min-window': item.minState,
-      'max-window': item.maxState,
-      'window-z-height': item.actionWindow,
-      'fil-attribute': item.windowType == 'file-attribute',
-    }"
-    class="window-item"
-    @mousedown="wact.windowMove"
-    @mouseup="wact.windowMouseUp"
-  >
-    <div
-      @click="wact.setWindowPos(item.id)"
-      :class="{ action: actionWindowId == item.id }"
-      class="window-mask"
-    ></div>
-    <div class="window-content">
-      <div class="window-title base-title">
-        <header class="base-title">文件属性</header>
-        <div class="opt">
-          <i
-            class="iconfont icon-webicon309"
-            @click="wact.closeWindow(item.id)"
-          ></i>
-        </div>
-      </div>
-      <div class="window-body">
-        <header class="icon">
-          <img
-            :src="
+  <BaseWindow :item="item" className="file-attribute">
+    <template v-slot:body>
+      <header class="icon">
+        <img :src="
               request +
               'desktop/api/file/getFileIconByType?type=' +
               state.attribute.type
-            "
-            alt=""
-          />
-        </header>
-        <div class="item-info">
-          <span class="name">文件名称:</span>
-          <span class="value">{{ state.attribute.name }}</span>
-        </div>
-        <div class="item-info">
-          <span class="name">大小:</span>
-          <span class="value">{{ sizeFormate(state.attribute.fileSize) }}</span>
-        </div>
-        <div class="item-info">
-          <span class="name">创建时间:</span>
-          <span class="value">{{
-            millisFormate(state.attribute.createTimer)
-          }}</span>
-        </div>
-        <div class="item-info">
-          <span class="name">最后修改时间:</span>
-          <span class="value">{{
-            millisFormate(state.attribute.lastModifiedTime)
-          }}</span>
-        </div>
-        <div class="item-info">
-          <span class="name">最后访问时间:</span>
-          <span class="value">{{
-            millisFormate(state.attribute.lastAccessTime)
-          }}</span>
-        </div>
-        <div class="item-info">
-          <span class="name">所有者:</span>
-          <span class="value">{{ state.attribute.owner }}</span>
-        </div>
+            " alt="" />
+      </header>
+      <div class="item-info">
+        <span class="name">文件名称:</span>
+        <span class="value">{{ state.attribute.name }}</span>
       </div>
-    </div>
-  </div>
+      <div class="item-info">
+        <span class="name">大小:</span>
+        <span class="value">{{ sizeFormate(state.attribute.fileSize) }}</span>
+      </div>
+      <div class="item-info">
+        <span class="name">创建时间:</span>
+        <span class="value">{{ millisFormate(state.attribute.createTimer) }}</span>
+      </div>
+      <div class="item-info">
+        <span class="name">最后修改时间:</span>
+        <span class="value">{{ millisFormate(state.attribute.lastModifiedTime) }}</span>
+      </div>
+      <div class="item-info">
+        <span class="name">最后访问时间:</span>
+        <span class="value">{{  millisFormate(state.attribute.lastAccessTime)}}</span>
+      </div>
+      <div class="item-info">
+        <span class="name">所有者:</span>
+        <span class="value">{{ state.attribute.owner }}</span>
+      </div>
+    </template>
+    <template v-slot:header>
+      <header>提示</header>
+    </template>
+  </BaseWindow>
+
 </template>
+
 
 <script setup>
 import { defineProps, reactive, ref } from "vue";
-import { coolWindow, wact } from "../windows/window-manager.js";
-import { uploadQueue, cancel } from "../utils/upload/manager.js";
 import { apiFileAttribute } from "../http/folder.js";
+import BaseWindow from "../components/window.vue";
 
 let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
 const props = defineProps({
@@ -117,7 +81,6 @@ const millisFormate = (l) => {
 let state = reactive({ attribute: {} });
 apiFileAttribute(props.item.data.path).then((res) => {
   state.attribute = res.data.data;
-  console.log(state);
 });
 </script>
 

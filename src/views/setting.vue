@@ -49,7 +49,6 @@ import { selectFile } from "../utils/file.js"
 import * as systemApi from "../http/system.js"
 import { coolWindow } from "../windows/window-manager.js";
 let secureShellUser = ref("")
-let { proxy } = getCurrentInstance();
 let currentBackgroundImageUrl = ref(`${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}`)
 const props = defineProps({
   item: Object,
@@ -75,7 +74,7 @@ const showCurrentSystemWallpaper = () => {
       wallpaper = wallpaper.substr(1)
       let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
       let id = Math.round(Math.random() * 100)
-      currentBackgroundImageUrl.value = `${serverDomain.value}${wallpaper}?id=${id}`
+      currentBackgroundImageUrl.value = `${serverDomain.value}${wallpaper}`
     }
   })
 

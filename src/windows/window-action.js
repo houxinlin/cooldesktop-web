@@ -65,7 +65,7 @@ export class WindowActions {
 
     //显示Window
     showWindow = (id) => {
-   
+
         //如果起动器是显示状态
         if (state.appStarterVisible) {
             hideWindow(false);
@@ -142,7 +142,6 @@ export class WindowActions {
 
     }
     windowMove = (e) => {
-
         if (e.which == 3) {
             return;
         }
@@ -152,10 +151,15 @@ export class WindowActions {
         let odiv = e.target;
         let downDiv = odiv;
         let list = [];
-
+        let canMove = false
         //找到window-item节点
         while (list.findIndex((item) => item == "window-item") == -1) {
             odiv = odiv.parentNode;
+            if (list.findIndex((item) => item == "window-title") != -1) {
+                if (!canMove) {
+                    canMove = true
+                }
+            }
             let classList = odiv.classList;
             if (classList == undefined) {
                 return;
@@ -172,11 +176,8 @@ export class WindowActions {
             }
         }
         //除了window-body其他都可以移动
-        if (
-            [...downDiv.classList].findIndex((item) => item == "window-title") == -1) {
-            if (downDiv.nodeName != "HEADER") {
-                return;
-            }
+        if (!canMove) {
+            return
         }
         let disX = e.clientX - odiv.offsetLeft;
         let disY = e.clientY - odiv.offsetTop;

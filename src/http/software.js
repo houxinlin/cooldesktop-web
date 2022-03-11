@@ -10,10 +10,16 @@ export function apiListAllSoftwareTypes(params) {
     return softwareServer.get("software/api/types");
 }
 
+export function apiUnInstallSoftware(id) {
+    return defaultAxios.post("/desktop/api/application/uninstall", qs.stringify({
+        id: id
+    }));
+}
+
 
 
 export function apiInstallSoftware(id) {
-    return axios.post("/desktop/api/application/install", qs.stringify({
+    return defaultAxios.post("/desktop/api/application/install", qs.stringify({
         id: id
     }));
 }

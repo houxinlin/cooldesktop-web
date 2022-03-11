@@ -1,3 +1,4 @@
+
 <template>
   <div :class="{ 'desktop-none': state.desktopScale }" :style="{'background-image':defaultBackgroundImageUrl}" class="desktop">
     <div class="app-starter" :class="{ 'app-starter-visible': state.appStarterVisible }">
@@ -82,18 +83,16 @@ import SoftwareView from "./software-view.vue";
 
 import { onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
-import { Queue } from "../utils/queue";
 import { initInstallProgressManager } from "../utils/install-progress-manager.js"
 import { VueNotificationList } from "@dafcoe/vue-notification";
 import { useNotificationStore } from "@dafcoe/vue-notification";
 const { setNotification } = useNotificationStore();
 import "@dafcoe/vue-notification/dist/vue-notification.css";
 
-import { apiListApplication } from "../http/application.js";
 import defaultAppList from "../software/default-software.js"
-import { refreshApplication, applicationState } from "../global/application.js";
 import getSocketConnection from "../utils/socket.js";
 import * as systemApi from "../http/system"
+import { refreshApplication, applicationState } from "../global/application.js";
 
 let defaultBackgroundImageUrl = ref(`url('${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}')`)
 onMounted(() => {
@@ -113,16 +112,15 @@ let { proxy } = getCurrentInstance();
 /**
  * 以下是测试区域
  */
-// coolWindow.startSoftware()
+coolWindow.startSoftware()
 // coolWindow.startNewSuccessMessageDialog("asd")
-coolWindow.openNewFolder("/home/HouXinLin");
+// coolWindow.openNewFolder("/home/HouXinLin");
 /**
  * 测试区域结束
  */
 //主程序通信
 getSocketConnection("/topic/events", (response) => {
   let event = JSON.parse(response.body)
-  console.log(event)
   proxy.eventBus.emit(event["subject"], event)
 
 }, (e) => { });
@@ -148,10 +146,10 @@ const refreshWallpaper = () => {
   systemApi.apiGetSystemProperty().then((response) => {
     let wallpaper = response.data.data["wallpaper"]
     if (wallpaper != '') {
-      console.log(wallpaper)
       wallpaper = wallpaper.substr(1)
       let id = Math.round(Math.random() * 100)
-      defaultBackgroundImageUrl.value = `url('${serverDomain.value}${wallpaper}?id=${id}')`
+
+      defaultBackgroundImageUrl.value = `url('${serverDomain.value}${wallpaper}')`
     }
   })
 
@@ -174,3 +172,4 @@ const notification = (param) => {
 @import "../assets/less/success-message.less";
 @import "../assets/less/loading.less";
 </style>>
+

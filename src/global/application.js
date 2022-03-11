@@ -1,12 +1,12 @@
-import { apiListApplication } from "../http/application.js";
-import { reactive } from "vue";
-let applicationState = reactive({ applications: [] });
+import { reactive, getCurrentInstance } from "vue";
 
+import { apiListApplication } from "../http/application.js";
+let applicationState = reactive({ applications: [] });
 //查找能处理这个类型的引用
 export const getApplicationByMedia = (tp) => {
     let result = []
     for (let item of applicationState.applications) {
-        if (item.handlerMediaTypes.findIndex((e) => e == tp) != -1) {
+        if (item.supportMediaTypes.findIndex((e) => e == tp) != -1) {
             result.push(item)
         }
     }
@@ -20,6 +20,9 @@ export const getApplicationById = (id) => {
         }
     }
     return null;
+}
+export const listApplication = () => {
+    return applicationState.applications
 }
 //刷新应用
 export const refreshApplication = () => {

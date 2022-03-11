@@ -26,11 +26,7 @@ div.software.window-item{
             
             ul {
               li{
-                cursor: pointer;
-                height: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                padding-left: 16px;
               }
               li.select{
                 background: #d9d4d40d;
@@ -39,8 +35,6 @@ div.software.window-item{
          
         }
         .container{
-            flex: 1;
-            color: #ffffff;
             .app-install-container{
                 padding: 70px;
                 .screenshot{
@@ -58,9 +52,6 @@ div.software.window-item{
                 .header-info{
                     display: flex;
                     .logo{
-                        display: flex;
-                        flex-direction: column;
-                        color: #ffffff;
                         align-items: center;
                         button{
                             cursor: pointer;
@@ -118,35 +109,17 @@ div.software.window-item{
                        }
                     }
                 }
+                
             }
             .app-list-container ul{
                 padding: 6px;
-                display: grid;
-                justify-content: center;
                 grid-template-columns: repeat(auto-fill, 86px);
                 li{
-                    cursor: pointer;
-                    width: 90px;
-                    height: 90px;
                     margin: 1px 0;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
         
-                    .file-item{
+                    .software-item{
                         position: relative;
-                        align-items: center;
-                        justify-content: center;
-                        color: #ffffff;
-                        display: flex;
-                        flex-direction: column;
                         width: 100%;
-                        img{
-                            width: 40px;
-                            height: 40px;
-                            object-fit: cover;
-                        }
-    
                         span{
                             margin-top: 6px;
                             font-size: 13px;
@@ -158,9 +131,6 @@ div.software.window-item{
                             text-overflow: ellipsis;
                             text-align: center;
                         }
-                        span.contenteditable{
-                            white-space: normal !important
-                        }
                     }
                 }
                 li:hover{
@@ -168,6 +138,7 @@ div.software.window-item{
                     border-radius: 6px;
                 }
             }
+       
         }
         
     }
