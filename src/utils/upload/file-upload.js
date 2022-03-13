@@ -1,9 +1,12 @@
 import * as folderApis from "../../http/folder.js";
 import { randId } from "../../utils/utils.js";
-import { addProgress, changeProgress, removeById, uploads, limit, uploadQueue, getController } from "./manager.js";
-
+import { addProgress, changeProgress, cancel, limit, uploadQueue, getController } from "./manager.js";
+import { coolWindow } from "../../windows/window-manager.js";
+//超时
 const UPLOAD_TIMER_OUT = 1000 * 60 * 15;
+//每个块的大小
 const CHUNK_SIZE_MB = 15 * 1024 * 1024;
+let errorMessage = new Map()
 function sum(arr) {
     let total = 0;
     for (var i in arr) {
@@ -23,6 +26,9 @@ class FileItemInfo {
         this.total = totalSize;
     }
 }
+let isStart = false
+let intervalId = null;
+
 const getChunk = (file) => {
     let chunkSize = Math.ceil(file.size / (CHUNK_SIZE_MB));
     let chunks = [];
@@ -35,10 +41,14 @@ const getChunk = (file) => {
     return chunks;
 }
 
-let isStart = false
-let intervalId = null;
+const showErrorMessage = (uploadId, msg = "") => {
+    if (errorMessage.get(uploadId) != true) {
+        errorMessage.set(uploadId, true)
+        coolWindow.startNewErrorMessageDialog(msg)
+    }
+}
 
-const handlerItem = (item) => {
+const doHandlerChunkItem = (item) => {
     let config = {
         signal: getController(item.uploadId).signal,
         timeout: UPLOAD_TIMER_OUT,
@@ -46,15 +56,27 @@ const handlerItem = (item) => {
         onUploadProgress: item.progress
     };
     let formData = createFormData(item.file, item.uploadId, item.blobId, item.target, item.fileName, item.total)
+    //如果有一个上传失败，则取消所有的，并提示上传失败
     folderApis.apiChunkFileUpload(formData, config)
-        .then((res => { if (limit.current > 0) limit.current-- }))
-        .catch((res) => { if (limit.current > 0) limit.current-- })
+        .then((res => {
+            if (res.data.status != 0) {
+                showErrorMessage(item.uploadId, res.data.msg)
+                cancel(item.uploadId)
+            }
+        })).catch((res) => {
+            showErrorMessage(item.uploadId, res)
+            cancel(item.uploadId)
+
+        }).finally((e) => {
+            if (limit.current > 0) limit.current--
+
+        })
 }
-const fileDequeue = () => {
+const fileConsume = () => {
     if (limit.current < limit.max) {
         let item = uploadQueue.files.dequeue();
         if (item != undefined) {
-            handlerItem(item)
+            doHandlerChunkItem(item)
             return
         }
         limit.current = 0;
@@ -65,7 +87,7 @@ const fileDequeue = () => {
 export const startConsumer = () => {
     if (!isStart) {
         isStart = true;
-        intervalId = setInterval(fileDequeue, 120);
+        intervalId = setInterval(fileConsume, 120);
     }
 }
 
@@ -101,17 +123,15 @@ function createSingleFileUpload(file, target) {
 }
 
 
-export class FileUpload {
-    constructor() {
+
+export const offerFile = (file, inPath,) => {
+    startConsumer()
+
+    if (file.size > CHUNK_SIZE_MB) {
+        createChunksUpload(file, inPath)
+        return
     }
-    start(file, inPath, callback) {
-        startConsumer()
-        if (file.size > CHUNK_SIZE_MB) {
-            createChunksUpload(file, inPath)
-            return
-        }
-        createSingleFileUpload(file, inPath)
-    }
+    createSingleFileUpload(file, inPath)
 }
 
 const createFormData = (file, chunkId, blobId, target, fileName, fileSize) => {

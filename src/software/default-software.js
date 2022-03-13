@@ -37,6 +37,13 @@ let defaultAppList = [
             coolWindow.startSetting()
         },
 
+    }, {
+        name: "自定义软件",
+        icon: new URL(`../assets/icon/ic-custom.png`, import.meta.url).href,
+        action: () => {
+            coolWindow.startCustomApplication()
+        },
+
     },
 ];
 export default defaultAppList

@@ -56,7 +56,7 @@ const menuClick = (menuPath) => {
 };
 
 let state = reactive({ ...props.item.data });
-let menus = state.handlerApp.menus;
+let menus = state.application.menus;
 let menuState = reactive([]);
 let menuMap = new Map();
 const initMenus = () => {

@@ -69,3 +69,7 @@ export function Setting(data) {
     return getWindowProperty({ windowType: "setting", "icon": defaultApps[4].icon }, data)
 }
 
+export function CustomApplication(data) {
+    return getWindowProperty({ windowType: "custom-application", "icon": defaultApps[5].icon, canMax: false }, data)
+}
+

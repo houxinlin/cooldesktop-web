@@ -1,5 +1,5 @@
 
-import { randId } from "../utils/utils";
+import { randId, getApplicationIndexUrl, getApplicationIconUrl } from "../utils/utils";
 import { reactive } from "vue";
 import { createFolder } from "./data/folder.js"
 import { WindowActions } from "./window-action";
@@ -69,9 +69,9 @@ class CoolWindowStarter {
     startNewTerminal = (path) => {
         startNewWindow(createWindowByType(WindowEnum.Terminal, { path }))
     }
-    startNewWebView = (url, handlerApp, icon) => {
-        let window = createWindowByType(WindowEnum.WebWindow, { url, handlerApp })
-        window.icon = icon
+    startNewWebView = (application, args = null) => {
+        let window = createWindowByType(WindowEnum.WebWindow, { url: getApplicationIndexUrl(application, args), application })
+        window.icon = getApplicationIconUrl(application)
         startNewWindow(window)
     }
     startNewLoadingView = (msg = "") => {
@@ -81,11 +81,12 @@ class CoolWindowStarter {
     }
     startSoftware = (data = {}) => {
         startNewWindow(createWindowByType(WindowEnum.Software, { data }))
-
     }
     startSetting = (data = {}) => {
         startNewWindow(createWindowByType(WindowEnum.Setting, { data }))
-
+    }
+    startCustomApplication = (data = {}) => {
+        startNewWindow(createWindowByType(WindowEnum.CustomApplication, { data }))
     }
 }
 export const coolWindow = new CoolWindowStarter();

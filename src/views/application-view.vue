@@ -3,9 +3,9 @@
     <template v-slot:body>
       <aside>
         <ul>
-          <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listSoftwareByType(index,'已安装')" :class="{'select':softwares.typeIndex==index}">已安装</li>
-          <template v-for="(item,index) in softwares.types" :key="item.id">
-            <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listSoftwareByType(index,item.typeName)" :class="{'select':softwares.typeIndex==index}">{{item.typeName}}</li>
+          <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listApplicationByType(index,'已安装')" :class="{'select':serverApplicationState.typeIndex==index}">已安装</li>
+          <template v-for="(item,index) in serverApplicationState.types" :key="item.id">
+            <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listApplicationByType(index,item.typeName)" :class="{'select':serverApplicationState.typeIndex==index}">{{item.typeName}}</li>
           </template>
         </ul>
       </aside>
@@ -13,8 +13,8 @@
         <div v-if="layerIndex==LAYER_DETAIL" class="app-install-container">
           <div class="header-info">
             <div class="flex flex-column color-white logo">
-              <img :src="softwareServerHost+softwares.current.software.softwareLogoUrl" />
-              <button v-if="installStatus.value==0" @click="doInstallSoftware">安装</button>
+              <img :src="applicationServerHost+serverApplicationState.current.software.softwareLogoUrl" />
+              <button v-if="installStatus.value==0" @click="doInstallApplication">安装</button>
               <button v-if="installStatus.value==-1">已安装</button>
               <div v-if="installStatus.value>0" class="progress">
                 <div :style="{width:installStatus.value+'%'}"></div>
@@ -25,34 +25,34 @@
             <div class="introduce">
               <div class="introduce-item">
                 <span class="key">名称:</span>
-                <span class="value">{{softwares.current.software.softwareName}}</span>
+                <span class="value">{{serverApplicationState.current.software.softwareName}}</span>
               </div>
               <div class="introduce-item">
                 <span class="key">大小:</span>
-                <span class="value">{{softwares.current.software.softwareSize}}MB</span>
+                <span class="value">{{serverApplicationState.current.software.softwareSize}}MB</span>
               </div>
               <div class="introduce-item">
                 <span class="key">作者:</span>
-                <span class="value">{{softwares.current.software.softwareAuthor}}</span>
+                <span class="value">{{serverApplicationState.current.software.softwareAuthor}}</span>
               </div>
               <div class="introduce-item">
                 <span class="key">简介:</span>
-                <span class="value">{{softwares.current.software.softwareDesc}}</span>
+                <span class="value">{{serverApplicationState.current.software.softwareDesc}}</span>
               </div>
             </div>
           </div>
           <div class="screenshot">
-            <template v-for="item in softwares.current.screenshots" :key="item">
-              <img :src="softwareServerHost+item.imageUrl" alt="">
+            <template v-for="item in serverApplicationState.current.screenshots" :key="item">
+              <img :src="applicationServerHost+item.imageUrl" alt="">
             </template>
           </div>
         </div>
         <div v-if="layerIndex==LAYER_LIST" class="app-list-container">
           <ul class="grid-justify-content-center">
-            <template v-for="(item,index) in softwares.list" :key="index">
-              <li class="cursor-pointer flex flex-all-center width-height-90" @click="softwareDetail(index)">
+            <template v-for="(item,index) in serverApplicationState.list" :key="index">
+              <li class="cursor-pointer flex flex-all-center width-height-90" @click="applicationDetail(index)">
                 <div class="flex flex-all-center color-white flex-column software-item">
-                  <img class="wh-40 cover" :src="softwareServerHost+item.software.softwareLogoUrl" />
+                  <img class="wh-40 cover" :src="applicationServerHost+item.software.softwareLogoUrl" />
                   <span>{{item.software.softwareName}}</span>
                 </div>
               </li>
@@ -107,51 +107,51 @@ const LAYER_LIST = 1;
 const LAYER_DETAIL = 2;
 const STATE_INSTALLING = 1;
 const LAYER_INSTALL = 3
-import * as softworeApi from "../http/software.js";
+import * as applicationApi from "../http/application.js";
 
 let state = reactive({ ...props.item.data });
 let layerIndex = ref(LAYER_LIST)
-let softwares = reactive({ types: [], list: [], current: {}, typeIndex: 0, installed: [] })
-let softwareServerHost = import.meta.env.VITE_APP_SOFTWARE_SERVER_URL
+let serverApplicationState = reactive({ types: [], list: [], current: {}, typeIndex: 0, installed: [] })
+let applicationServerHost = import.meta.env.VITE_APP_SOFTWARE_SERVER_URL
 let installStatus = ref(null);
 import { beginInstall, getRefProgressValue, clearRefProgressValue } from "../utils/install-progress-manager.js"
-import { listApplication, applicationState } from "../global/application.js"
+import { applicationState } from "../global/application.js"
 import { coolWindow } from "../windows/window-manager";
 
 //初始化软件类型
-const initSoftwareList = () => {
-  softworeApi.apiListAllSoftwareTypes().then((res) => {
-    softwares.types = res.data
-    listSoftwareByType(0, softwares.types[0].typeName)
+const initApplicationList = () => {
+  applicationApi.apiListAllApplicationType().then((res) => {
+    serverApplicationState.types = res.data
+    listApplicationByType(0, serverApplicationState.types[0].typeName)
   })
 
 }
 //更具类型获取所有软件
-const listSoftwareByType = (index, name) => {
+const listApplicationByType = (index, name) => {
   layerIndex.value = LAYER_LIST
-  softwares.typeIndex = index
-  softwares.list = []
+  serverApplicationState.typeIndex = index
+  serverApplicationState.list = []
   if (name === "已安装") {
     layerIndex.value = LAYER_INSTALL
     refreshInstalled()
     return
   }
 
-  softworeApi.apiListAllSoftware(name).then((res) => {
-    softwares.list = res.data
+  applicationApi.apiListAllApplicationByType(name).then((res) => {
+    serverApplicationState.list = res.data
   })
 }
 const refreshInstalled = () => {
 
 }
 //安装软件
-const doInstallSoftware = () => {
-  beginInstall(softwares.current.software.softwareId)
+const doInstallApplication = () => {
+  beginInstall(serverApplicationState.current.software.softwareId)
 }
 
 function uninstall(id) {
   let loadingWindow = coolWindow.startNewLoadingView("卸载中")
-  softworeApi.apiUnInstallSoftware(id).then((res) => {
+  applicationApi.apiUnInstallApplication(id).then((res) => {
     //刷新应用程序列表
     proxy.eventBus.emit("/event/refresh/application", {})
     loadingWindow.closeWindow()
@@ -165,14 +165,14 @@ const goBackPage = () => {
   layerIndex.value = LAYER_LIST
 }
 //查看详细
-const softwareDetail = (index) => {
+const applicationDetail = (index) => {
   layerIndex.value = LAYER_DETAIL
-  softwares.current = softwares.list[index]
-  installStatus.value = getRefProgressValue(softwares.current.software.softwareId)
+  serverApplicationState.current = serverApplicationState.list[index]
+  installStatus.value = getRefProgressValue(serverApplicationState.current.software.softwareId)
 }
 
 
-initSoftwareList()
+initApplicationList()
 // initEvent()
 </script>
 <style lang="less">

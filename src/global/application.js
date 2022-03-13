@@ -1,6 +1,7 @@
 import { reactive, getCurrentInstance } from "vue";
 
 import { apiListApplication } from "../http/application.js";
+
 let applicationState = reactive({ applications: [] });
 //查找能处理这个类型的引用
 export const getApplicationByMedia = (tp) => {

@@ -1,10 +1,7 @@
 export class Queue extends Array {
     constructor() {
         super()
-        Object.defineProperty(this, "head", {
-            value: 0
-            , writable: true
-        });
+        Object.defineProperty(this, "head", { value: 0, writable: true });
     }
     remove(index) {
         this.splice(index, 1)
@@ -16,11 +13,7 @@ export class Queue extends Array {
     }
     dequeue() {
         var first;
-        return this.head < this.length ? (first = this[this.head]
-            , delete this[this.head++]
-            , first
-        )
-            : undefined; 
+        return this.head < this.length ? (first = this[this.head], delete this[this.head++], first) : undefined;
     }
     peek() {
         return this[this.head];

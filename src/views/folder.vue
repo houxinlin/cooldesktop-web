@@ -120,7 +120,7 @@ import { coolWindow, wact } from "../windows/window-manager.js";
 //文件API
 import * as folderApis from "../http/folder.js";
 //文件上传组建
-import { FileUpload } from "../utils/upload/file-upload";
+import { offerFile } from "../utils/upload/file-upload";
 //用于判断有没有文件上传记录
 import { uploads } from "../utils/upload/manager";
 import { applicationState, getApplicationByMedia, } from "../global/application.js";
@@ -356,9 +356,8 @@ const doHandlerFileDblClick = (item) => {
     return;
   }
   //打开首页
-  let url = `${serverDomain.value}desktop/webapplication/${handlerApp.applicationId}/index.html?path=${item.path}`;
-  coolWindow.startNewWebView(url, handlerApp, `${serverDomain.value}desktop/webapplication/${handlerApp.applicationId}/logo.png`
-  );
+
+  coolWindow.startNewWebView(handlerApp, `path=${item.path}`)
 };
 //文件双击
 const fileDblClick = (item) => {
@@ -420,17 +419,11 @@ const drop = (event) => {
   event.preventDefault();
   let files = event.dataTransfer.files;
   let inPath = state.path.path;
-  let upload = new FileUpload();
   for (let index = 0; index < files.length; index++) {
-    const element = files[index];
-    upload.start(element, inPath, (res) => {
-      if (res.data.status == 0) {
-        coolWindow.startNewSuccessMessageDialog("上传成功");
-      }
-      if (res.data.status != 0) {
-        coolWindow.startNewErrorMessageDialog(res.data.msg);
-      }
-    });
+    const fileItem = files[index];
+    console.log(fileItem)
+
+    offerFile(fileItem, inPath);
   }
 };
 const addDoneTask = (taskId, func) => {

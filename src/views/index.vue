@@ -14,8 +14,9 @@
               </div>
             </li>
           </template>
+          <!-- 所有应用 -->
           <template v-for="item in applicationState.applications" :key="item.applicationId">
-            <li v-if="item.visibilityIsDesktop" @dblclick="coolWindow.startNewTerminal('/')">
+            <li v-if="item.visibilityIsDesktop" @dblclick="startApplication(item)">
               <div class="app-item">
                 <div class="app-icon">
                   <img :src=" serverDomain + 'desktop/webapplication/' + item.applicationId + '/logo.png'" alt="" />
@@ -39,8 +40,10 @@
         <FileAttribute :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'file-attribute'" />
         <TerminalView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'terminal'" />
         <LoadingView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'loading-view'" />
-        <SoftwareView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'software'" />
-        <Setting :test="a" :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'setting'" />
+        <ApplicationView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'software'" />
+        <Setting :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'setting'" />
+        <CustomApplicationView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'custom-application'" />
+
       </template>
     </div>
     <div class="task-bar">
@@ -79,7 +82,8 @@ import Setting from "./setting.vue";
 import FileUploadManagerView from "./fileUpload-manager-view.vue";
 import TerminalView from "./terminal.vue";
 import FileAttribute from "./file-attribute.vue";
-import SoftwareView from "./software-view.vue";
+import ApplicationView from "./application-view.vue";
+import CustomApplicationView from "./custom-application.vue";
 
 import { onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
@@ -88,7 +92,7 @@ import { VueNotificationList } from "@dafcoe/vue-notification";
 import { useNotificationStore } from "@dafcoe/vue-notification";
 const { setNotification } = useNotificationStore();
 import "@dafcoe/vue-notification/dist/vue-notification.css";
-
+import { getApplicationIndexUrl, getApplicationIconUrl } from "../utils/utils.js"
 import defaultAppList from "../software/default-software.js"
 import getSocketConnection from "../utils/socket.js";
 import * as systemApi from "../http/system"
@@ -107,12 +111,14 @@ let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
 
 let { proxy } = getCurrentInstance();
 //获取系统配置
-
+const startApplication = (application) => {
+  coolWindow.startNewWebView(application)
+}
 
 /**
  * 以下是测试区域
  */
-coolWindow.startSoftware()
+coolWindow.startCustomApplication()
 // coolWindow.startNewSuccessMessageDialog("asd")
 // coolWindow.openNewFolder("/home/HouXinLin");
 /**

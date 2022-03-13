@@ -1,6 +1,6 @@
 let progressMap = new Map()
-import * as softworeApi from "../http/software.js";
-import { defineProps, reactive, ref, getCurrentInstance } from "vue";
+import * as applicationApi from "../http/application.js";
+import { ref, getCurrentInstance } from "vue";
 import { getApplicationById, refreshApplication } from "../global/application.js"
 export const initInstallProgressManager = () => {
     let { proxy } = getCurrentInstance()
@@ -18,27 +18,27 @@ export const initInstallProgressManager = () => {
     })
 }
 //添加进度
-export const addProgress = (softwareId, value) => {
-    progressMap.set(softwareId, value)
+export const addProgress = (applicationId, value) => {
+    progressMap.set(applicationId, value)
 }
 //开始安装
-export const beginInstall = (softwareId) => {
-    softworeApi.apiInstallSoftware(softwareId).then((res) => {
-        getRefProgressValue(softwareId).value = 1
+export const beginInstall = (applicationId) => {
+    applicationApi.apiInstallApplication(applicationId).then((res) => {
+        getRefProgressValue(applicationId).value = 1
     })
 }
-export const clearRefProgressValue = (softwareId) => {
-    progressMap.delete(softwareId)
+export const clearRefProgressValue = (applicationId) => {
+    progressMap.delete(applicationId)
 }
 //获取进度值
-export const getRefProgressValue = (softwareId) => {
-    if (!progressMap.has(softwareId)) {
-        if (getApplicationById(softwareId) != null) {
-            progressMap.set(softwareId, ref(-1))//已经安装
+export const getRefProgressValue = (applicationId) => {
+    if (!progressMap.has(applicationId)) {
+        if (getApplicationById(applicationId) != null) {
+            progressMap.set(applicationId, ref(-1))//已经安装
         } else {
-            progressMap.set(softwareId, ref(0))//进度
+            progressMap.set(applicationId, ref(0))//进度
         }
 
     }
-    return progressMap.get(softwareId)
+    return progressMap.get(applicationId)
 }
