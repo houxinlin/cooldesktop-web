@@ -28,7 +28,7 @@
         </ul>
       </div>
     </div>
-    <div class="work-region">
+    <div class="work-region" :class="{'work-region-low-z-index':state.appStarterVisible }">
       <template v-for="item in state.windowsCollection" :key="item">
         <DialogCreateFile :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'dialog-create-file'" />
         <FileUploadManagerView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'upload-manager'" />
@@ -43,6 +43,7 @@
         <ApplicationView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'software'" />
         <Setting :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'setting'" />
         <CustomApplicationView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'custom-application'" />
+        <DeveloperDoc :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'developer-doc'" />
 
       </template>
     </div>
@@ -84,18 +85,17 @@ import TerminalView from "./terminal.vue";
 import FileAttribute from "./file-attribute.vue";
 import ApplicationView from "./application-view.vue";
 import CustomApplicationView from "./custom-application.vue";
-
+import DeveloperDoc from "./doc.vue";
 import { onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { initInstallProgressManager } from "../utils/install-progress-manager.js"
 import { VueNotificationList } from "@dafcoe/vue-notification";
-import { useNotificationStore } from "@dafcoe/vue-notification";
-const { setNotification } = useNotificationStore();
+
 import "@dafcoe/vue-notification/dist/vue-notification.css";
-import { getApplicationIndexUrl, getApplicationIconUrl } from "../utils/utils.js"
 import defaultAppList from "../software/default-software.js"
 import getSocketConnection from "../utils/socket.js";
 import * as systemApi from "../http/system"
+import * as globalApi from "../global/api/global-api.js"
 import { refreshApplication, applicationState } from "../global/application.js";
 
 let defaultBackgroundImageUrl = ref(`url('${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}')`)
@@ -103,8 +103,8 @@ onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;
   }, 10);
+  //初始化软件安装管理器
   initInstallProgressManager()
-  exportApi();
 });
 
 let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
@@ -118,43 +118,36 @@ const startApplication = (application) => {
 /**
  * 以下是测试区域
  */
-coolWindow.startCustomApplication()
-// coolWindow.startNewSuccessMessageDialog("asd")
-// coolWindow.openNewFolder("/home/HouXinLin");
 /**
  * 测试区域结束
  */
-//主程序通信
+//主程序通信,分发subject到订阅这上
 getSocketConnection("/topic/events", (response) => {
   let event = JSON.parse(response.body)
   proxy.eventBus.emit(event["subject"], event)
-
 }, (e) => { });
-//刷新应用程序列表
-proxy.eventBus.on("/event/refresh/application", (e) => {
-  refreshApplication()
-})
-proxy.eventBus.on("/event/refresh/wallpaper", (e) => {
-  refreshWallpaper()
-})
-proxy.eventBus.on("/event/open/directory", (e) => {
-  coolWindow.openNewFolder(e.data)
-})
-const exportApi = () => {
-  window.addEventListener("message", (events) => {
-    if (events.data.action == "notification") {
-      notification(events.data.param);
-      return;
+//刷新应用程序列表订阅
+proxy.eventBus.on("/event/refresh/application", (e) => { refreshApplication() })
+//刷新壁纸
+proxy.eventBus.on("/event/refresh/wallpaper", (e) => { refreshWallpaper() })
+//打目录
+proxy.eventBus.on("/event/open/directory", (e) => { coolWindow.openNewFolder(e.data) })
+
+proxy.eventBus.on("/event/notify/message/error", (e) => { coolWindow.startNewErrorMessageDialog(e.data) })
+proxy.eventBus.on("/event/notify/message/success", (e) => { coolWindow.startNewSuccessMessageDialog(e.data) })
+//所有异步文件处理结果通知统一走这里，用来提示
+proxy.eventBus.on("/event/file", (e) => {
+  if (e.hasOwnProperty("result")) {
+    if (e.result.code != 0) {
+      coolWindow.startNewErrorMessageDialog(e.result.msg)
     }
-  });
-};
+  }
+})
 const refreshWallpaper = () => {
   systemApi.apiGetSystemProperty().then((response) => {
     let wallpaper = response.data.data["wallpaper"]
-    if (wallpaper != '') {
+    if (wallpaper != undefined && wallpaper != '') {
       wallpaper = wallpaper.substr(1)
-      let id = Math.round(Math.random() * 100)
-
       defaultBackgroundImageUrl.value = `url('${serverDomain.value}${wallpaper}')`
     }
   })
@@ -162,10 +155,6 @@ const refreshWallpaper = () => {
 }
 refreshWallpaper()
 refreshApplication()
-const notification = (param) => {
-  setNotification(param);
-};
-
 
 </script>
 

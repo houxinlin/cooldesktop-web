@@ -9,7 +9,7 @@
         <header>归档类型:</header>
         <form>
           <span><input v-model="radioVal" value="zip" name="select" type="radio" />.zip</span>
-          <span><input v-model="radioVal" value="tar" name="select" type="radio" />tar.xz</span>
+          <span><input v-model="radioVal" value="tar" name="select" type="radio" />tar.gz</span>
           <span><input v-model="radioVal" value="7z" name="select" type="radio" />7z</span>
         </form>
       </div>

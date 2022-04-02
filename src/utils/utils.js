@@ -18,3 +18,13 @@ export function getApplicationIconUrl(application) {
    return `${serverDomain}desktop/webapplication/${application.applicationId}/logo.png`
 
 }
+
+export const sizeFormate = (size) => {
+   if (size < 1024) {
+      return size + "字节";
+   }
+   if (size / 1024 < 1024) {
+      return Math.floor(size / 1024) + "KB";
+   }
+   return Math.round(size / 1024 / 1024) + "MB";
+};

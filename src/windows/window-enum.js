@@ -16,7 +16,8 @@ let BASE_WINDOW_PROPERTYS = {
     x: 0,
     y: 0,
     closeWindowTransition: false,
-    canResize: true
+    canResize: true,
+    singleInstance: false
 }
 
 function getWindowProperty(windowProperty, data = {}) {
@@ -50,7 +51,7 @@ export function TextEditor(data) {
 }
 
 export function LoadingView(data) {
-    return getWindowProperty({ windowType: "loading-view", "canClose": false }, data)
+    return getWindowProperty({ windowType: "loading-view", showWindowInTaskBar: false, canClose: false, canMin: false }, data)
 }
 export function FolderWindow(data = {}) {
     return getWindowProperty({ windowType: "folder", "icon": defaultApps[0].icon }, data)
@@ -71,5 +72,9 @@ export function Setting(data) {
 
 export function CustomApplication(data) {
     return getWindowProperty({ windowType: "custom-application", "icon": defaultApps[5].icon, canMax: false }, data)
+}
+
+export function DeveloperDoc(data) {
+    return getWindowProperty({ windowType: "developer-doc", "icon": defaultApps[6].icon}, data)
 }
 

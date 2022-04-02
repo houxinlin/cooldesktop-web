@@ -56,7 +56,7 @@ class CoolWindowStarter {
     startNewSuccessMessageDialog = (msg) => {
         startNewWindow(createWindowByType(WindowEnum.SuccessMessage, { "message": msg }))
     }
-    startNewDialogSelect = (name, callback) => {
+    startNewCompressDialogSelect = (name, callback) => {
         startNewWindow(createWindowByType(WindowEnum.DialogCompressSelect, { "targetName": name, callback }))
     }
     startNewFileAttribute = (name) => {
@@ -70,9 +70,17 @@ class CoolWindowStarter {
         startNewWindow(createWindowByType(WindowEnum.Terminal, { path }))
     }
     startNewWebView = (application, args = null) => {
+        if (application.singleInstance) {
+            if (state.windowsCollection.findIndex((item) => { return application.applicationId === (item.application || {}).applicationId }) != -1) {
+                wact.showWindowByApplicationId(application.applicationId)
+                return
+            }
+        }
         let window = createWindowByType(WindowEnum.WebWindow, { url: getApplicationIndexUrl(application, args), application })
         window.icon = getApplicationIconUrl(application)
+        window.application = application
         startNewWindow(window)
+
     }
     startNewLoadingView = (msg = "") => {
         let window = createWindowByType(WindowEnum.LoadingView, { message: msg })
@@ -87,6 +95,9 @@ class CoolWindowStarter {
     }
     startCustomApplication = (data = {}) => {
         startNewWindow(createWindowByType(WindowEnum.CustomApplication, { data }))
+    }
+    startNewDeveloperDoc = (data = {}) => {
+        startNewWindow(createWindowByType(WindowEnum.DeveloperDoc, { data }))
     }
 }
 export const coolWindow = new CoolWindowStarter();

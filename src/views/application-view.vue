@@ -3,7 +3,7 @@
     <template v-slot:body>
       <aside>
         <ul>
-          <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listApplicationByType(index,'已安装')" :class="{'select':serverApplicationState.typeIndex==index}">已安装</li>
+          <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listApplicationByType(-1,'已安装')" :class="{'select':serverApplicationState.typeIndex==-1}">已安装</li>
           <template v-for="(item,index) in serverApplicationState.types" :key="item.id">
             <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listApplicationByType(index,item.typeName)" :class="{'select':serverApplicationState.typeIndex==index}">{{item.typeName}}</li>
           </template>
@@ -14,13 +14,17 @@
           <div class="header-info">
             <div class="flex flex-column color-white logo">
               <img :src="applicationServerHost+serverApplicationState.current.software.softwareLogoUrl" />
-              <button v-if="installStatus.value==0" @click="doInstallApplication">安装</button>
-              <button v-if="installStatus.value==-1">已安装</button>
-              <div v-if="installStatus.value>0" class="progress">
-                <div :style="{width:installStatus.value+'%'}"></div>
-                <span v-if="installStatus.value<100">{{installStatus}}%</span>
-                <span v-if="installStatus.value==100">安装中...</span>
+              <div v-if="installStatus.value>=0" class="progress">
+                <div class="flex flex-all-center" :style="{width:installStatus.value+'%'}"></div>
+                <span class="value">{{installStatus}}</span>
               </div>
+              <div v-if="installStatus.value<0" class="progress">
+                <button v-if="installStatus.value==-2" @click="doInstallApplication">安装</button>
+                <span v-if="installStatus.value==-3">已安装</span>
+                <span v-if="installStatus.value==-4">安装中</span>
+                <span v-if="installStatus.value==-5" @click="doInstallApplication">安装失败</span>
+              </div>
+
             </div>
             <div class="introduce">
               <div class="introduce-item">
@@ -29,7 +33,7 @@
               </div>
               <div class="introduce-item">
                 <span class="key">大小:</span>
-                <span class="value">{{serverApplicationState.current.software.softwareSize}}MB</span>
+                <span class="value">{{sizeFormate(serverApplicationState.current.software.softwareSize)}}</span>
               </div>
               <div class="introduce-item">
                 <span class="key">作者:</span>
@@ -97,6 +101,7 @@
 import { defineProps, reactive, ref, getCurrentInstance } from "vue";
 import BaseWindow from "../components/window.vue";
 let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
+import { sizeFormate } from "../utils/utils.js"
 const props = defineProps({
   item: Object,
   actionWindowId: String,
@@ -115,7 +120,7 @@ let serverApplicationState = reactive({ types: [], list: [], current: {}, typeIn
 let applicationServerHost = import.meta.env.VITE_APP_SOFTWARE_SERVER_URL
 let installStatus = ref(null);
 import { beginInstall, getRefProgressValue, clearRefProgressValue } from "../utils/install-progress-manager.js"
-import { applicationState } from "../global/application.js"
+import { applicationState, refreshApplication } from "../global/application.js"
 import { coolWindow } from "../windows/window-manager";
 
 //初始化软件类型
@@ -142,7 +147,7 @@ const listApplicationByType = (index, name) => {
   })
 }
 const refreshInstalled = () => {
-
+  refreshApplication()
 }
 //安装软件
 const doInstallApplication = () => {
@@ -153,11 +158,10 @@ function uninstall(id) {
   let loadingWindow = coolWindow.startNewLoadingView("卸载中")
   applicationApi.apiUnInstallApplication(id).then((res) => {
     //刷新应用程序列表
-    proxy.eventBus.emit("/event/refresh/application", {})
     loadingWindow.closeWindow()
-    refreshInstalled()
-    coolWindow.startNewSuccessMessageDialog(res.data.data)
+    coolWindow.startNewSuccessMessageDialog(res.data.msg)
     clearRefProgressValue(id)
+    refreshInstalled()
   })
 }
 //返回主页

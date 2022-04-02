@@ -1,7 +1,7 @@
 <template>
-    <BaseWindow :item="item" className="success-message">
+    <BaseWindow :item="item" className="success-message" backgroundClass="window-body-background-green">
       <template v-slot:body>
-        <div>{{state.message}}</div>
+        <div class="fit-parent">{{state.message}}</div>
       </template>
       <template v-slot:header>
         <header>提示</header>

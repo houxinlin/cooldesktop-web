@@ -44,11 +44,11 @@ export class WindowActions {
         for (const item of state.windowsCollection) {
             item.actionWindow = false;
         }
-
         //当前活动id
         state.actionWindowId = id;
         //设置当前为置顶
         this.getAppById(id).instance.actionWindow = true;
+
         //如果是最小化的时候，则显示
         if (this.getAppById(id).instance.minState) {
             this.getAppById(id).instance.minState = false;
@@ -63,18 +63,24 @@ export class WindowActions {
         }
     };
 
+    showWindowByApplicationId = (id) => {
+        let index = state.windowsCollection.findIndex((item) => { return id === (item.application || {}).applicationId })
+        if (index != -1) {
+            this.showWindow(state.windowsCollection[index].id)
+        }
+
+    }
     //显示Window
     showWindow = (id) => {
-
-        //如果起动器是显示状态
+        //如果启动器是显示状态
         if (state.appStarterVisible) {
-            hideWindow(false);
+            this.hideWindow(false);
             state.appStarterVisible = false;
-            return;
+            
         }
+        this.setWindowPos(id);
         //如果当前Window已经显示，并且是置顶，则开始动画
         let app = this.getAppById(id);
-
         if (app.instance.actionWindow == true) {
             app.instance.windowScale = true;
             setTimeout(() => {
@@ -86,7 +92,7 @@ export class WindowActions {
             app.instance.minState = false;
         }
         //显示Window
-        this.setWindowPos(id);
+
     };
 
     //最小化
@@ -168,13 +174,7 @@ export class WindowActions {
         }
         actionMoveId = odiv.getAttribute("data-id");
         this.setWindowPos(actionMoveId)
-        //置顶
-        odiv.style.zIndex = 9999;
-        for (const item of document.querySelectorAll(".window-item")) {
-            if (item != odiv) {
-                item.style.zIndex = 1000;
-            }
-        }
+
         //除了window-body其他都可以移动
         if (!canMove) {
             return

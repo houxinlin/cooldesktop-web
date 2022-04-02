@@ -45,5 +45,13 @@ let defaultAppList = [
         },
 
     },
+    {
+        name: "开发文档",
+        icon: new URL(`../assets/icon/ic-developer.png`, import.meta.url).href,
+        action: () => {
+            coolWindow.startNewDeveloperDoc()
+        },
+
+    },
 ];
 export default defaultAppList

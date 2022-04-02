@@ -1,12 +1,12 @@
 <template>
-  <BaseWindow :item="item" className="dialog-create-file">
+  <BaseWindow :item="item" className="dialog-create-file" backgroundClass="window-body-background-green">
     <template v-slot:body>
       <div class="item">
         <header>名称:</header>
         <input class="base-input" v-model="targetName" type="text" />
       </div>
 
-      <button class="base-button blue" @click="finish()">创建</button>
+      <button class="base-button color-white red-a" @click="finish()">创建</button>
     </template>
     <template v-slot:header>
       <header>提示</header>

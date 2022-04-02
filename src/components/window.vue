@@ -9,7 +9,8 @@
       'min-window': item.minState,
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
-    } ,className]" class="window-item window-item-resize " @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
+      'window-item-resize':item.canResize
+    } ,className,backgroundClass]" class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
     <!-- 插槽3 扩展 -->
     <slot name="extend"></slot>
     <div @click="wact.setWindowPos(item.id)" v-if="item.windowType=='web'" :class="{ action:  item.actionWindow }" class="window-mask"></div>
@@ -20,7 +21,7 @@
         <div class="opt">
           <i v-if="item.canMin" class="iconfont icon-tzuixiaohua" @click="wact.windowMin(item.id)"></i>
           <i v-if="item.canMax" class="iconfont icon-big" @click="wact.windowFullScreen(item.id)"></i>
-          <i class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
+          <i v-if="item.canClose" class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
         </div>
       </div>
       <div class="window-body">
@@ -38,7 +39,8 @@ const props = defineProps({
   className: String,
   item: Object,
   actionWindowId: String,
-  title: String
+  title: String,
+  backgroundClass:String
 });
 
 </script>

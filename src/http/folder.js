@@ -51,16 +51,18 @@ export function apiFileRename(source, newName) {
         source: source
     }));
 }
-export function apiFileCompress(path, targetName, compressType) {
+export function apiFileCompress(path, targetName, compressType, taskId) {
     return axios.post("/desktop/api/file/fileCompress", qs.stringify({
         path,
         targetName,
-        compressType
+        compressType,
+        taskId
     }));
 }
-export function apiFileDecompression(path) {
+export function apiFileDecompression(path, taskId) {
     return axios.post("/desktop/api/file/fileDecompression", qs.stringify({
-        path
+        path,
+        taskId
     }));
 }
 export function apiFileAttribute(path) {

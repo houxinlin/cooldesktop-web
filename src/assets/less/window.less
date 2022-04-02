@@ -1,6 +1,17 @@
 @TASK_BAR_HEGIHT: 57px;
+@BASE_Z_INEDX:495594;
+
+@MAX_Z_INDEX: @BASE_Z_INEDX + 100;
+
 @APP_CONTAINER_Z_INDEX:1000;
-@APP_TASK_BAR_Z_INDEX:999999;
+
+@APP_TASK_BAR_Z_INDEX: @BASE_Z_INEDX + 5;
+
+@DESKTOP_Z_INDEX: @APP_TASK_BAR_Z_INDEX - 1;
+
+@APP_STARTER_Z_INDEX:@APP_TASK_BAR_Z_INDEX - 1;
+
+@APP_WORK:@APP_TASK_BAR_Z_INDEX + 5;
 .max-window{
     position: absolute !important;
     left: 0px !important;
@@ -8,7 +19,7 @@
     bottom: 0px !important;
     right: 0px !important;
     width: 100% !important;
-    height: calc(100% + @TASK_BAR_HEGIHT + 70px)  !important;
+    height: calc(100% + @TASK_BAR_HEGIHT )  !important;
     border-radius: 0px !important;
 
 }
@@ -36,14 +47,16 @@
 }
 
 .window-z-height{
-    z-index: @APP_TASK_BAR_Z_INDEX - 1 !important
+    z-index: @APP_TASK_BAR_Z_INDEX + 1
 }
 .desktop-none{
     transform: scale(0.0);
 }
 .app-starter-visible{
     opacity: 1 !important;
-    z-index: 9999 !important
+}
+.work-region-low-z-index{
+    z-index: @BASE_Z_INEDX - 10 !important
 }
 .window-item-resize{
     resize: both;
@@ -60,6 +73,7 @@
     display: flex;
     flex-direction: column;
     background-size: cover;
+    z-index: @BASE_Z_INEDX;
     .app-starter{
         background: #000000b8;
         position: absolute;
@@ -69,13 +83,13 @@
         bottom: 0px;
         opacity: 0;
         transition: all 0.4s;
-        z-index: 1;
+        z-index: @APP_STARTER_Z_INDEX ;
     }
    .work-region{
         position: relative;
         flex: 1;
         width: 100%;
-        z-index: 10;
+        z-index: @APP_WORK;
    }
    .task-bar{
        height: @TASK_BAR_HEGIHT;

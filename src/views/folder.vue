@@ -10,7 +10,7 @@
             <li @click="openTerminal()">在此处打开终端</li>
           </div>
           <div class="item-group">
-            <li @click="createFile('director')">创建文件夹</li>
+            <li @click="createFile('folder')">创建文件夹</li>
             <li @click="createFile('file')">创建文件</li>
           </div>
           <div class="item-group">
@@ -26,6 +26,9 @@
         top: state.contextMenuPoint.y + 'px',
       }" class="file-menu">
         <menu>
+          <div v-if="state.selectFileItem.type != 'folder'" class="item-group">
+            <li @click="showOpenMethod()">打开方式</li>
+          </div>
           <div v-if="state.selectFileItem.type == 'folder'" class="item-group">
             <li @click="openNewFolderWhitThis()">在新窗口打开</li>
           </div>
@@ -33,9 +36,9 @@
             <li @click="deleteFile()">删除</li>
             <li @click="fileCopy()">复制</li>
             <li @click="fileCut()">剪切</li>
-            <li @click="reName()">重复名</li>
+            <li @click="reName()">重命名</li>
           </div>
-          <div class="item-group">
+          <div v-if="state.selectFileItem.type != 'folder'" class="item-group">
             <li @click="downloadCurSelectFile()">下载</li>
           </div>
           <div class="item-group">
@@ -43,17 +46,37 @@
             <li @click="fileDecompression()">解压</li>
           </div>
           <div class="item-group">
-            <li @click="openFileAttribute()">属性</li>
+            <li @click="openFileAttribute(getSelectFile().path)">属性</li>
           </div>
+
         </menu>
       </div>
     </template>
     <template v-slot:body>
+      <div v-if="selectOpenMethod" class="select-method-mask pos-absolute fit-parent"></div>
+      <div v-if="selectOpenMethod" class="select-method pos-absolute flex flex-all-center fit-parent">
+        <div class="height-200px flex flex-column background-white ">
+          <header class="grid">
+            <button @click="selectOpenMethod=false" class="base-button">取消</button>
+            <div class="title flex flex-all-center">请选择打开方式</div>
+            <div></div>
+          </header>
+          <ul class="padding-10 flex-1">
+            <template v-for="applicationItem in applicationState.applications" :key="applicationItem.applicationId">
+              <li @click="openByApplicationId(applicationItem)" class="cursor-pointer">
+                <div class="flex flex-aling-item-center">
+                  <img class="wh-40" :src=" serverDomain + 'desktop/webapplication/' + applicationItem.applicationId + '/logo.png'" alt="" />
+                  <span class="font-size-10">{{applicationItem.applicationName}}</span>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
       <div @dragstart="dragstart" @dragover="dragover" @dragleave="dragleave" @drop="drop" @contextmenu.prevent="folderContextMenu($event)" @click="
-           state.contextMenuVisible = false;
-           state.folderContextMenuVisible = false;
+           hideAllPopupMenu()
         " class="folder-global">
-        <ul v-if="item.windowType == 'folder'">
+        <ul class="folder-u" v-if="item.windowType == 'folder'">
           <template v-for="(item, index) in state.child" :key="item">
             <li @contextmenu.prevent="fileContextMenu($event, item)" :class="{ select: state.currentSelectName == item.name }" @click="
                 state.currentSelectName = item.name;
@@ -71,7 +94,7 @@
                     encodeURIComponent(item.path)
                   " alt="" />
                 <span @keydown="fileKeyDown($event, index)" @blur="fileBlur(index)" class="contenteditable" v-if="item.edit" contenteditable="true">{{ item.name }}</span>
-                <span v-if="item.edit == false">{{ item.name }}</span>
+                <span class="file-name" v-if="item.edit == false">{{ item.name }}</span>
                 <div class="tip">{{ item.name }}</div>
               </div>
             </li>
@@ -111,6 +134,7 @@ const props = defineProps({
   actionWindowId: String,
   folderInfo: Object,
 });
+
 import BaseWindow from "../components/window.vue";
 //字符串常量
 import * as string from "../global/strings.js";
@@ -123,7 +147,7 @@ import * as folderApis from "../http/folder.js";
 import { offerFile } from "../utils/upload/file-upload";
 //用于判断有没有文件上传记录
 import { uploads } from "../utils/upload/manager";
-import { applicationState, getApplicationByMedia, } from "../global/application.js";
+import { applicationState, getApplicationByMedia } from "../global/application.js";
 import { randId } from "../utils/utils.js"
 //传递过来的数据
 let state = reactive({ ...props.item.data });
@@ -138,8 +162,20 @@ let { proxy } = getCurrentInstance();
 //任务完成后会掉
 let taskDoneExecuteMap = new Map()
 //文件粘贴标识
-let loadingWindows = new Map()
+let doneCallback = new Map()
 
+let selectOpenMethod = ref(false)
+
+const openByApplicationId = (application) => {
+  selectOpenMethod.value = false
+  let file = getSelectFile()
+  coolWindow.startNewWebView(application, `path=${file.path}`)
+
+}
+const showOpenMethod = () => {
+  hideAllPopupMenu()
+  selectOpenMethod.value = true
+}
 //显示文件上传管理器
 const showUploadView = () => {
   coolWindow.openFileUploadManager();
@@ -177,7 +213,6 @@ const downloadCurSelectFile = () => {
 const createFile = (type) => {
   hideAllPopupMenu();
   coolWindow.startNewDialogCreateFile((data) => {
-    console.log(data, state.path.getPath());
     folderApis
       .apiCreateFile(getCurrentDirectory(), data.targetName, type)
       .then((res) => {
@@ -189,15 +224,20 @@ const createFile = (type) => {
   });
 };
 //打开文件属性
-const openFileAttribute = (defaultPath) => {
-  let obj = getSelectFile() || { path: defaultPath };
-  coolWindow.startNewFileAttribute(obj.path);
+const openFileAttribute = (filePath) => {
+  coolWindow.startNewFileAttribute(filePath);
   hideAllPopupMenu();
 };
 //文件解压
 const fileDecompression = () => {
   hideAllPopupMenu();
-  folderApis.apiFileDecompression(getSelectFile().path).then((res) => { });
+  let loading = coolWindow.startNewLoadingView("解压中")
+  let taskId = randId()
+  addDoneTask(taskId, () => {
+    loading.closeWindow()
+    refresh()
+  })
+  folderApis.apiFileDecompression(getSelectFile().path, taskId).then((res) => { });
 };
 //文件压缩
 const fileCompress = () => {
@@ -208,7 +248,7 @@ const fileCompress = () => {
   //如果是文件
   if (file.isFile) {
     let index = file.name.indexOf(".");
-    if (index == 0) {
+    if (index == -1) {
       name = file.name;
     } else {
       name = file.name.substring(0, index);
@@ -216,9 +256,18 @@ const fileCompress = () => {
   } else {
     name = file.name;
   }
-  coolWindow.startNewDialogSelect(name, function (data, dialog) {
-    folderApis.apiFileCompress(getSelectFile().path, data.targetName, data.type).then((res) => {
-      coolWindow.startNewSuccessMessageDialog("任务调用成功");
+
+  //选择压缩类型
+  coolWindow.startNewCompressDialogSelect(name, function (data, dialog) {
+    //压缩
+    let loading = coolWindow.startNewLoadingView("压缩中")
+    let taskId = randId()
+    addDoneTask(taskId, () => {
+      loading.closeWindow()
+      refresh()
+    })
+    folderApis.apiFileCompress(getSelectFile().path, data.targetName, data.type, taskId).then((res) => {
+
     });
   });
 };
@@ -226,6 +275,7 @@ const fileCompress = () => {
 const hideAllPopupMenu = () => {
   state.folderContextMenuVisible = false;
   state.contextMenuVisible = false;
+  props.item.canResize = true
 };
 //文件复制
 const fileCopy = () => {
@@ -240,11 +290,9 @@ const filePaste = () => {
   //由于不知道什么时候复制完成，先将完成后的事情做个回调
   //服务器会返回一个id，当文件处理完成后，会回调这个id
   //文件处理完成后会回调到doneFunction
-  loadingWindows.set(taskId, {
-    "window": windowLoadingProperty, "doneFunction": () => {
-      windowLoadingProperty.closeWindow()
-      refresh();
-    }
+  addDoneTask(taskId, () => {
+    windowLoadingProperty.closeWindow()
+    refresh();
   })
   folderApis.apiFilePaste(state.path.getPath(), taskId).then((res) => {
     if (res.data.code != 0) {
@@ -310,6 +358,9 @@ const reName = () => {
   hideAllPopupMenu();
 };
 const fileContextMenu = (e, item) => {
+  e.preventDefault();
+  e.stopPropagation();
+  props.item.canResize = false
   state.selectFileItem = item;
   state.folderContextMenuVisible = false;
   state.currentSelectName = item.name;
@@ -317,18 +368,19 @@ const fileContextMenu = (e, item) => {
   let window = document.getElementById(props.item.id);
   state.contextMenuPoint.x = e.x - window.offsetLeft;
   state.contextMenuPoint.y = e.y - window.offsetTop;
-  e.preventDefault();
-  e.stopPropagation();
+
 };
 
 const folderContextMenu = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  props.item.canResize = false
   state.currentSelectName = "";
   state.folderContextMenuVisible = true;
   state.contextMenuVisible = false;
   let window = document.getElementById(props.item.id);
   state.folderContextMenuPoint.x = e.x - window.offsetLeft;
   state.folderContextMenuPoint.y = e.y - window.offsetTop;
-  e.preventDefault();
 };
 
 const listDirector = (path) => {
@@ -421,36 +473,41 @@ const drop = (event) => {
   let inPath = state.path.path;
   for (let index = 0; index < files.length; index++) {
     const fileItem = files[index];
-    console.log(fileItem)
-
     offerFile(fileItem, inPath);
   }
 };
 const addDoneTask = (taskId, func) => {
-  taskDoneExecuteMap.set(taskId, func)
+  doneCallback.set(taskId, { "doneFunction": func })
 }
 
 const doHandlerTaskEvent = (data) => {
-  if (data.action == "paste") {
-    let fun = loadingWindows.get(data.id)["doneFunction"]
-    if (data.result.code != 0) {
-      coolWindow.startNewErrorMessageDialog(data.result.msg)
-    }
-    if (fun instanceof Function) { fun() }
-  }
   if (data.action == "refresh") {
     refresh()
+    return
   }
-
+  let taskInfo = doneCallback.get(data.id)
+  if (taskInfo != null) {
+    let fun = taskInfo.doneFunction
+    if (fun instanceof Function) { fun() }
+  }
 }
+
+let webSocketEventHandlerFunction = (data) => { doHandlerTaskEvent(data) }
 const initEventListener = () => {
-  proxy.eventBus.on("/event/file", (data) => { doHandlerTaskEvent(data) })
-
+  proxy.eventBus.on("/event/file", webSocketEventHandlerFunction)
+  proxy.eventBus.on("/event/compress/result", webSocketEventHandlerFunction)
 }
-initEventListener();
+props.item.events = function (e, d) {
+  if (e == "close") {
+    proxy.eventBus.off("/event/file", webSocketEventHandlerFunction)
+    proxy.eventBus.off("/event/compress/result", webSocketEventHandlerFunction)
+  }
+};
 
 onMounted(() => {
+  initEventListener();
   listDirector(state.path.getPath());
+
 });
 </script>
 

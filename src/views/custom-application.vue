@@ -59,7 +59,7 @@ const drop = (event) => {
   state.imageUrl = loadingImageUrl
   state.imageClass = "element-rotate"
   apiInstallCustomApplication(formData, axiosConfig).then((res) => {
-    coolWindow.startNewSuccessMessageDialog(res.data.data)
+    coolWindow.startNewSuccessMessageDialog(res.data.msg)
     resetState()
   })
 
