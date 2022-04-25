@@ -60,13 +60,15 @@ let menus = state.application.menus;
 let menuState = reactive([]);
 let menuMap = new Map();
 const initMenus = () => {
-  for (const menuItem of menus) {
+  for (let menuItem of menus) {
+    if(menuItem.length==0){continue;}
     let menuSplit = menuItem.split("/");
     let source = menuMap.get(menuSplit[0]) || [];
     source.push(menuSplit[1]);
     menuMap.set(menuSplit[0], source);
   }
-  for (var [key, value] of menuMap) {
+  for (let [key, value] of menuMap) {
+    
     menuState.push({ name: key, subMenu: value });
   }
 };

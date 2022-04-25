@@ -54,9 +54,11 @@ export function LoadingView(data) {
     return getWindowProperty({ windowType: "loading-view", showWindowInTaskBar: false, canClose: false, canMin: false }, data)
 }
 export function FolderWindow(data = {}) {
-    return getWindowProperty({ windowType: "folder", "icon": defaultApps[0].icon }, data)
+    return getWindowProperty({ windowType: "folder", "icon": defaultApps[0].icon, isSelect: false }, data)
 }
-
+export function FileSelectWindow(data = {}) {
+    return getWindowProperty({ windowType: "folder", "icon": defaultApps[0].icon, canMin: false, canMax: false, isSelect: true }, data)
+}
 export function UploadManager(data) {
     return getWindowProperty({ windowType: "upload-manager", "icon": defaultApps[1].icon }, data)
 }
@@ -75,6 +77,6 @@ export function CustomApplication(data) {
 }
 
 export function DeveloperDoc(data) {
-    return getWindowProperty({ windowType: "developer-doc", "icon": defaultApps[6].icon}, data)
+    return getWindowProperty({ windowType: "developer-doc", "icon": defaultApps[6].icon }, data)
 }
 

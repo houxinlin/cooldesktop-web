@@ -141,11 +141,9 @@ export class WindowActions {
 
     postWindowEvents = (id, name, e) => {
         let events = this.getAppById(id).instance.events
-
         if (typeof (events) == "function") {
             events(name, e)
         }
-
     }
     windowMove = (e) => {
         if (e.which == 3) {

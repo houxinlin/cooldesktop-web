@@ -6,9 +6,12 @@ export function randId() {
 }
 
 export function getApplicationIndexUrl(application, arg = null) {
-
+   //如果类型是easy类型
+   if (application.type == 3) {
+      let url = `${serverDomain}${application.applicationId}/`
+      return url
+   }
    let url = `${serverDomain}desktop/webapplication/${application.applicationId}/index.html`
-
    if (arg != null) {
       url = url + "?" + arg
    }

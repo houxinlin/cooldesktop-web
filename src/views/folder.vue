@@ -81,6 +81,7 @@
             <li @contextmenu.prevent="fileContextMenu($event, item)" :class="{ select: state.currentSelectName == item.name }" @click="
                 state.currentSelectName = item.name;
                 state.contextMenuVisible = false;
+                state.selectFileItem=item
               " @dblclick="fileDblClick(item)">
               <div class="file-item">
                 <img v-if="item.type != 'image'" :src="
@@ -117,6 +118,8 @@
             <img @click="showSearchInput()" src="../assets/icon/ic-search.png" alt="" />
           </div>
           <div v-if="uploads.files.length > 0" @click.stop="showUploadView()" class="loader"></div>
+          <button @click="callbackSelect" v-if="props.item.isSelect==true" class="base-button green">选择</button>
+
         </div>
       </header>
 
@@ -131,9 +134,9 @@
 <script setup>
 const props = defineProps({
   item: Object,
-  actionWindowId: String,
-  folderInfo: Object,
+  actionWindowId: String
 });
+
 
 import BaseWindow from "../components/window.vue";
 //字符串常量
@@ -149,6 +152,7 @@ import { offerFile } from "../utils/upload/file-upload";
 import { uploads } from "../utils/upload/manager";
 import { applicationState, getApplicationByMedia } from "../global/application.js";
 import { randId } from "../utils/utils.js"
+
 //传递过来的数据
 let state = reactive({ ...props.item.data });
 //服务器域名
@@ -172,13 +176,26 @@ const openByApplicationId = (application) => {
   coolWindow.startNewWebView(application, `path=${file.path}`)
 
 }
+const callbackSelect = () => {
+  if (getSelectFile() == null) return
+  if (props.item.selectType == "file" && getSelectFile().type == "folder") return
+  if (props.item.selectType == "folder" && getSelectFile().type != "folder") return
+  if (props.item.selectCallback != undefined) {
+    props.item.selectCallback(getSelectFile())
+    wact.closeWindow(props.item.id)
+    return
+  }
+
+
+  // console.log(getsstate.currentSelectName)
+}
 const showOpenMethod = () => {
   hideAllPopupMenu()
   selectOpenMethod.value = true
 }
 //显示文件上传管理器
 const showUploadView = () => {
-  coolWindow.openFileUploadManager();
+  coolWindow.startFileUploadManager();
 };
 //打开终端
 const openTerminal = () => {
@@ -439,7 +456,7 @@ const openNewFolderWhitThis = () => {
     return;
   }
   hideAllPopupMenu();
-  coolWindow.openNewFolder(getSelectFile().path);
+  coolWindow.startNewFolder(getSelectFile().path);
 };
 //刷新
 const refresh = () => {

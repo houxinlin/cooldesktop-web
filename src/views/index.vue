@@ -97,6 +97,7 @@ import getSocketConnection from "../utils/socket.js";
 import * as systemApi from "../http/system"
 import * as globalApi from "../global/api/global-api.js"
 import { refreshApplication, applicationState } from "../global/application.js";
+import { WindowActions } from "../windows/window-action";
 
 let defaultBackgroundImageUrl = ref(`url('${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}')`)
 onMounted(() => {
@@ -118,6 +119,8 @@ const startApplication = (application) => {
 /**
  * 以下是测试区域
  */
+
+
 /**
  * 测试区域结束
  */
@@ -131,7 +134,7 @@ proxy.eventBus.on("/event/refresh/application", (e) => { refreshApplication() })
 //刷新壁纸
 proxy.eventBus.on("/event/refresh/wallpaper", (e) => { refreshWallpaper() })
 //打目录
-proxy.eventBus.on("/event/open/directory", (e) => { coolWindow.openNewFolder(e.data) })
+proxy.eventBus.on("/event/open/directory", (e) => { coolWindow.startNewFolder(e.data) })
 
 proxy.eventBus.on("/event/notify/message/error", (e) => { coolWindow.startNewErrorMessageDialog(e.data) })
 proxy.eventBus.on("/event/notify/message/success", (e) => { coolWindow.startNewSuccessMessageDialog(e.data) })

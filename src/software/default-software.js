@@ -4,14 +4,14 @@ let defaultAppList = [
         name: "文件",
         icon: new URL(`../assets/icon/ic-folder.png`, import.meta.url).href,
         action: () => {
-            coolWindow.openNewFolder();
+            coolWindow.startNewFolder();
         },
     },
     {
         name: "文件上传管理器",
         icon: new URL(`../assets/icon/ic-upload-manager.png`, import.meta.url).href,
         action: () => {
-            coolWindow.openFileUploadManager();
+            coolWindow.startFileUploadManager();
         },
     },
     {

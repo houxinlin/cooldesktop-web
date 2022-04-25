@@ -37,16 +37,15 @@ export const createWindowByType = (desktopWindow, data = {}) => {
     return windowProperty;
 }
 class CoolWindowStarter {
-
     openStarter = () => {
         wact.hideWindow(!state.appStarterVisible)
         state.appStarterVisible = !state.appStarterVisible;
     };
 
-    openNewFolder = (path = "/") => {
+    startNewFolder = (path = "/") => {
         startNewWindow(createWindowByType(WindowEnum.FolderWindow, createFolder(path, [])))
     };
-    openFileUploadManager = () => {
+    startFileUploadManager = () => {
         startNewWindow(createWindowByType(WindowEnum.UploadManager, uploads))
     };
     startNewErrorMessageDialog = (msg) => {
@@ -98,6 +97,12 @@ class CoolWindowStarter {
     }
     startNewDeveloperDoc = (data = {}) => {
         startNewWindow(createWindowByType(WindowEnum.DeveloperDoc, { data }))
+    }
+    startNewFileSelect = (selectType = "file", selectCallback = function (d) { }) => {
+        let props = createWindowByType(WindowEnum.FileSelectWindow, createFolder("/", []))
+        props.selectCallback = selectCallback
+        props.selectType = selectType
+        startNewWindow(props)
     }
 }
 export const coolWindow = new CoolWindowStarter();

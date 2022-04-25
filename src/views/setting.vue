@@ -159,6 +159,9 @@ const addOpenUrl = () => {
       return
     }
     systemApi.apiAddOpenUrl(data.targetName).then((res) => {
+      if (res.data.status < 0) {
+        coolWindow.startNewErrorMessageDialog(res.data.msg)
+      }
       showAllOpenUrl()
     })
   })
