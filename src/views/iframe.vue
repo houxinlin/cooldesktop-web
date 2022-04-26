@@ -24,7 +24,7 @@
       </div>
     </template>
     <template v-slot:header>
-      <header></header>
+      <header>{{item.application.applicationName}}</header>
     </template>
   </BaseWindow>
 

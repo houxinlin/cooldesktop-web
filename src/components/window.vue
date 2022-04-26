@@ -9,8 +9,8 @@
       'min-window': item.minState,
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
-      'window-item-resize':item.canResize
-    } ,className,backgroundClass]" class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
+      'window-item-resize':item.canResize,
+    } ,className,backgroundClass]" :style="[{'background':backgroundFilter(item.application )}]" class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
     <!-- 插槽3 扩展 -->
     <slot name="extend"></slot>
     <div @click="wact.setWindowPos(item.id)" v-if="item.windowType=='web'" :class="{ action:  item.actionWindow }" class="window-mask"></div>
@@ -40,9 +40,12 @@ const props = defineProps({
   item: Object,
   actionWindowId: String,
   title: String,
-  backgroundClass:String
+  backgroundClass: String
 });
-
+const backgroundFilter = (value) => {
+  let back = (value || {}).windowBackground || "#000000c4"
+  return back
+}
 </script>
 
 <style>

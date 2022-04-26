@@ -74,7 +74,7 @@
                     <span class="margin-l-10">{{item.applicationName}}</span>
                   </div>
                   <div>
-                    <button @click="uninstall(item.applicationId)" class="base-button blue">卸载</button>
+                    <button @click="uninstall(item.applicationId)" class="base-button color-white red">卸载</button>
                   </div>
                 </div>
               </li>
