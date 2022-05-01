@@ -4,6 +4,11 @@
     -ms-user-select: none;   
     user-select: none;          
 }
+@media (-webkit-device-pixel-ratio: 1.25) {
+  :root {
+    zoom: 0.75;
+  }
+}
 body{
     background: #000;
 }
@@ -115,9 +120,13 @@ body{
   }
 
   //img
-  img.wh-40{
+  img.wh-40px{
     width: 40px;
     height: 40px;
+  }
+  img.wh-30px{
+    width: 30px;
+    height: 30px;
   }
   img.cover{
     object-fit: cover;
@@ -125,14 +134,17 @@ body{
 
   //padding
 
-  .padding-10{
+  .padding-10px{
     padding: 10px;
   }
   //margin
   .margin-10px{
     margin: 10px;
   }
-  .margin-l-10{
+  .margin-b-5px{
+    margin-bottom: 5px;
+  }
+  .margin-l-10px{
     margin-left: 10px;
   }
   .margin-t-10px{
@@ -149,7 +161,7 @@ body{
     height: 200px;
   }
   //width
-  .width-height-90{
+  .width-height-90px{
     height: 90px;
     width: 90px;
   }
@@ -206,7 +218,7 @@ body{
 
 
   //font
-  .font-size-10{
+  .font-size-10px{
     font-size: 10px;
   }
 

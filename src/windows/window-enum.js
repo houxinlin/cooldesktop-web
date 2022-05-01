@@ -46,6 +46,9 @@ export function FileAttribute(data) {
 export function DialogCreateFile(data) {
     return getWindowProperty({ windowType: "dialog-create-file", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
 }
+export function DialogInput(data) {
+    return getWindowProperty({ windowType: "input-dialog", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
+}
 export function TextEditor(data) {
     return getWindowProperty({ windowType: "text-editor" }, data)
 }

@@ -104,6 +104,10 @@ class CoolWindowStarter {
         props.selectType = selectType
         startNewWindow(props)
     }
+
+    startNewInputDialog = (callback, title = "提示") => {
+        startNewWindow(createWindowByType(WindowEnum.DialogInput, { callback, title }))
+    }
 }
 export const coolWindow = new CoolWindowStarter();
 export const wact = new WindowActions();

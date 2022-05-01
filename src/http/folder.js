@@ -75,3 +75,22 @@ export function apiCreateFile(parent, name, type) {
         parent, name, type
     }));
 }
+
+export function apiRunJar(path,arg) {
+    return axios.post("/desktop/api/file/runJar", qs.stringify({
+        path,arg
+    }));
+}
+
+
+export function apiStopJar(path) {
+    return axios.post("/desktop/api/file/stopJar", qs.stringify({
+        path
+    }));
+}
+
+export function apiRunShell(path) {
+    return axios.post("/desktop/api/file/runShell", qs.stringify({
+        path
+    }));
+}

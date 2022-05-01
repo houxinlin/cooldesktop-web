@@ -54,9 +54,9 @@
         <div v-if="layerIndex==LAYER_LIST" class="app-list-container">
           <ul class="grid-justify-content-center">
             <template v-for="(item,index) in serverApplicationState.list" :key="index">
-              <li class="cursor-pointer flex flex-all-center width-height-90" @click="applicationDetail(index)">
+              <li class="cursor-pointer flex flex-all-center width-height-90px" @click="applicationDetail(index)">
                 <div class="flex flex-all-center color-white flex-column software-item">
-                  <img class="wh-40 cover" :src="applicationServerHost+item.software.softwareLogoUrl" />
+                  <img class="wh-40px cover" :src="applicationServerHost+item.software.softwareLogoUrl" />
                   <span>{{item.software.softwareName}}</span>
                 </div>
               </li>
@@ -67,11 +67,11 @@
         <div v-if="layerIndex==LAYER_INSTALL" class="app-list-container">
           <ul class="flex-col">
             <template v-for="(item,index) in applicationState.applications" :key="index">
-              <li class="app-item padding-10">
+              <li class="app-item padding-10px">
                 <div class="software-item flex flex-space-between">
                   <div class="flex-all-center flex">
-                    <img class="wh-40 cover" :src=" serverDomain + 'desktop/webapplication/' + item.applicationId + '/logo.png'" alt="" />
-                    <span class="margin-l-10">{{item.applicationName}}</span>
+                    <img class="wh-40px cover" :src=" serverDomain + 'desktop/webapplication/' + item.applicationId + '/logo.png'" alt="" />
+                    <span class="margin-l-10px">{{item.applicationName}}</span>
                   </div>
                   <div>
                     <button @click="uninstall(item.applicationId)" class="base-button color-white red">卸载</button>
@@ -156,10 +156,10 @@ const doInstallApplication = () => {
 
 function uninstall(id) {
   let loadingWindow = coolWindow.startNewLoadingView("卸载中")
-  applicationApi.apiUnInstallApplication(id).then((res) => {
+  applicationApi.apiUnInstallApplication(id).then((response) => {
     //刷新应用程序列表
     loadingWindow.closeWindow()
-    coolWindow.startNewSuccessMessageDialog(res.data.msg)
+    coolWindow.startNewSuccessMessageDialog(response.data.data)
     clearRefProgressValue(id)
     refreshInstalled()
   })

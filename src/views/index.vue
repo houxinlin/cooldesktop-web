@@ -44,7 +44,7 @@
         <Setting :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'setting'" />
         <CustomApplicationView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'custom-application'" />
         <DeveloperDoc :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'developer-doc'" />
-
+        <InputDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'input-dialog'" />
       </template>
     </div>
     <div class="task-bar">
@@ -86,6 +86,8 @@ import FileAttribute from "./file-attribute.vue";
 import ApplicationView from "./application-view.vue";
 import CustomApplicationView from "./custom-application.vue";
 import DeveloperDoc from "./doc.vue";
+import InputDialog from "./dialog/input-dialog.vue";
+
 import { onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { initInstallProgressManager } from "../utils/install-progress-manager.js"
@@ -137,7 +139,10 @@ proxy.eventBus.on("/event/refresh/wallpaper", (e) => { refreshWallpaper() })
 proxy.eventBus.on("/event/open/directory", (e) => { coolWindow.startNewFolder(e.data) })
 
 proxy.eventBus.on("/event/notify/message/error", (e) => { coolWindow.startNewErrorMessageDialog(e.data) })
+
 proxy.eventBus.on("/event/notify/message/success", (e) => { coolWindow.startNewSuccessMessageDialog(e.data) })
+
+
 //所有异步文件处理结果通知统一走这里，用来提示
 proxy.eventBus.on("/event/file", (e) => {
   if (e.hasOwnProperty("result")) {

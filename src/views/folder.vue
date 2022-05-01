@@ -48,8 +48,24 @@
           <div class="item-group">
             <li @click="openFileAttribute(getSelectFile().path)">属性</li>
           </div>
-
+          <div v-if="state.selectFileItem.rawType=='jar'" class="item-group mulit">
+            <li>
+              <span>jar</span>
+              <menu class="second-menu">
+            <li @click="runJar(getSelectFile().path)">运行</li>
+            <li @click="stopJar(getSelectFile().path)">停止</li>
         </menu>
+        </li>
+      </div>
+      <div v-if="state.selectFileItem.rawType=='sh'" class="item-group mulit">
+        <li>
+          <span>sh</span>
+          <menu class="second-menu">
+        <li @click="runShell(getSelectFile().path)">运行</li>
+        </menu>
+        </li>
+      </div>
+      </menu>
       </div>
     </template>
     <template v-slot:body>
@@ -61,12 +77,12 @@
             <div class="title flex flex-all-center">请选择打开方式</div>
             <div></div>
           </header>
-          <ul class="padding-10 flex-1">
+          <ul class="padding-10px flex-1">
             <template v-for="applicationItem in applicationState.applications" :key="applicationItem.applicationId">
-              <li @click="openByApplicationId(applicationItem)" class="cursor-pointer">
+              <li @click="openByApplicationId(applicationItem)" class="cursor-pointer margin-b-5px">
                 <div class="flex flex-aling-item-center">
-                  <img class="wh-40" :src=" serverDomain + 'desktop/webapplication/' + applicationItem.applicationId + '/logo.png'" alt="" />
-                  <span class="font-size-10">{{applicationItem.applicationName}}</span>
+                  <img class="wh-30px" :src=" serverDomain + 'desktop/webapplication/' + applicationItem.applicationId + '/logo.png'" alt="" />
+                  <span class="font-size-10px">{{applicationItem.applicationName}}</span>
                 </div>
               </li>
             </template>
@@ -169,7 +185,31 @@ let taskDoneExecuteMap = new Map()
 let doneCallback = new Map()
 
 let selectOpenMethod = ref(false)
+const runShell = (path) => {
+  hideAllPopupMenu()
+  folderApis.apiRunShell(path).then((e) => {
 
+  })
+}
+const runJar = (path) => {
+  hideAllPopupMenu()
+  coolWindow.startNewInputDialog((value) => {
+    let loading = coolWindow.startNewLoadingView("启动中")
+    folderApis.apiRunJar(path, value.targetName).then((e) => {
+      coolWindow.startNewSuccessMessageDialog(e.data.data == true ? "启动成功" : "启动失败")
+      loading.closeWindow()
+    })
+  }, "填写启动参数")
+
+}
+const stopJar = (path) => {
+  let loading = coolWindow.startNewLoadingView("停止中")
+  folderApis.apiStopJar(path).then((e) => {
+    coolWindow.startNewSuccessMessageDialog(e.data.data)
+    loading.closeWindow()
+  })
+  hideAllPopupMenu()
+}
 const openByApplicationId = (application) => {
   selectOpenMethod.value = false
   let file = getSelectFile()
@@ -385,7 +425,7 @@ const fileContextMenu = (e, item) => {
   let window = document.getElementById(props.item.id);
   state.contextMenuPoint.x = e.x - window.offsetLeft;
   state.contextMenuPoint.y = e.y - window.offsetTop;
-
+  console.log(state.selectFileItem)
 };
 
 const folderContextMenu = (e) => {
