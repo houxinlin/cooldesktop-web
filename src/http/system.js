@@ -10,8 +10,8 @@ export function apiChangeWallpaper(wallpaperFile) {
     };
     return axios.post("/desktop/api/system/changeWallpaper", wallpaperFile, config);
 }
-export function apiGetSystemProperty() {
-    return axios.post("/desktop/api/system/getCoolDesktopProperty");
+export function apiGetCoolDesktopConfigs() {
+    return axios.post("/desktop/api/system/getCoolDesktopConfigs");
 }
 export function apiConfigSecureShell() {
     return axios.post("/desktop/api/system/configSecureShell");
@@ -21,8 +21,8 @@ export function apiConfigSecureShellUser(userName) {
         userName
     }));
 }
-export function apiResetLogoPasswd() {
-    return axios.post("/desktop/api/system/resetLogoPasswd");
+export function apiResetLoginPasswd() {
+    return axios.post("/desktop/api/system/resetLoginPasswd");
 }
 
 export function apiGetOpenUrl() {
@@ -44,4 +44,33 @@ export function apiRemoveOpenUrl(url) {
 
 
 
+
+export function apiSetSysProperty(key, value) {
+    return axios.post("/desktop/api/system/setSysProperty", qs.stringify({
+        key, value
+    }));
+}
+
+
+export function apiGetSysProperty(key) {
+    return axios.post("/desktop/api/system/getSysProperty", qs.stringify({
+        key
+    }));
+}
+
+export function apiAddDesktopFile(path) {
+    return axios.post("/desktop/api/system/desktop/file/add", qs.stringify({
+        path
+    }));
+}
+
+export function apiRemoveDesktopFile(path) {
+    return axios.post("/desktop/api/system/desktop/file/remove", qs.stringify({
+        path
+    }));
+}
+
+export function apiListDesktopFile() {
+    return axios.get("/desktop/api/system/desktop/file/list");
+}
 

@@ -19,6 +19,9 @@
           <div class="item-group">
             <li @click="openFileAttribute(getCurrentDirectory())">属性</li>
           </div>
+          <div class="item-group">
+            <li @click="sendToDesktop(getSelectFile().path)">发送到桌面</li>
+          </div>
         </menu>
       </div>
       <div v-if="state.contextMenuVisible" :style="{
@@ -47,6 +50,9 @@
           </div>
           <div class="item-group">
             <li @click="openFileAttribute(getSelectFile().path)">属性</li>
+          </div>
+          <div class="item-group">
+            <li @click="sendToDesktop(getSelectFile().path)">发送到桌面</li>
           </div>
           <div v-if="state.selectFileItem.rawType=='jar'" class="item-group mulit">
             <li>
@@ -145,8 +151,6 @@
 </template>
 
 
-
-
 <script setup>
 const props = defineProps({
   item: Object,
@@ -162,6 +166,7 @@ import { defineProps, onMounted, reactive, ref, getCurrentInstance } from "vue";
 import { coolWindow, wact } from "../windows/window-manager.js";
 //文件API
 import * as folderApis from "../http/folder.js";
+import * as sysApis from "../http/system.js";
 //文件上传组建
 import { offerFile } from "../utils/upload/file-upload";
 //用于判断有没有文件上传记录
@@ -185,6 +190,11 @@ let taskDoneExecuteMap = new Map()
 let doneCallback = new Map()
 
 let selectOpenMethod = ref(false)
+
+const sendToDesktop = (path) => {
+  hideAllPopupMenu()
+  sysApis.apiAddDesktopFile(path).then((Response) => { })
+}
 const runShell = (path) => {
   hideAllPopupMenu()
   folderApis.apiRunShell(path).then((e) => {
@@ -352,7 +362,7 @@ const filePaste = () => {
     refresh();
   })
   folderApis.apiFilePaste(state.path.getPath(), taskId).then((res) => {
-    if (res.data.code != 0) {
+    if (res.data.status != 0) {
       coolWindow.startNewErrorMessageDialog(res.data.msg);
     }
 
@@ -425,7 +435,7 @@ const fileContextMenu = (e, item) => {
   let window = document.getElementById(props.item.id);
   state.contextMenuPoint.x = e.x - window.offsetLeft;
   state.contextMenuPoint.y = e.y - window.offsetTop;
-  console.log(state.selectFileItem)
+
 };
 
 const folderContextMenu = (e) => {
@@ -436,8 +446,9 @@ const folderContextMenu = (e) => {
   state.folderContextMenuVisible = true;
   state.contextMenuVisible = false;
   let window = document.getElementById(props.item.id);
-  state.folderContextMenuPoint.x = e.x - window.offsetLeft;
-  state.folderContextMenuPoint.y = e.y - window.offsetTop;
+  state.folderContextMenuPoint.x = (e.x) - (window.offsetLeft);
+  state.folderContextMenuPoint.y = (e.y) - (window.offsetTop);
+
 };
 
 const listDirector = (path) => {

@@ -1,7 +1,7 @@
 <template>
   <BaseWindow className="setting" :item="item">
     <template v-slot:body>
-      <aside class="pos-fixed pos-t-b-r-0">
+      <aside class="pos-fixed tbl0">
         <ul>
           <li @click="changeNavIndex(index)" v-for="(item,index) in nav" :class="[index==navIndex?'select':'']" :key="item">
             <div>
@@ -105,14 +105,14 @@ let navIndex = ref(0)
 
 const resetPassClick = () => {
   let loadingWindow = coolWindow.startNewLoadingView("重置中")
-  systemApi.apiResetLogoPasswd().then((response) => {
+  systemApi.apiResetLoginPasswd().then((response) => {
     loadingWindow.closeWindow()
     coolWindow.startNewSuccessMessageDialog(response.data.data)
   })
 }
 
 const showaseConfig = () => {
-  systemApi.apiGetSystemProperty().then((response) => {
+  systemApi.apiGetCoolDesktopConfigs().then((response) => {
     let wallpaper = response.data.data["wallpaper"]
     version.value=response.data.data["cooldesktop.version"]
     if (wallpaper != undefined && wallpaper != '') {

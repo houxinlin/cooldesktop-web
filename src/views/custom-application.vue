@@ -58,8 +58,9 @@ const drop = (event) => {
   };
   state.imageUrl = loadingImageUrl
   state.imageClass = "element-rotate"
+  //上传并且安装自定义软件
   apiInstallCustomApplication(formData, axiosConfig).then((res) => {
-    coolWindow.startNewSuccessMessageDialog(res.data.msg)
+    coolWindow.startNewSuccessMessageDialog(res.data.data)
     resetState()
   })
 

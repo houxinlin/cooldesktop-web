@@ -42,7 +42,14 @@ class CoolWindowStarter {
         state.appStarterVisible = !state.appStarterVisible;
     };
 
-    startNewFolder = (path = "/") => {
+    startNewFolder = (path = "/",single=false) => {
+        if(single){
+            for (const window of state.windowsCollection) {
+                if(window.windowType=="folder"  && path ==window.data.path.path){
+                    return
+                }
+            }
+        }
         startNewWindow(createWindowByType(WindowEnum.FolderWindow, createFolder(path, [])))
     };
     startFileUploadManager = () => {

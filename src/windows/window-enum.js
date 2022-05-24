@@ -23,9 +23,8 @@ let BASE_WINDOW_PROPERTYS = {
 function getWindowProperty(windowProperty, data = {}) {
     return Object.assign({}, BASE_WINDOW_PROPERTYS, windowProperty, { data })
 }
-
 export function ErrorMessage(data) {
-    return getWindowProperty({ windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
+    return getWindowProperty({ application: { "windowBackground": "#c95447d4" }, windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
 }
 export function SuccessMessage(data) {
     return getWindowProperty({ windowType: "success-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
@@ -36,7 +35,6 @@ export function WebWindow(data) {
 export function NotifyWindow() {
     return getWindowProperty({ windowType: "notif-window" }, data)
 }
-
 export function DialogCompressSelect(data) {
     return getWindowProperty({ windowType: "dialog-compress-select", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
 }
@@ -52,7 +50,6 @@ export function DialogInput(data) {
 export function TextEditor(data) {
     return getWindowProperty({ windowType: "text-editor" }, data)
 }
-
 export function LoadingView(data) {
     return getWindowProperty({ windowType: "loading-view", showWindowInTaskBar: false, canClose: false, canMin: false }, data)
 }
@@ -66,7 +63,7 @@ export function UploadManager(data) {
     return getWindowProperty({ windowType: "upload-manager", "icon": defaultApps[1].icon }, data)
 }
 export function Terminal(data) {
-    return getWindowProperty({ windowType: "terminal", "icon": defaultApps[2].icon }, data)
+    return getWindowProperty({ application: { "windowBackground": "#853f3fe0" }, windowType: "terminal", "icon": defaultApps[2].icon }, data)
 }
 export function Software(data) {
     return getWindowProperty({ windowType: "software", "icon": defaultApps[3].icon }, data)
@@ -78,7 +75,6 @@ export function Setting(data) {
 export function CustomApplication(data) {
     return getWindowProperty({ windowType: "custom-application", "icon": defaultApps[5].icon, canMax: false }, data)
 }
-
 export function DeveloperDoc(data) {
     return getWindowProperty({ windowType: "developer-doc", "icon": defaultApps[6].icon }, data)
 }
