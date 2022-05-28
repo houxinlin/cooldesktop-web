@@ -60,7 +60,7 @@ const drop = (event) => {
   state.imageClass = "element-rotate"
   //上传并且安装自定义软件
   apiInstallCustomApplication(formData, axiosConfig).then((res) => {
-    coolWindow.startNewSuccessMessageDialog(res.data.data)
+    postMessage({ "action": "notification", "param": { "message": res.data.data, "type": "success" } }, "*")
     resetState()
   })
 

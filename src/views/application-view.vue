@@ -159,7 +159,7 @@ function uninstall(id) {
   applicationApi.apiUnInstallApplication(id).then((response) => {
     //刷新应用程序列表
     loadingWindow.closeWindow()
-    coolWindow.startNewSuccessMessageDialog(response.data.data)
+    postMessage({ "action": "notification", "param": { "message": response.data.data, "type": "success" } }, "*")
     clearRefProgressValue(id)
     refreshInstalled()
   })

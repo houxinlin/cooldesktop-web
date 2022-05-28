@@ -63,7 +63,7 @@ export function UploadManager(data) {
     return getWindowProperty({ windowType: "upload-manager", "icon": defaultApps[1].icon }, data)
 }
 export function Terminal(data) {
-    return getWindowProperty({ application: { "windowBackground": "#853f3fe0" }, windowType: "terminal", "icon": defaultApps[2].icon }, data)
+    return getWindowProperty({ application: { "windowBackground": "#0b0a0bcc" }, windowType: "terminal", "icon": defaultApps[2].icon }, data)
 }
 export function Software(data) {
     return getWindowProperty({ windowType: "software", "icon": defaultApps[3].icon }, data)

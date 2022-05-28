@@ -1,7 +1,6 @@
 
 <template>
   <div :class="{ 'desktop-none': state.desktopScale }" :style="{'background-image':defaultBackgroundImageUrl}" class="desktop">
-
     <div class="app-starter" :class="{ 'app-starter-visible': state.appStarterVisible }">
       <div class="app-list">
         <ul>
@@ -180,6 +179,7 @@ const startHandlerWindow = (item) => {
 /**
  * 以下是测试区域
  */
+// coolWindow.startNewTerminal()
 
 /**
  * 测试区域结束

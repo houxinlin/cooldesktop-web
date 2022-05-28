@@ -1,7 +1,7 @@
 <template>
   <BaseWindow :item="item" className="terminal">
     <template v-slot:body>
-      <div id="xterm-container"></div>
+      <div class="xterm-container"></div>
     </template>
     <template v-slot:header>
       <header>{{windowTitle}}</header>
@@ -15,10 +15,24 @@ const props = defineProps({
   item: Object,
   actionWindowId: String,
 });
-props.item.events = function (e, d) {
-  if (e == "close") {
+
+import { defineProps, onMounted, ref, getCurrentInstance } from "vue";
+import { createTerminalInstance } from "../utils/xterm.js"
+import { Terminal } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
+import { AttachAddon } from 'xterm-addon-attach';
+let windowTitle = ref("连接中...")
+let terminalSocket = null
+let listenerWindowSizeEventTimerId = null
+let term = null
+const fitAddon = new FitAddon();
+const instance = [createTerminalInstance(), createTerminalInstance(), createTerminalInstance(), createTerminalInstance(), createTerminalInstance()]
+//事件监听
+props.item.events = function (name, data) {
+  //关闭窗口
+  if (name == "close" && term != null) {
     //断开连接
-    terminalSocket.close()
+    if (terminalSocket != null) terminalSocket.close()
     terminalSocket = null
     term.dispose()
     term.clear()
@@ -26,74 +40,68 @@ props.item.events = function (e, d) {
     term.reset()
     clearInterval(listenerWindowSizeEventTimerId)
   }
+  //大小改变
+  if (name == "sizeChange" && term!=null) {
+    fitAddon.fit();
+    var setSizeMessage =
+      "setSize" +
+      prefixInteger(term.cols, 4) +
+      prefixInteger(term.rows, 4) +
+      prefixInteger(data.width, 4) +
+      prefixInteger(data.height, 4);
+    terminalWindowSizeData = setSizeMessage
+  }
 };
-
-import elementResizeDetectorMaker from "element-resize-detector";
-
-import { defineProps, onMounted, ref, getCurrentInstance } from "vue";
-import Stomp from "stompjs";
-let stompClient = null;
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
-import { AttachAddon } from 'xterm-addon-attach';
-let windowTitle = ref("连接中...")
-let terminalSocket = null
-let listenerWindowSizeEventTimerId = null
-const fitAddon = new FitAddon();
-const term = new Terminal({
-  fontSize: 17,
-  rightClickSelectsWord: true,
-  letterSpacing: 0,
-  allowTransparency: true,
-  cursorBlink: true,
-  cursorStyle: "bar",
-  cols: 65,
-  rows: 20,
-  theme: {
-    foreground: "#ffffff",
-    background: "#00000000",
-  },
-});
 
 let { proxy } = getCurrentInstance()
 proxy.eventBus.on("/event/message/terminal", (e) => {
   writeMegToTerm(e.msg)
 })
-
-
 let terminalWindowSizeData = ""
 //宽度自适应
-term.loadAddon(fitAddon);
 
-const PrefixInteger = (num, n) => {
+const prefixInteger = (num, n) => {
   return (Array(n).join(0) + num).slice(-n);
 };
+function deleteChild() {
+  var e = document.querySelector(`#${props.item.id} .xterm-container`);
+  var first = e.firstElementChild;
+  while (first) {
+    first.remove();
+    first = e.firstElementChild;
+  }
+}
+const createTerminal = () => {
+  term = new Terminal({
+    fontSize: 14,
+    rightClickSelectsWord: true,
+    letterSpacing: 0,
+    allowTransparency: true,
+    cursorBlink: true,
+    cursorStyle: "bar",
+    lineHeight:1.2,
+    cols: 65,
+    rows: 20,
+    theme: {
+      foreground: "#ffffff",
+      background: "#00000000",
+    },
+  });
+  term.loadAddon(fitAddon);
+  term.open(document.querySelector(`#${props.item.id} .xterm-container`));
+
+}
 onMounted(() => {
+  deleteChild()
+  createTerminal();
+  connectWebSocket();
   listenerWindowSizeEventTimerId = setInterval(() => {
     if (terminalSocket != null && terminalWindowSizeData != "") {
       terminalSocket.send(terminalWindowSizeData)
+      term.refresh()
       terminalWindowSizeData = ""
     }
   }, 1000);
-
-  const erd = elementResizeDetectorMaker();
-  erd.listenTo(document.getElementById(props.item.id), (element) => {
-    fitAddon.fit();
-    var setSizeMessage =
-      "setSize" +
-      PrefixInteger(term.cols, 4) +
-      PrefixInteger(term.rows, 4) +
-      PrefixInteger(element.offsetWidth, 4) +
-      PrefixInteger(element.offsetHeight, 4);
-    terminalWindowSizeData = setSizeMessage
-
-  });
-  let xterm = document.querySelector("#" + props.item.id + " #xterm-container");
-  term.clear()
-  term.clearSelection()
-  term.reset()
-  term.open(xterm);
-  connectWebSocket();
 });
 
 const websocketClose = (e) => {

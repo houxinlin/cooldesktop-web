@@ -33,7 +33,8 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, onMounted } from "vue";
+import elementResizeDetectorMaker from "element-resize-detector";
 import { coolWindow, wact } from "../windows/window-manager.js";
 const props = defineProps({
   className: String,
@@ -46,6 +47,23 @@ const backgroundFilter = (value) => {
   let back = (value || {}).windowBackground || "#000000c4"
   return back
 }
+onMounted(() => {
+  const erd = elementResizeDetectorMaker();
+  //监听窗口大小改变
+  erd.listenTo(document.getElementById(props.item.id), (element) => {
+    pushSizeChangeEvent(element.offsetWidth, element.offsetHeight)
+  });
+  console.log(props);
+})
+const pushSizeChangeEvent = (width, height) => {
+  if (props.item.windowType == "web") {
+    let iframe = document.querySelector(`#${props.item.id} .mainFrame`).contentWindow;
+    iframe.postMessage({ "eventName": "windowEvent", "detailName": "sizeChange", "data": { width, height } }, "*");
+  }
+  wact.postWindowEvents(props.item.id, "sizeChange", { height, width })
+
+};
+
 </script>
 
 <style>
