@@ -41,7 +41,7 @@ props.item.events = function (name, data) {
     clearInterval(listenerWindowSizeEventTimerId)
   }
   //大小改变
-  if (name == "sizeChange" && term!=null) {
+  if (name == "sizeChange" && term != null) {
     fitAddon.fit();
     var setSizeMessage =
       "setSize" +
@@ -58,7 +58,6 @@ proxy.eventBus.on("/event/message/terminal", (e) => {
   writeMegToTerm(e.msg)
 })
 let terminalWindowSizeData = ""
-//宽度自适应
 
 const prefixInteger = (num, n) => {
   return (Array(n).join(0) + num).slice(-n);
@@ -73,13 +72,13 @@ function deleteChild() {
 }
 const createTerminal = () => {
   term = new Terminal({
-    fontSize: 14,
+    fontSize: 15,
     rightClickSelectsWord: true,
     letterSpacing: 0,
     allowTransparency: true,
     cursorBlink: true,
     cursorStyle: "bar",
-    lineHeight:1.2,
+    lineHeight: 1.2,
     cols: 65,
     rows: 20,
     theme: {
@@ -98,7 +97,6 @@ onMounted(() => {
   listenerWindowSizeEventTimerId = setInterval(() => {
     if (terminalSocket != null && terminalWindowSizeData != "") {
       terminalSocket.send(terminalWindowSizeData)
-      term.refresh()
       terminalWindowSizeData = ""
     }
   }, 1000);
@@ -113,7 +111,7 @@ const writeMegToTerm = (msg) => {
 const websocketOpen = (e) => {
   windowTitle.value = "终端"
   if (props.item.data.path != null) {
-    terminalSocket.send("cd " + props.item.data.path + "\r")
+    terminalSocket.send(`cd ${props.item.data.path} \r`)
   }
 }
 const connectWebSocket = () => {

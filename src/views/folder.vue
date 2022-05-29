@@ -235,9 +235,6 @@ const callbackSelect = () => {
     wact.closeWindow(props.item.id)
     return
   }
-
-
-  // console.log(getsstate.currentSelectName)
 }
 const showOpenMethod = () => {
   hideAllPopupMenu()

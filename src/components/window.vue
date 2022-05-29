@@ -53,7 +53,6 @@ onMounted(() => {
   erd.listenTo(document.getElementById(props.item.id), (element) => {
     pushSizeChangeEvent(element.offsetWidth, element.offsetHeight)
   });
-  console.log(props);
 })
 const pushSizeChangeEvent = (width, height) => {
   if (props.item.windowType == "web") {

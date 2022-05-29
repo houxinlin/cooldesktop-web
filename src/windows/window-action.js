@@ -76,22 +76,13 @@ export class WindowActions {
         if (state.appStarterVisible) {
             this.hideWindow(false);
             state.appStarterVisible = false;
-            
         }
         this.setWindowPos(id);
         //如果当前Window已经显示，并且是置顶，则开始动画
         let app = this.getAppById(id);
-        if (app.instance.actionWindow == true) {
-            app.instance.windowScale = true;
-            setTimeout(() => {
-                app.instance.windowScale = false;
-            }, 301);
-            return;
-        }
         if (app.instance.minState) {
             app.instance.minState = false;
         }
-        //显示Window
 
     };
 

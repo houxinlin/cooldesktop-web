@@ -1,8 +1,4 @@
 div.software.window-item{
-    height: 560px  ;
-    width: 870px ;
-    left: calc(50% - 435px);
-    top: calc(50% - 280px);
     header{
         display: flex;
         align-items: center;
@@ -17,11 +13,10 @@ div.software.window-item{
     .window-body{
         display: flex;
         position: relative;
-
+        overflow: hidden;
         aside{
             min-width: 120px;
             color: #d1d1d1;
-            background: #d3d1d10f;
             font-size: 16px;
             
             ul {
@@ -29,14 +24,14 @@ div.software.window-item{
                 padding-left: 16px;
               }
               li.select{
-                background: #d9d4d40d;
+                background: #dfe1e133;
               }
             }
          
         }
         .container{
             .app-install-container{
-                padding: 70px;
+                padding: 10px;
                 .screenshot{
                     overflow-x: auto;
                     display: flex;
@@ -94,7 +89,7 @@ div.software.window-item{
                     }
                     .introduce{
                         flex: 1;
-                        margin-left: 120px;
+                        margin-left: 20px;
                        .introduce-item{
                             display: flex;
                             color: #e3dfdf;
