@@ -42,10 +42,10 @@ class CoolWindowStarter {
         state.appStarterVisible = !state.appStarterVisible;
     };
 
-    startNewFolder = (path = "/",single=false) => {
-        if(single){
+    startNewFolder = (path = "/", single = false) => {
+        if (single) {
             for (const window of state.windowsCollection) {
-                if(window.windowType=="folder"  && path ==window.data.path.path){
+                if (window.windowType == "folder" && path == window.data.path.path) {
                     return
                 }
             }
@@ -112,8 +112,8 @@ class CoolWindowStarter {
         startNewWindow(props)
     }
 
-    startNewInputDialog = (callback, title = "提示") => {
-        startNewWindow(createWindowByType(WindowEnum.DialogInput, { callback, title }))
+    startNewInputDialog = (callback, title = "提示", defaultValue = "") => {
+        startNewWindow(createWindowByType(WindowEnum.DialogInput, { callback, title, defaultValue }))
     }
 }
 export const coolWindow = new CoolWindowStarter();

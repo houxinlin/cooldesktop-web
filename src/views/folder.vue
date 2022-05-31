@@ -203,14 +203,20 @@ const runShell = (path) => {
 }
 const runJar = (path) => {
   hideAllPopupMenu()
-  coolWindow.startNewInputDialog((value) => {
-    let loading = coolWindow.startNewLoadingView("启动中")
-    folderApis.apiRunJar(path, value.targetName).then((e) => {
-      coolWindow.startNewSuccessMessageDialog(e.data.data == true ? "启动成功" : "启动失败")
-      loading.closeWindow()
-    })
-  }, "填写启动参数")
 
+  sysApis.apiGetSysProperty(`jar_arg_${path}`).then((response) => {
+    console.log(response);
+    coolWindow.startNewInputDialog((value) => {
+      let loading = coolWindow.startNewLoadingView("启动中")
+      sysApis.apiSetSysProperty(`jar_arg_${path}`, value.targetName).then((setPropertyResponse) => {
+
+      })
+      folderApis.apiRunJar(path, value.targetName).then((e) => {
+        coolWindow.startNewSuccessMessageDialog(e.data.data == true ? "启动成功" : "启动失败")
+        loading.closeWindow()
+      })
+    }, "填写启动参数", response.data.data)
+  })
 }
 const stopJar = (path) => {
   let loading = coolWindow.startNewLoadingView("停止中")

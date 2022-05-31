@@ -41,10 +41,6 @@ export function apiRemoveOpenUrl(url) {
     }));
 }
 
-
-
-
-
 export function apiSetSysProperty(key, value) {
     return axios.post("/desktop/api/system/setSysProperty", qs.stringify({
         key, value

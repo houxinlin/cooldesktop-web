@@ -17,7 +17,6 @@ export function apiDeleteFileOrFolder(params) {
     });
 }
 
-
 export function apiChunkFileUpload(chunkFile, axiosRequestConfig) {
     return axios.post("/desktop/api/file/chunkUpload", chunkFile, axiosRequestConfig);
 }
@@ -77,11 +76,13 @@ export function apiCreateFile(parent, name, type) {
 }
 
 export function apiRunJar(path,arg) {
+    let config = {
+        timeout: 1000*15,
+    };
     return axios.post("/desktop/api/file/runJar", qs.stringify({
         path,arg
-    }));
+    }),config);
 }
-
 
 export function apiStopJar(path) {
     return axios.post("/desktop/api/file/stopJar", qs.stringify({
