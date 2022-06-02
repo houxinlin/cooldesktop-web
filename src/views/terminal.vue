@@ -78,7 +78,10 @@ const createTerminal = () => {
     allowTransparency: true,
     cursorBlink: true,
     cursorStyle: "bar",
-    lineHeight: 1.2,
+    lineHeight: 1.25,
+    cursorWidth:2,
+    fontFamily:'YaHei',
+    windowsMode:true,
     cols: 65,
     rows: 20,
     theme: {

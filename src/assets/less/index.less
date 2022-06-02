@@ -258,3 +258,15 @@ body{
   .border-5-radius{
     border-radius: 5px;
   }
+  @keyframes rotateAnimation{
+  from {
+    transform: rotate(0deg);
+  }
+  to {   
+     transform: rotate(360deg);
+    }
+  }
+  .loading img{
+    animation: rotateAnimation  2s linear infinite;
+    animation-delay: 0s;
+  }

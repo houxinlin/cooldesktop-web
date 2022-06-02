@@ -18,6 +18,7 @@
           </div>
           <div class="item-group">
             <li @click="openFileAttribute(getCurrentDirectory())">属性</li>
+            <li @click="copyFilePath(getCurrentDirectory())">复制文件路径</li>
           </div>
           <div class="item-group">
             <li @click="sendToDesktop(getSelectFile().path)">发送到桌面</li>
@@ -50,6 +51,7 @@
           </div>
           <div class="item-group">
             <li @click="openFileAttribute(getSelectFile().path)">属性</li>
+            <li @click="copyFilePath(getSelectFile().path)">复制文件路径</li>
           </div>
           <div class="item-group">
             <li @click="sendToDesktop(getSelectFile().path)">发送到桌面</li>
@@ -98,6 +100,9 @@
       <div @dragstart="dragstart" @dragover="dragover" @dragleave="dragleave" @drop="drop" @contextmenu.prevent="folderContextMenu($event)" @click="
            hideAllPopupMenu()
         " class="folder-global">
+        <div v-if="loadingVisable" class="loading pos-absolute flex pos-ltrb0 flex-all-center">
+          <img class="wh-40px" src="../assets/icon/ic-loading.png" alt="">
+        </div>
         <ul class="folder-u" v-if="item.windowType == 'folder'">
           <template v-for="(item, index) in state.child" :key="item">
             <li @contextmenu.prevent="fileContextMenu($event, item)" :class="{ select: state.currentSelectName == item.name }" @click="
@@ -157,7 +162,11 @@ const props = defineProps({
   actionWindowId: String
 });
 
+import { copyText } from 'vue3-clipboard'
 
+
+
+import VueClipboard from 'vue3-clipboard'
 import BaseWindow from "../components/window.vue";
 //字符串常量
 import * as string from "../global/strings.js";
@@ -173,7 +182,8 @@ import { offerFile } from "../utils/upload/file-upload";
 import { uploads } from "../utils/upload/manager";
 import { applicationState, getApplicationByMedia } from "../global/application.js";
 import { randId } from "../utils/utils.js"
-
+const message = ref("false")
+let loadingVisable = ref(false)
 //传递过来的数据
 let state = reactive({ ...props.item.data });
 //服务器域名
@@ -190,7 +200,10 @@ let taskDoneExecuteMap = new Map()
 let doneCallback = new Map()
 
 let selectOpenMethod = ref(false)
-
+const copyFilePath = (text) => {
+  copyText(text, undefined, (error, event) => { })
+  hideAllPopupMenu()
+}
 const sendToDesktop = (path) => {
   hideAllPopupMenu()
   sysApis.apiAddDesktopFile(path).then((Response) => { })
@@ -455,7 +468,10 @@ const folderContextMenu = (e) => {
 };
 
 const listDirector = (path) => {
+  loadingVisable.value = true
+  state.child.length = 0
   folderApis.apiListDirectory(path).then((res) => {
+    loadingVisable.value = false
     state.child = res.data.data;
     state.searchInputVisible = false;
     rawFils = state.child;
@@ -464,7 +480,7 @@ const listDirector = (path) => {
     }
   });
 };
-//处理双击事件
+//处理文件双击事件
 const doHandlerFileDblClick = (item) => {
   //不知道文件类型
   if (item.type == "none") {
