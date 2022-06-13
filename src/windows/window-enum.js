@@ -21,61 +21,61 @@ let BASE_WINDOW_PROPERTYS = {
 }
 
 function getWindowProperty(windowProperty, data = {}) {
-    return Object.assign({}, BASE_WINDOW_PROPERTYS, windowProperty, { data })
+    return Object.assign({}, BASE_WINDOW_PROPERTYS, windowProperty, { data });
 }
 export function ErrorMessage(data) {
-    return getWindowProperty({ application: { "windowBackground": "#c95447d4" }, windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
+    return getWindowProperty({ applicationId: 1, application: { "windowBackground": "#c95447d4", windowSize: 29884616 }, windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function SuccessMessage(data) {
-    return getWindowProperty({ windowType: "success-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
+    return getWindowProperty({ applicationId: 2, windowType: "success-message", application: { windowSize: 29884616 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function WebWindow(data) {
-    return getWindowProperty({ windowType: "web" }, data)
+    return getWindowProperty({ windowType: "web" }, data);
 }
 export function NotifyWindow() {
-    return getWindowProperty({ windowType: "notif-window" }, data)
+    return getWindowProperty({ applicationId: 4, windowType: "notif-window" }, data);
 }
 export function DialogCompressSelect(data) {
-    return getWindowProperty({ windowType: "dialog-compress-select", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
+    return getWindowProperty({ applicationId: 5, windowType: "dialog-compress-select", application: { windowSize: 27525378 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function FileAttribute(data) {
-    return getWindowProperty({ windowType: "file-attribute" }, data)
+    return getWindowProperty({ applicationId: 6, windowType: "file-attribute", application: { windowSize: 28181080 }}, data);
 }
 export function DialogCreateFile(data) {
-    return getWindowProperty({ windowType: "dialog-create-file", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
+    return getWindowProperty({ applicationId: 7, windowType: "dialog-create-file", showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function DialogInput(data) {
-    return getWindowProperty({ windowType: "input-dialog", showWindowInTaskBar: false, canMax: false, canMin: false }, data)
+    return getWindowProperty({ applicationId: 8, windowType: "input-dialog", application: { windowSize: 27525280 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function TextEditor(data) {
-    return getWindowProperty({ windowType: "text-editor" }, data)
+    return getWindowProperty({ applicationId: 9, windowType: "text-editor" }, data);
 }
 export function LoadingView(data) {
-    return getWindowProperty({ windowType: "loading-view", showWindowInTaskBar: false, canClose: false, canMin: false }, data)
+    return getWindowProperty({ applicationId: 10, windowType: "loading-view", application: { windowSize: 9175220 }, showWindowInTaskBar: false, canClose: false, canMin: false, canResize: false }, data);
 }
 export function FolderWindow(data = {}) {
-    return getWindowProperty({ windowType: "folder", "icon": defaultApps[0].icon, isSelect: false }, data)
+    return getWindowProperty({ applicationId: 11, windowType: "folder", "icon": defaultApps[0].icon, isSelect: false }, data);
 }
 export function FileSelectWindow(data = {}) {
-    return getWindowProperty({ windowType: "folder", "icon": defaultApps[0].icon, canMin: false, canMax: false, isSelect: true }, data)
+    return getWindowProperty({ applicationId: 12, windowType: "folder", "icon": defaultApps[0].icon, canMin: false, canMax: false, isSelect: true }, data);
 }
 export function UploadManager(data) {
-    return getWindowProperty({ windowType: "upload-manager", "icon": defaultApps[1].icon }, data)
+    return getWindowProperty({ applicationId: 13, windowType: "upload-manager", "icon": defaultApps[1].icon }, data);
 }
 export function Terminal(data) {
-    return getWindowProperty({ application: { "windowBackground": "#0b0a0bcc" }, windowType: "terminal", "icon": defaultApps[2].icon }, data)
+    return getWindowProperty({ applicationId: 14, application: { "windowBackground": "#0b0a0bcc", windowSize: 56885748 }, windowType: "terminal", "icon": defaultApps[2].icon }, data);
 }
 export function Software(data) {
-    return getWindowProperty({ windowType: "software", "icon": defaultApps[3].icon }, data)
+    return getWindowProperty({ applicationId: 15, windowType: "software", "icon": defaultApps[3].icon }, data);
 }
 export function Setting(data) {
-    return getWindowProperty({ windowType: "setting", "icon": defaultApps[4].icon }, data)
+    return getWindowProperty({ applicationId: 16, windowType: "setting", "icon": defaultApps[4].icon }, data);
 }
 
 export function CustomApplication(data) {
-    return getWindowProperty({ windowType: "custom-application", "icon": defaultApps[5].icon, canMax: false }, data)
+    return getWindowProperty({ applicationId: 17, windowType: "custom-application", "icon": defaultApps[5].icon, canMax: false }, data);
 }
 export function DeveloperDoc(data) {
-    return getWindowProperty({ windowType: "developer-doc", "icon": defaultApps[6].icon }, data)
+    return getWindowProperty({ applicationId: 18, windowType: "developer-doc", "icon": defaultApps[6].icon }, data);
 }
 

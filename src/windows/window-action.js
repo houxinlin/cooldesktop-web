@@ -8,23 +8,19 @@ export class WindowActions {
     closeWindowByType = (windowType) => {
         let ids = []
         for (let index = 0; index < state.windowsCollection.length; index++) {
-            if (state.windowsCollection[index].windowType == windowType) {
-                ids.push(index);
-            }
+            if (state.windowsCollection[index].windowType == windowType) ids.push(index);
         }
         for (const iterator of ids) {
-            state.windowsCollection.splice(iterator, 1)
+            state.windowsCollection.splice(iterator, 1);
         }
     }
     hideWindow = (status) => {
         if (status) {
-            state.windowVisibleState = state.windowsCollection.filter(
-                (item) => item.hideWindow == true
-            );
+            state.windowVisibleState = state.windowsCollection.filter((item) => item.hideWindow == true);
             for (const iterator of state.windowsCollection) {
                 iterator.hideWindow = true;
             }
-            return
+            return;
         }
         for (const iterator of state.windowsCollection) {
             iterator.hideWindow = false;
@@ -38,8 +34,6 @@ export class WindowActions {
             index: index,
         };
     };
-
-
     setWindowPos = (id) => {
         for (const item of state.windowsCollection) {
             item.actionWindow = false;
@@ -65,9 +59,7 @@ export class WindowActions {
 
     showWindowByApplicationId = (id) => {
         let index = state.windowsCollection.findIndex((item) => { return id === (item.application || {}).applicationId })
-        if (index != -1) {
-            this.showWindow(state.windowsCollection[index].id)
-        }
+        if (index != -1) this.showWindow(state.windowsCollection[index].id);
 
     }
     //显示Window
@@ -88,7 +80,6 @@ export class WindowActions {
 
     //最小化
     windowMin = (id) => {
-
         this.getAppById(id).instance.minState = !this.getAppById(id).instance.minState;
         this.getAppById(id).instance.actionWindow = false;
         state.actionWindowId = -1;
@@ -129,12 +120,9 @@ export class WindowActions {
         }
     };
 
-
     postWindowEvents = (id, name, e) => {
         let events = this.getAppById(id).instance.events
-        if (typeof (events) == "function") {
-            events(name, e)
-        }
+        if (typeof (events) == "function") events(name, e);
     }
     windowMove = (e) => {
         if (e.which == 3) {
@@ -152,7 +140,7 @@ export class WindowActions {
             odiv = odiv.parentNode;
             if (list.findIndex((item) => item == "window-title") != -1) {
                 if (!canMove) {
-                    canMove = true
+                    canMove = true;
                 }
             }
             let classList = odiv.classList;
@@ -162,11 +150,11 @@ export class WindowActions {
             list = [...classList];
         }
         actionMoveId = odiv.getAttribute("data-id");
-        this.setWindowPos(actionMoveId)
+        this.setWindowPos(actionMoveId);
 
         //除了window-body其他都可以移动
         if (!canMove) {
-            return
+            return;
         }
         let disX = e.clientX - odiv.offsetLeft;
         let disY = e.clientY - odiv.offsetTop;

@@ -10,7 +10,8 @@
       'max-window': item.maxState,
       'window-z-height': item.actionWindow,
       'window-item-resize':item.canResize,
-    } ,className,backgroundClass]" :style="[{'background':backgroundFilter(item.application )}]" class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
+    } ,className,backgroundClass]" :style="[{'left':(first?windowLeft:'error')},{'top':(first?windowTop:'error')},{'width':windowWidth+'px','height':windowHeight+'px','background':backgroundFilter(item.application )}]"
+    class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
     <!-- 插槽3 扩展 -->
     <slot name="extend"></slot>
     <div @click="wact.setWindowPos(item.id)" v-if="item.windowType=='web'" :class="{ action:  item.actionWindow }" class="window-mask"></div>
@@ -33,9 +34,16 @@
 </template>
 
 <script setup>
-import { defineProps, onMounted } from "vue";
+import { defineProps, onMounted, ref } from "vue";
 import elementResizeDetectorMaker from "element-resize-detector";
 import { coolWindow, wact } from "../windows/window-manager.js";
+import { height16, low16 } from "../utils/utils.js";
+import { LoadingView } from "../windows/window-enum.js";
+let windowWidth = ref(0);
+let windowHeight = ref(0);
+let windowLeft = ref(0);
+let windowTop = ref(0);
+let first = ref(true)
 const props = defineProps({
   className: String,
   item: Object,
@@ -43,15 +51,40 @@ const props = defineProps({
   title: String,
   backgroundClass: String
 });
+const getWindowsSize = (type) => {
+  const defaultWidth = "666";
+  const defaultHeight = "422";
+  if (!props.item.hasOwnProperty("application")) {
+    if (type == 1) return defaultWidth;
+    if (type == 2) return defaultHeight;
+  };
+  if (props.item.application.windowSize == 0 && type == 1) return defaultWidth;
+  if (props.item.application.windowSize == 0 && type == 2) return defaultHeight;
+  if (type == 1) return height16(props.item.application.windowSize);
+  if (type == 2) return low16(props.item.application.windowSize);
+}
 const backgroundFilter = (value) => {
-  let back = (value || {}).windowBackground || "#000000c4"
-  return back
+  let back = (value || {}).windowBackground || "#000000c4";
+  return back;
 }
 onMounted(() => {
+
+  let localSize = localStorage.getItem(props.item.applicationId);
+  windowWidth.value = localSize != null ? JSON.parse(localSize).width : getWindowsSize(1);
+  windowHeight.value = localSize != null ? JSON.parse(localSize).height : getWindowsSize(2);
+
+  console.log(windowWidth.value);
+  windowLeft.value = `calc(50% - ${windowWidth.value / 2}px)`
+  windowTop.value = `calc(50% - ${windowHeight.value / 2}px)`
+  setTimeout(() => { first.value = false }, 10);
+
   const erd = elementResizeDetectorMaker();
   //监听窗口大小改变
   erd.listenTo(document.getElementById(props.item.id), (element) => {
-    pushSizeChangeEvent(element.offsetWidth, element.offsetHeight)
+    localStorage.setItem(props.item.applicationId, JSON.stringify({ width: element.offsetWidth, height: element.offsetHeight, left: element.offsetLeft, top: element.offsetTop }));
+    windowWidth.value = element.offsetWidth;
+    windowHeight.value = element.offsetHeight;
+    pushSizeChangeEvent(element.offsetWidth, element.offsetHeight);
   });
 })
 const pushSizeChangeEvent = (width, height) => {
@@ -59,7 +92,7 @@ const pushSizeChangeEvent = (width, height) => {
     let iframe = document.querySelector(`#${props.item.id} .mainFrame`).contentWindow;
     iframe.postMessage({ "eventName": "windowEvent", "detailName": "sizeChange", "data": { width, height } }, "*");
   }
-  wact.postWindowEvents(props.item.id, "sizeChange", { height, width })
+  wact.postWindowEvents(props.item.id, "sizeChange", { height, width });
 
 };
 

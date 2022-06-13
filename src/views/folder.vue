@@ -1,6 +1,7 @@
 <template>
   <BaseWindow :item="item" className="folder">
     <template v-slot:extend>
+      <!-- 文件右击菜单 -->
       <div v-if="state.folderContextMenuVisible" :style="{
         left: state.folderContextMenuPoint.x + 'px',
         top: state.folderContextMenuPoint.y + 'px',
@@ -21,7 +22,7 @@
             <li @click="copyFilePath(getCurrentDirectory())">复制文件路径</li>
           </div>
           <div class="item-group">
-            <li @click="sendToDesktop(getSelectFile().path)">发送到桌面</li>
+            <li @click="sendToDesktop(getCurrentDirectory())">发送到桌面</li>
           </div>
         </menu>
       </div>
@@ -60,8 +61,9 @@
             <li>
               <span>jar</span>
               <menu class="second-menu">
-            <li @click="runJar(getSelectFile().path)">运行</li>
+            <li @click="runJar(getSelectFile().path,0)">运行</li>
             <li @click="stopJar(getSelectFile().path)">停止</li>
+            <li @click="runJar(getSelectFile().path,1)">重启</li>
         </menu>
         </li>
       </div>
@@ -162,11 +164,7 @@ const props = defineProps({
   actionWindowId: String
 });
 
-import { copyText } from 'vue3-clipboard'
 
-
-
-import VueClipboard from 'vue3-clipboard'
 import BaseWindow from "../components/window.vue";
 //字符串常量
 import * as string from "../global/strings.js";
@@ -182,8 +180,10 @@ import { offerFile } from "../utils/upload/file-upload";
 import { uploads } from "../utils/upload/manager";
 import { applicationState, getApplicationByMedia } from "../global/application.js";
 import { randId } from "../utils/utils.js"
-const message = ref("false")
+import { notifyMessage } from "../utils/notify.js"
 let loadingVisable = ref(false)
+import { copyText } from 'vue3-clipboard'
+
 //传递过来的数据
 let state = reactive({ ...props.item.data });
 //服务器域名
@@ -195,50 +195,61 @@ let rawFils = [];
 //这里主要用于eventbus
 let { proxy } = getCurrentInstance();
 //任务完成后会掉
-let taskDoneExecuteMap = new Map()
-//文件粘贴标识
 let doneCallback = new Map()
 
 let selectOpenMethod = ref(false)
+
+//复制文件路径
 const copyFilePath = (text) => {
   copyText(text, undefined, (error, event) => { })
   hideAllPopupMenu()
 }
+//发送到桌面
 const sendToDesktop = (path) => {
   hideAllPopupMenu()
   sysApis.apiAddDesktopFile(path).then((Response) => { })
 }
+//运行shell
 const runShell = (path) => {
   hideAllPopupMenu()
   folderApis.apiRunShell(path).then((e) => {
 
   })
 }
-const runJar = (path) => {
+//运行jar，获取参数
+const runJar = (path, type) => {
   hideAllPopupMenu()
-
-  sysApis.apiGetSysProperty(`jar_arg_${path}`).then((response) => {
-    console.log(response);
+  //首先获取启动历史参数
+  sysApis.apiGetAppProperty(`jar_arg_${path}`).then((response) => {
+    if (type == 1) {
+      callRunJarApi(path, response.data.data, type)
+      return
+    }
     coolWindow.startNewInputDialog((value) => {
-      let loading = coolWindow.startNewLoadingView("启动中")
-      sysApis.apiSetSysProperty(`jar_arg_${path}`, value.targetName).then((setPropertyResponse) => {
+      sysApis.apiSetAppProperty(`jar_arg_${path}`, value.targetName).then((setPropertyResponse) => { })
+      callRunJarApi(path, value.targetName, type)
 
-      })
-      folderApis.apiRunJar(path, value.targetName).then((e) => {
-        coolWindow.startNewSuccessMessageDialog(e.data.data == true ? "启动成功" : "启动失败")
-        loading.closeWindow()
-      })
     }, "填写启动参数", response.data.data)
   })
 }
+//运行jar
+const callRunJarApi = (path, arg, type) => {
+  let loading = coolWindow.startNewLoadingView("启动中")
+  folderApis.apiRunJar(path, arg, type).then((e) => {
+    notifyMessage(e.data.data == true ? "启动成功" : "启动失败")
+    loading.closeWindow()
+  })
+}
+//停止jar
 const stopJar = (path) => {
   let loading = coolWindow.startNewLoadingView("停止中")
   folderApis.apiStopJar(path).then((e) => {
-    coolWindow.startNewSuccessMessageDialog(e.data.data)
+    notifyMessage(e.data.data)
     loading.closeWindow()
   })
   hideAllPopupMenu()
 }
+//打开应用程序
 const openByApplicationId = (application) => {
   selectOpenMethod.value = false
   let file = getSelectFile()
@@ -255,6 +266,7 @@ const callbackSelect = () => {
     return
   }
 }
+//展示打开方式
 const showOpenMethod = () => {
   hideAllPopupMenu()
   selectOpenMethod.value = true
@@ -295,7 +307,7 @@ const downloadCurSelectFile = () => {
 //创建文件
 const createFile = (type) => {
   hideAllPopupMenu();
-  coolWindow.startNewDialogCreateFile((data) => {
+  coolWindow.startNewInputDialog((data) => {
     folderApis
       .apiCreateFile(getCurrentDirectory(), data.targetName, type)
       .then((res) => {
@@ -304,7 +316,8 @@ const createFile = (type) => {
         }
         refresh();
       });
-  });
+  }, "输入文件名")
+
 };
 //打开文件属性
 const openFileAttribute = (filePath) => {

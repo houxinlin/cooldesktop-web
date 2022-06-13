@@ -41,15 +41,15 @@ export function apiRemoveOpenUrl(url) {
     }));
 }
 
-export function apiSetSysProperty(key, value) {
-    return axios.post("/desktop/api/system/setSysProperty", qs.stringify({
+export function apiSetAppProperty(key, value) {
+    return axios.post("/desktop/api/system/setAppProperty", qs.stringify({
         key, value
     }));
 }
 
 
-export function apiGetSysProperty(key) {
-    return axios.post("/desktop/api/system/getSysProperty", qs.stringify({
+export function apiGetAppProperty(key) {
+    return axios.post("/desktop/api/system/getAppProperty", qs.stringify({
         key
     }));
 }

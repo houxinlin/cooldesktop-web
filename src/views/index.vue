@@ -179,8 +179,6 @@ const startHandlerWindow = (item) => {
 /**
  * 以下是测试区域
  */
-// coolWindow.startNewTerminal()
-
 /**
  * 测试区域结束
  */
