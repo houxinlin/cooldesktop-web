@@ -21,7 +21,7 @@
         <slot name="header"></slot>
         <div class="opt">
           <i v-if="item.canMin" class="iconfont icon-tzuixiaohua" @click="wact.windowMin(item.id)"></i>
-          <i v-if="item.canMax" class="iconfont icon-big" @click="wact.windowFullScreen(item.id)"></i>
+          <i v-if="item.canMax" class="iconfont icon-big" @click="windowFullScreen(item.id)"></i>
           <i v-if="item.canClose" class="iconfont icon-webicon309" @click="wact.closeWindow(item.id)"></i>
         </div>
       </div>
@@ -36,14 +36,14 @@
 <script setup>
 import { defineProps, onMounted, ref } from "vue";
 import elementResizeDetectorMaker from "element-resize-detector";
-import { coolWindow, wact } from "../windows/window-manager.js";
+import { wact } from "../windows/window-manager.js";
 import { height16, low16 } from "../utils/utils.js";
-import { LoadingView } from "../windows/window-enum.js";
 let windowWidth = ref(0);
 let windowHeight = ref(0);
 let windowLeft = ref(0);
 let windowTop = ref(0);
 let first = ref(true)
+let restoreWindowsSizeTimeStamp = 0;
 const props = defineProps({
   className: String,
   item: Object,
@@ -67,23 +67,27 @@ const backgroundFilter = (value) => {
   let back = (value || {}).windowBackground || "#000000c4";
   return back;
 }
+const windowFullScreen = (id) => {
+  if (props.item.maxState) restoreWindowsSizeTimeStamp = new Date().getTime();
+  wact.windowFullScreen(id)
+}
 onMounted(() => {
-
   let localSize = localStorage.getItem(props.item.applicationId);
   windowWidth.value = localSize != null ? JSON.parse(localSize).width : getWindowsSize(1);
   windowHeight.value = localSize != null ? JSON.parse(localSize).height : getWindowsSize(2);
 
-  console.log(windowWidth.value);
   windowLeft.value = `calc(50% - ${windowWidth.value / 2}px)`
   windowTop.value = `calc(50% - ${windowHeight.value / 2}px)`
   setTimeout(() => { first.value = false }, 10);
 
   const erd = elementResizeDetectorMaker();
-  //监听窗口大小改变
+  //监听窗口大小改变,并将自己目前的宽度保存，下一次启动时候恢复
   erd.listenTo(document.getElementById(props.item.id), (element) => {
-    localStorage.setItem(props.item.applicationId, JSON.stringify({ width: element.offsetWidth, height: element.offsetHeight, left: element.offsetLeft, top: element.offsetTop }));
-    windowWidth.value = element.offsetWidth;
-    windowHeight.value = element.offsetHeight;
+    if (!element.classList.contains("max-window") && (new Date().getTime() - restoreWindowsSizeTimeStamp) > 500) {
+      localStorage.setItem(props.item.applicationId, JSON.stringify({ width: element.offsetWidth, height: element.offsetHeight, left: element.offsetLeft, top: element.offsetTop }));
+      windowWidth.value = element.offsetWidth;
+      windowHeight.value = element.offsetHeight;
+    }
     pushSizeChangeEvent(element.offsetWidth, element.offsetHeight);
   });
 })
