@@ -2,13 +2,14 @@ import Stomp from "stompjs";
 /**
  * WebSocket创建
  */
-export default (subscribe, socketMessage, websocketClose) => {
+export default (subscribe, socketMessageCallback, websocketCloseCallback) => {
     let url = `${import.meta.env.VITE_APP_REQUEST_URL}desktop-socket-endpoint`;
 
     let stompClient = Stomp.over(new SockJS(url));
     //连接成功则订阅
-    stompClient.connect({}, () => { stompClient.subscribe(subscribe, (e)=>{
-        socketMessage(e)
-    }); }, websocketClose);
+    stompClient.connect({}, () => {
+        stompClient.subscribe(subscribe, (e) => { socketMessageCallback(e) });
+    }, websocketCloseCallback);
     stompClient.debug = null;
+
 }

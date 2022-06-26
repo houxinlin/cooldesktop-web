@@ -1,4 +1,4 @@
-import defaultApps from "../software/default-software.js"
+import defaultApps from "../application/default-applications.js"
 let BASE_WINDOW_PROPERTYS = {
     showWindowInTaskBar: true,
     minState: false,
@@ -17,7 +17,8 @@ let BASE_WINDOW_PROPERTYS = {
     y: 0,
     closeWindowTransition: false,
     canResize: true,
-    singleInstance: false
+    singleInstance: false,
+    visibilityIsDesktop:false
 }
 
 function getWindowProperty(windowProperty, data = {}) {
@@ -77,5 +78,9 @@ export function CustomApplication(data) {
 }
 export function DeveloperDoc(data) {
     return getWindowProperty({ applicationId: 18, windowType: "developer-doc", "icon": defaultApps[6].icon }, data);
+}
+
+export function Tail(data) {
+    return getWindowProperty({visibilityIsDesktop:false, applicationId: 19, windowType: "tail", "icon": defaultApps[7].icon }, data);
 }
 

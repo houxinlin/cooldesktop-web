@@ -26,10 +26,8 @@
           </div>
         </menu>
       </div>
-      <div v-if="state.contextMenuVisible" :style="{
-        left: state.contextMenuPoint.x + 'px',
-        top: state.contextMenuPoint.y + 'px',
-      }" class="file-menu">
+      <!-- 文件右击菜单 -->
+      <div v-if="state.contextMenuVisible" :style="{  left: state.contextMenuPoint.x + 'px',  top: state.contextMenuPoint.y + 'px', }" class="file-menu">
         <menu>
           <div v-if="state.selectFileItem.type != 'folder'" class="item-group">
             <li @click="showOpenMethod()">打开方式</li>
@@ -41,7 +39,7 @@
             <li @click="deleteFile()">删除</li>
             <li @click="fileCopy()">复制</li>
             <li @click="fileCut()">剪切</li>
-            <li @click="reName()">重命名</li>
+            <li @click="rename()">重命名</li>
           </div>
           <div v-if="state.selectFileItem.type != 'folder'" class="item-group">
             <li @click="downloadCurSelectFile()">下载</li>
@@ -64,6 +62,7 @@
             <li @click="runJar(getSelectFile().path,0)">运行</li>
             <li @click="stopJar(getSelectFile().path)">停止</li>
             <li @click="runJar(getSelectFile().path,1)">重启</li>
+
         </menu>
         </li>
       </div>
@@ -75,11 +74,16 @@
         </menu>
         </li>
       </div>
+      <div v-if="state.selectFileItem.rawType=='out' || state.selectFileItem.rawType=='log'" class="item-group">
+        <li @click="tail(getSelectFile().path)">日志追踪</li>
+      </div>
       </menu>
       </div>
     </template>
     <template v-slot:body>
+      <!-- 打开方式遮罩 -->
       <div v-if="selectOpenMethod" class="select-method-mask pos-absolute fit-parent"></div>
+      <!-- 打开方式对话框 -->
       <div v-if="selectOpenMethod" class="select-method pos-absolute flex flex-all-center fit-parent">
         <div class="height-200px flex flex-column background-white ">
           <header class="grid">
@@ -198,78 +202,82 @@ let { proxy } = getCurrentInstance();
 let doneCallback = new Map()
 
 let selectOpenMethod = ref(false)
-
+//tail
+const tail = (path) => {
+  hideAllPopupMenu()
+  coolWindow.startTail(path)
+}
 //复制文件路径
 const copyFilePath = (text) => {
   copyText(text, undefined, (error, event) => { })
-  hideAllPopupMenu()
+  hideAllPopupMenu();
 }
 //发送到桌面
 const sendToDesktop = (path) => {
-  hideAllPopupMenu()
-  sysApis.apiAddDesktopFile(path).then((Response) => { })
+  hideAllPopupMenu();
+  sysApis.apiAddDesktopFile(path).then((Response) => { });
 }
 //运行shell
 const runShell = (path) => {
-  hideAllPopupMenu()
+  hideAllPopupMenu();
   folderApis.apiRunShell(path).then((e) => {
 
   })
 }
 //运行jar，获取参数
 const runJar = (path, type) => {
-  hideAllPopupMenu()
+  hideAllPopupMenu();
   //首先获取启动历史参数
   sysApis.apiGetAppProperty(`jar_arg_${path}`).then((response) => {
     if (type == 1) {
-      callRunJarApi(path, response.data.data, type)
-      return
+      callRunJarApi(path, response.data.data, type);
+      return;
     }
     coolWindow.startNewInputDialog((value) => {
-      sysApis.apiSetAppProperty(`jar_arg_${path}`, value.targetName).then((setPropertyResponse) => { })
-      callRunJarApi(path, value.targetName, type)
+      sysApis.apiSetAppProperty(`jar_arg_${path}`, value.targetName).then((setPropertyResponse) => { });
+      callRunJarApi(path, value.targetName, type);
 
     }, "填写启动参数", response.data.data)
   })
 }
 //运行jar
 const callRunJarApi = (path, arg, type) => {
-  let loading = coolWindow.startNewLoadingView("启动中")
+  let loading = coolWindow.startNewLoadingView("启动中");
   folderApis.apiRunJar(path, arg, type).then((e) => {
-    notifyMessage(e.data.data == true ? "启动成功" : "启动失败")
-    loading.closeWindow()
-  })
+    notifyMessage(e.data.data == true ? "启动成功" : "启动失败");
+    loading.closeWindow();
+  });
 }
 //停止jar
 const stopJar = (path) => {
-  let loading = coolWindow.startNewLoadingView("停止中")
+  let loading = coolWindow.startNewLoadingView("停止中");
   folderApis.apiStopJar(path).then((e) => {
-    notifyMessage(e.data.data)
-    loading.closeWindow()
+    notifyMessage(e.data.data);
+    loading.closeWindow();
   })
-  hideAllPopupMenu()
+  hideAllPopupMenu();
 }
 //打开应用程序
 const openByApplicationId = (application) => {
-  selectOpenMethod.value = false
-  let file = getSelectFile()
-  coolWindow.startNewWebView(application, `path=${file.path}`)
+  selectOpenMethod.value = false;
+  let file = getSelectFile();
+  coolWindow.startNewWebView(application, `path=${file.path}`);
 
 }
 const callbackSelect = () => {
-  if (getSelectFile() == null) return
-  if (props.item.selectType == "file" && getSelectFile().type == "folder") return
-  if (props.item.selectType == "folder" && getSelectFile().type != "folder") return
+  if (getSelectFile() == null) return;
+  if (props.item.selectType == "file" && getSelectFile().type == "folder") return;
+  if (props.item.selectType == "folder" && getSelectFile().type != "folder") return;
   if (props.item.selectCallback != undefined) {
-    props.item.selectCallback(getSelectFile())
-    wact.closeWindow(props.item.id)
-    return
+    props.item.selectCallback(getSelectFile());
+    wact.closeWindow(props.item.id);
+    return;
   }
 }
 //展示打开方式
 const showOpenMethod = () => {
-  hideAllPopupMenu()
-  selectOpenMethod.value = true
+  hideAllPopupMenu();
+  selectOpenMethod.value = true;
 }
 //显示文件上传管理器
 const showUploadView = () => {
@@ -438,7 +446,7 @@ const fileKeyDown = (events, index) => {
 const fileBlur = (index) => {
   state.child[index].edit = false;
 };
-const reName = () => {
+const rename = () => {
   let select = getSelectFile();
   let index = state.child.findIndex((r) => {
     return r == select;

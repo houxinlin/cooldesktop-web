@@ -6,7 +6,7 @@
         <ul>
           <!-- 默认应用 -->
           <template v-for="item in defaultAppList" :key="item.name">
-            <li @dblclick="item.action">
+            <li v-if="item.visibilityIsDesktop" @dblclick="item.action">
               <div class="app-item">
                 <div class="app-icon">
                   <img :src="item.icon" alt="" />
@@ -69,6 +69,7 @@
         <CustomApplicationView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'custom-application'" />
         <DeveloperDoc :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'developer-doc'" />
         <InputDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'input-dialog'" />
+        <Tail :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'tail'" />
       </template>
     </div>
     <!-- 任务栏 -->
@@ -112,6 +113,7 @@ import ApplicationView from "./application-view.vue";
 import CustomApplicationView from "./custom-application.vue";
 import DeveloperDoc from "./doc.vue";
 import InputDialog from "./dialog/input-dialog.vue";
+import Tail from "./tail-log.vue";
 
 import { onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
@@ -119,7 +121,7 @@ import { initInstallProgressManager } from "../utils/install-progress-manager.js
 import { VueNotificationList } from "@dafcoe/vue-notification";
 
 import "@dafcoe/vue-notification/dist/vue-notification.css";
-import defaultAppList from "../software/default-software.js"
+import defaultAppList from "../application/default-applications.js"
 import getSocketConnection from "../utils/socket.js";
 import * as string from "../global/strings.js";
 import * as systemApi from "../http/system"
@@ -179,11 +181,13 @@ const startHandlerWindow = (item) => {
 /**
  * 以下是测试区域
  */
+
+
 /**
  * 测试区域结束
  */
-//主程序通信,分发subject到订阅这上
 
+//主程序通信,分发到订阅
 const connectWebSocketServer = () => {
   getSocketConnection("/topic/events", (response) => {
     let event = JSON.parse(response.body)
@@ -237,7 +241,7 @@ const deleteDesktopFile = () => {
 }
 const openContainer = () => {
   coolWindow.startNewFolder(contentMenuState.selectFile.parent)
-  contentMenuState.visual=false
+  contentMenuState.visual = false
 }
 const getLastName = (path) => {
   let sp = path.split("/")

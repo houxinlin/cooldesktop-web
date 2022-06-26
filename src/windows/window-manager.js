@@ -87,7 +87,7 @@ class CoolWindowStarter {
         let window = createWindowByType(WindowEnum.WebWindow, { url: getApplicationIndexUrl(application, args), application });
         window.icon = getApplicationIconUrl(application);
         window.application = application;
-        window.applicationId=application.applicationId;
+        window.applicationId = application.applicationId;
         startNewWindow(window, application);
 
     }
@@ -117,6 +117,15 @@ class CoolWindowStarter {
 
     startNewInputDialog = (callback, title = "提示", defaultValue = "") => {
         startNewWindow(createWindowByType(WindowEnum.DialogInput, { callback, title, defaultValue }));
+    }
+    startTail = (path) => {
+        for (const window of state.windowsCollection) {
+            if (window.windowType == "tail" && path == window.data.path) {
+                postMessage({ action: "notification", param: { message: "该日志已经在追踪", type: "error" } });
+                return;
+            }
+        }
+        startNewWindow(createWindowByType(WindowEnum.Tail, { path }));
     }
 }
 export const coolWindow = new CoolWindowStarter();

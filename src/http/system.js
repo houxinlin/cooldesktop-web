@@ -21,8 +21,10 @@ export function apiConfigSecureShellUser(userName) {
         userName
     }));
 }
-export function apiResetLoginPasswd() {
-    return axios.post("/desktop/api/system/resetLoginPasswd");
+export function apiResetLoginPasswd(pass) {
+    return axios.post("/desktop/api/system/resetLoginPasswd", qs.stringify({
+        pass
+    }));
 }
 
 export function apiGetOpenUrl() {

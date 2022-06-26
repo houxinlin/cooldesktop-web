@@ -35,6 +35,8 @@
           </div>
         </div>
         <div :style="[navIndex==2?'':'display:none']" class="page-passwd">
+          <span>新密码：</span>
+          <input v-model="loginPasswd" type="password" class="base-input" >
           <button @click="resetPassClick" class="button color-white base-button">重置</button>
         </div>
         <div :style="[navIndex==3?'':'display:none']" class="padding-10px page-url-config">
@@ -71,13 +73,16 @@
 <script setup>
 import BaseWindow from "../components/window.vue";
 import { defineProps, onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
-import { selectFile } from "../utils/file.js"
-import * as systemApi from "../http/system.js"
+import { selectFile } from "../utils/file.js";
+import * as systemApi from "../http/system.js";
 import { coolWindow } from "../windows/window-manager.js";
-let secureShellUser = ref("")
-let openUrlState = reactive({ list: [] })
-let currentBackgroundImageUrl = ref(`${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}`)
-let version = ref("未获取到")
+import md5 from "md5";
+let secureShellUser = ref("");
+let loginPasswd = ref("");
+let openUrlState = reactive({ list: [] });
+let currentBackgroundImageUrl = ref(`${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}`);
+let version = ref("未获取到");
+let COOLDESKTOP_PASS_SUFFIX = "cooldesktop@passwd!.";
 const props = defineProps({
   item: Object,
   actionWindowId: String
@@ -104,17 +109,23 @@ const nav = [{
 let navIndex = ref(0)
 
 const resetPassClick = () => {
-  let loadingWindow = coolWindow.startNewLoadingView("重置中")
-  systemApi.apiResetLoginPasswd().then((response) => {
-    loadingWindow.closeWindow()
-    coolWindow.startNewSuccessMessageDialog(response.data.data)
-  })
+  let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{6,20}/
+  if (reg.test(loginPasswd.value)) {
+    let loadingWindow = coolWindow.startNewLoadingView("重置中")
+    systemApi.apiResetLoginPasswd(md5(loginPasswd.value + COOLDESKTOP_PASS_SUFFIX)).then((response) => {
+      loadingWindow.closeWindow()
+      postMessage({ action: "notification", param: { message: response.data.data, type: "success" } });
+    })
+    return
+  }
+  coolWindow.startNewErrorMessageDialog("你需要设置至少包含一个大写字母、一个小写字母、一个数字、一个特殊符号的6-20位密码")
+
 }
 
 const showaseConfig = () => {
   systemApi.apiGetCoolDesktopConfigs().then((response) => {
     let wallpaper = response.data.data["wallpaper"]
-    version.value=response.data.data["cooldesktop.version"]
+    version.value = response.data.data["cooldesktop.version"]
     if (wallpaper != undefined && wallpaper != '') {
       wallpaper = wallpaper.substr(1)
       let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);

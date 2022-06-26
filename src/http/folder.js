@@ -95,3 +95,13 @@ export function apiRunShell(path) {
         path
     }));
 }
+export function apiTailStart(path) {
+    return axios.post("/desktop/api/file/tail/start", qs.stringify({
+        path
+    }));
+}
+export function apiTailStop(id) {
+    return axios.post("/desktop/api/file/tail/stop", qs.stringify({
+        id
+    }));
+}
