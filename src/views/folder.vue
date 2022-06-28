@@ -105,7 +105,7 @@
       </div>
       <div @dragstart="dragstart" @dragover="dragover" @dragleave="dragleave" @drop="drop" @contextmenu.prevent="folderContextMenu($event)" @click="
            hideAllPopupMenu()
-        " class="folder-global">
+        " class="folder-global pos-relative" >
         <div v-if="loadingVisable" class="loading pos-absolute flex pos-ltrb0 flex-all-center">
           <img class="wh-40px" src="../assets/icon/ic-loading.png" alt="">
         </div>
@@ -167,7 +167,6 @@ const props = defineProps({
   item: Object,
   actionWindowId: String
 });
-
 
 import BaseWindow from "../components/window.vue";
 //字符串常量
