@@ -30,6 +30,19 @@
       </div>
     </div>
     <div class="work-region" :class="{'work-region-low-z-index':state.appStarterVisible }">
+      <!-- 状态栏 -->
+      <div class="status-bar pos-absolute color-white flex">
+        <div class="left"></div>
+        <div class="center"></div>
+        <div class="right flex flex-all-center">
+          <span @click="logout"> <i> <svg t="1658147165145" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5333" width="16" height="16">
+                <path
+                  d="M511.771963 1023.291077c-63.724308 0-125.558154-12.445538-183.768615-37.100308a469.464615 469.464615 0 0 1-150.134154-101.139692 471.118769 471.118769 0 0 1 59.392-717.351385 37.021538 37.021538 0 0 1 43.008 59.864616 403.692308 403.692308 0 0 0-121.304616 139.027692A391.798154 391.798154 0 0 0 113.435963 551.227077c0 106.338462 41.432615 206.375385 116.657231 281.6a395.736615 395.736615 0 0 0 281.678769 116.736c106.338462 0 206.454154-41.432615 281.757539-116.736a395.421538 395.421538 0 0 0 116.65723-281.6 391.483077 391.483077 0 0 0-45.528615-184.635077 403.298462 403.298462 0 0 0-121.304615-138.870154 36.864 36.864 0 0 1 43.008-59.943384 471.04 471.04 0 0 1 59.392 717.430153 471.04 471.04 0 0 1-333.981539 138.161231z m11.106462-512.236308a36.864 36.864 0 0 1-36.94277-36.864V37.021538a37.021538 37.021538 0 0 1 73.964308 0v437.169231c0 20.48-16.541538 36.864-37.021538 36.864z"
+                  p-id="5334" fill="#ffffff"></path>
+              </svg></i></span>
+        </div>
+      </div>
+
       <!-- 桌面文件 -->
       <div class="desktop-work pos-absolute pos-ltrb0">
         <!-- 菜单 -->
@@ -137,7 +150,8 @@ let defaultBackgroundImageUrl = ref(`url('${new URL(`../assets/background/deskto
 onMounted(() => {
   setTimeout(() => {
     state.desktopScale = false;
-  }, 10);
+  }, 20);
+
   //初始化软件安装管理器
   initInstallProgressManager()
 });
@@ -153,7 +167,9 @@ const showContextMenu = (event, item) => {
   contentMenuState.selectFile = item
 
 }
-
+const logout = () => {
+  location.href = "/tomcat/api/logout"
+}
 //获取系统配置
 const startApplication = (application) => {
   coolWindow.startNewWebView(application)

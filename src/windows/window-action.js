@@ -131,6 +131,7 @@ export class WindowActions {
         for (const item of state.windowsCollection) {
             item.pointerEvents = true;
         }
+
         let odiv = e.target;
         let downDiv = odiv;
         let list = [];
@@ -150,6 +151,7 @@ export class WindowActions {
             list = [...classList];
         }
         actionMoveId = odiv.getAttribute("data-id");
+        if (this.getAppById(actionMoveId).instance.maxState) return
         this.setWindowPos(actionMoveId);
 
         //除了window-body其他都可以移动
@@ -159,9 +161,14 @@ export class WindowActions {
         let disX = e.clientX - odiv.offsetLeft;
         let disY = e.clientY - odiv.offsetTop;
         document.onmousemove = (e) => {
+            // if() {
+            //     console.log("asd");
+            // }
+
+
             let left = e.clientX - disX;
             let top = e.clientY - disY;
-            if (top <= -10) {
+            if (top <= 23) {
                 document.onmousemove = null;
                 document.onmouseup = null;
                 this.windowFullScreen(actionMoveId);

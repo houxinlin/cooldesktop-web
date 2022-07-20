@@ -12,14 +12,16 @@
 @APP_STARTER_Z_INDEX:@APP_TASK_BAR_Z_INDEX - 1;
 
 @APP_WORK:@APP_TASK_BAR_Z_INDEX + 5;
+
+@MAX_WINDOW_HEIGHT:@TASK_BAR_HEGIHT - 23; 
 .max-window{
     position: absolute !important;
     left: 0px !important;
-    top: 0px !important;
+    top: 23px !important;
     bottom: 0px !important;
     right: 0px !important;
     width: 100% !important;
-    height: calc(100% + @TASK_BAR_HEGIHT )  !important;
+    height: calc(100% + @MAX_WINDOW_HEIGHT )  !important;
     border-radius: 0px !important;
 
 }
@@ -47,7 +49,7 @@
 }
 
 .window-z-height{
-    z-index: @APP_TASK_BAR_Z_INDEX + 1
+    z-index: @APP_TASK_BAR_Z_INDEX + 2
 }
 .desktop-none{
     transform: scale(0.0);
@@ -74,6 +76,32 @@
     flex-direction: column;
     background-size: cover;
     z-index: @BASE_Z_INEDX;
+    .status-bar{
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        height: 23px;
+        background: #00000082;
+        justify-content: space-between;
+        z-index: @BASE_Z_INEDX + 10;
+        div{
+            padding-left: 3px;
+            padding-right: 3px;
+        }
+        span{
+            cursor: pointer;
+        }
+        .left{
+            flex:1
+        }
+        .center{
+            flex: 2;
+        }
+        .right{
+            justify-content: flex-end;
+            flex: 1;
+        }
+    }
     .desktop-work{
         bottom: @TASK_BAR_HEGIHT;
         padding: 6px;
@@ -106,6 +134,7 @@
             justify-content: center;
             align-items: center;
             height: 100%;
+            padding-top: 20px;
             li:hover{
                 background: #ffffff21;
                 border-radius: 9px;
