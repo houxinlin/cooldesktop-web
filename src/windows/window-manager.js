@@ -127,6 +127,9 @@ class CoolWindowStarter {
         }
         startNewWindow(createWindowByType(WindowEnum.Tail, { path }));
     }
+    startSysLog = () => {
+        startNewWindow(createWindowByType(WindowEnum.SysLog, { }));
+    }
 }
 export const coolWindow = new CoolWindowStarter();
 export const wact = new WindowActions();

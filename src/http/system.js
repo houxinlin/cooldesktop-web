@@ -72,3 +72,6 @@ export function apiListDesktopFile() {
     return axios.get("/desktop/api/system/desktop/file/list");
 }
 
+export function  apiGetBaseInfo() {
+    return axios.get("/desktop/api/system/baseInfo");
+}
