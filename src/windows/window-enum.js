@@ -85,6 +85,8 @@ export function Tail(data) {
 }
 
 export function SysLog(data) {
-    return getWindowProperty({ application: { "windowBackground": "#000000c2", windowSize: 56885748 }, applicationId: 20, windowType: "sys-log", "icon": defaultApps[8].icon }, data);
+
+    return getWindowProperty({ application: { "windowBackground": "#0b0a0bcc", windowSize: 56885748 }, applicationId: 20, windowType: "sys-log", "icon": defaultApps[8].icon }, data);
+
 }
 

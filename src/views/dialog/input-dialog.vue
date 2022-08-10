@@ -26,7 +26,6 @@ const props = defineProps({
   item: Object,
   actionWindowId: String,
 });
-console.log(props);
 const targetName = ref(props.item.data.defaultValue);
 const finish = () => {
   wact.closeWindow(props.item.id);

@@ -39,6 +39,7 @@
           </footer>
         </div>
       </div>
+
     </template>
     <template v-slot:header>
       <header>日志</header>
@@ -52,7 +53,6 @@ import { defineProps, onMounted, ref, getCurrentInstance, reactive } from "vue";
 import { apiTailStart, apiTailStop } from "../http/folder.js"
 
 let { proxy } = getCurrentInstance();
-
 let navIndex = ref(0);
 
 let filterTimer = reactive({ "list": ["全部", "今天", "三天内", "一周内"], "select": 0 });
