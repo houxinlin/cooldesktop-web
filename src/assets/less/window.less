@@ -1,31 +1,33 @@
 @TASK_BAR_HEGIHT: 57px;
-@BASE_Z_INEDX:495594;
+@BASE_Z_INEDX: 495594;
 
 @MAX_Z_INDEX: @BASE_Z_INEDX + 100;
 
-@APP_CONTAINER_Z_INDEX:1000;
+@APP_CONTAINER_Z_INDEX: 1000;
 
 @APP_TASK_BAR_Z_INDEX: @BASE_Z_INEDX + 5;
 
 @DESKTOP_Z_INDEX: @APP_TASK_BAR_Z_INDEX - 1;
 
-@APP_STARTER_Z_INDEX:@APP_TASK_BAR_Z_INDEX - 1;
+@APP_STARTER_Z_INDEX: @APP_TASK_BAR_Z_INDEX - 1;
 
-@APP_WORK:@APP_TASK_BAR_Z_INDEX + 5;
+@APP_WORK: @APP_TASK_BAR_Z_INDEX + 5;
 
-@MAX_WINDOW_HEIGHT:@TASK_BAR_HEGIHT - 23; 
-.max-window{
+@MAX_WINDOW_HEIGHT: @TASK_BAR_HEGIHT - 23;
+
+.max-window {
     position: absolute !important;
     left: 0px !important;
     top: 23px !important;
     bottom: 0px !important;
     right: 0px !important;
     width: 100% !important;
-    height: calc(100% + @MAX_WINDOW_HEIGHT )  !important;
+    height: calc(100% + @MAX_WINDOW_HEIGHT ) !important;
     border-radius: 0px !important;
 
 }
-.action-window-border::after{
+
+.action-window-border::after {
     content: ' ';
     border: 1px #740a0a solid;
     left: -1px;
@@ -35,36 +37,45 @@
     border-radius: 10px;
     position: absolute;
 }
-.hide-window{
-    display: none  !important
+
+.hide-window {
+    display: none !important
 }
-.close-window-transition{
+
+.close-window-transition {
     transform: scaleY(0) !important
 }
-.min-window{
+
+.min-window {
     transform: scale(0) !important;
 }
-.window-transition{
+
+.window-transition {
     transition: all 0.3s !important;
 }
 
-.window-z-height{
+.window-z-height {
     z-index: @APP_TASK_BAR_Z_INDEX + 2
 }
-.desktop-none{
+
+.desktop-none {
     transform: scale(0.0);
 }
-.app-starter-visible{
+
+.app-starter-visible {
     opacity: 1 !important;
 }
-.work-region-low-z-index{
+
+.work-region-low-z-index {
     z-index: @BASE_Z_INEDX - 10 !important
 }
-.window-item-resize{
+
+.window-item-resize {
     resize: both;
     overflow: hidden;
 }
-.desktop{
+
+.desktop {
     transition: all 0.6s;
     position: fixed;
     left: 0px;
@@ -76,7 +87,8 @@
     flex-direction: column;
     background-size: cover;
     z-index: @BASE_Z_INEDX;
-    .status-bar{
+
+    .status-bar {
         left: 0px;
         top: 0px;
         right: 0px;
@@ -84,28 +96,40 @@
         background: #00000082;
         justify-content: space-between;
         z-index: @BASE_Z_INEDX + 10;
-        div{
+        font-size: 13px;
+
+        div {
             padding-left: 3px;
             padding-right: 3px;
         }
-        span{
+
+        span {
             cursor: pointer;
         }
-        .left{
-            flex:1
+
+        .left {
+            flex: 1
         }
-        .center{
+
+        .center {
             flex: 2;
         }
-        .right{
+
+        .right {
             justify-content: flex-end;
             flex: 1;
+
+            span {
+                margin: 0 10px;
+            }
         }
     }
-    .desktop-work{
+
+    .desktop-work {
         bottom: @TASK_BAR_HEGIHT;
         padding: 6px;
-        .menu{
+
+        .menu {
             min-width: 100px;
             min-height: 70px;
             background: #35ba99f0;
@@ -113,11 +137,12 @@
             overflow: hidden;
             border-radius: 7px;
 
-            ul{
-                li:hover{
+            ul {
+                li:hover {
                     background: #ffffff3b;
                 }
-                li{
+
+                li {
                     font-size: 13px;
                     cursor: pointer;
                     padding: 10px;
@@ -126,20 +151,23 @@
                 }
             }
         }
-        ul.folder{
+
+        ul.folder {
             display: grid;
             grid-auto-flow: column;
-            grid-template-columns: repeat(auto-fill,85px);
+            grid-template-columns: repeat(auto-fill, 85px);
             grid-template-rows: repeat(auto-fill, 85px);
             justify-content: center;
             align-items: center;
             height: 100%;
             padding-top: 20px;
-            li:hover{
+
+            li:hover {
                 background: #ffffff21;
                 border-radius: 9px;
             }
-            li{
+
+            li {
                 cursor: pointer;
                 width: 84px;
                 height: 84px;
@@ -147,7 +175,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                .file-item{
+
+                .file-item {
                     position: relative;
                     align-items: center;
                     justify-content: center;
@@ -155,12 +184,14 @@
                     display: flex;
                     flex-direction: column;
                     width: 100%;
-                    img{
+
+                    img {
                         width: 40px;
                         height: 40px;
                         object-fit: cover;
                     }
-                    span{
+
+                    span {
                         margin-top: 6px;
                         font-size: 14px;
                         color: #ffffff;
@@ -174,9 +205,10 @@
                 }
             }
         }
-    
+
     }
-    .app-starter{
+
+    .app-starter {
         background: #000000b8;
         position: absolute;
         left: 0px;
@@ -187,21 +219,24 @@
         transition: all 0.4s;
         z-index: @APP_STARTER_Z_INDEX ;
     }
-   .work-region{
+
+    .work-region {
         position: relative;
         flex: 1;
         width: 100%;
         z-index: @APP_WORK;
-   }
-   .task-bar{
-       height: @TASK_BAR_HEGIHT;
-       position: relative;
-       overflow: hidden;
-       margin: 0 73px 15px 73px;
-       border-radius: 12px;
-       box-shadow: 0px 2px 10px #00000069;
-       z-index: @APP_TASK_BAR_Z_INDEX;
-       .task-bar-mask{
+    }
+
+    .task-bar {
+        height: @TASK_BAR_HEGIHT;
+        position: relative;
+        overflow: hidden;
+        margin: 0 73px 15px 73px;
+        border-radius: 12px;
+        box-shadow: 0px 2px 10px #00000069;
+        z-index: @APP_TASK_BAR_Z_INDEX;
+
+        .task-bar-mask {
             content: '';
             position: absolute;
             top: 0;
@@ -211,18 +246,19 @@
             backdrop-filter: blur(5px);
             background: #00000082;
         }
-        .task-bar-content{
+
+        .task-bar-content {
             position: relative;
             z-index: 3;
             height: 100%;
 
-            ul{
+            ul {
                 padding: 0px 10px;
                 height: 100%;
                 display: flex;
                 align-items: center;
-              
-                li{
+
+                li {
                     transition: all 0.3s;
                     cursor: pointer;
                     margin: 0 6px;
@@ -231,22 +267,24 @@
                     display: flex;
                     justify-content: center;
                 }
-                li:hover{
+
+                li:hover {
                     background: #484646bd;
                     border-radius: 3px;
                 }
-              
-                .task-item{
+
+                .task-item {
                     flex-direction: column;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    img{
+
+                    img {
                         width: 32px;
                         transition: all 0.4s;
                     }
-                 
-                    span{
+
+                    span {
                         background: #d11010f5;
                         border-radius: 50%;
                         margin-top: 6px;
@@ -257,31 +295,34 @@
                         position: absolute;
                         top: 42px;
                     }
-                    span.select{
+
+                    span.select {
                         transform: scale(1);
                     }
                 }
             }
-       }
-   }
+        }
+    }
 
-   
-  
-   //app list
-   .app-list{
+
+
+    //app list
+    .app-list {
         display: flex;
-        padding: 14px;
+        padding: 22px;
         z-index: 999;
         position: absolute;
         width: 100%;
-       ul{
-        display: flex;
-        justify-content: center;
-        display: grid;
-        justify-content: center;
-        grid-template-columns: repeat(auto-fill, 140px);
-        width: 100%;
-            li{
+
+        ul {
+            display: flex;
+            justify-content: center;
+            display: grid;
+            justify-content: center;
+            grid-template-columns: repeat(auto-fill, 140px);
+            width: 100%;
+
+            li {
                 cursor: pointer;
                 padding: 0px;
                 transition: all 0.2s;
@@ -293,136 +334,152 @@
                 border-radius: 7px;
                 margin: 7px;
             }
-            li:hover{
+
+            li:hover {
                 background: #ffffff2e;
                 backdrop-filter: blur(15px);
             }
-           .app-icon{
-               img{
-                width: 48px;
-                height: 48px;
-                object-fit: contain;
-                border-radius: 3px;
-               }
-           }
-           .app-item{
+
+            .app-icon {
+                img {
+                    width: 48px;
+                    height: 48px;
+                    object-fit: contain;
+                    border-radius: 3px;
+                }
+            }
+
+            .app-item {
                 text-align: center;
-           }
-           .app-name{
+            }
+
+            .app-name {
                 color: #e1e1e1;
                 text-align: center;
                 font-size: 13px;
                 font-weight: 500;
                 white-space: nowrap;
-           }
-           .iconfont{
-               font-size: 48px;
-           }
-       }
+            }
+
+            .iconfont {
+                font-size: 48px;
+            }
+        }
     }
 
-    .window-item{
-            transition: transform 0.2s;
+    .window-item {
+        transition: transform 0.2s;
+        position: absolute;
+        box-shadow: 2px 6px 10px 2px #00000091;
+        display: flex;
+        flex-direction: column;
+        width: 666px;
+        height: 422px;
+        background: #000000c4;
+        backdrop-filter: blur(15px);
+        border-radius: 8px;
+        min-width: 200px;
+        min-height: 200px;
+        left: calc(50% - 333px);
+        top: calc(50% - 211px);
+
+        .window-content {
+            height: 100%;
+            width: 100%;
             position: absolute;
-            box-shadow: 2px 6px 10px 2px #00000091;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            bottom: 0px;
             display: flex;
+            z-index: 2;
             flex-direction: column;
-            width: 666px;
-            height: 422px;
-            background: #000000c4;
-            backdrop-filter: blur(15px);
-            border-radius: 8px;
-            min-width: 200px;
-            min-height: 200px;
-            left: calc(50% - 333px);
-            top: calc(50% - 211px);
-            .window-content{
-                height: 100%;
+        }
+
+        .window-mask {
+            position: absolute;
+            left: 0px;
+            top: 43px;
+            right: 0px;
+            bottom: 0px;
+            z-index: 10000;
+            transition: all 0.2s;
+            background: #ffffff00;
+        }
+
+        .window-mask.action {
+            z-index: 1;
+            background: none;
+        }
+
+        .window-title::-webkit-resizer {
+            background-color: transparent;
+        }
+
+        .window-title.base-title {
+            header {
                 width: 100%;
-                position: absolute;
-                left: 0px;
-                right: 0px;
-                top: 0px;
-                bottom: 0px;
+                height: 100%;
                 display: flex;
-                z-index: 2;
-                flex-direction: column;
-            }
-            .window-mask{
-                position: absolute;
-                left: 0px;
-                top: 43px;
-                right: 0px;
-                bottom: 0px;
-                z-index: 10000;
-                transition: all 0.2s;
-                background: #ffffff00;
-            }
-            .window-mask.action{
-                z-index: 1;
-                background: none;
-            }
-            .window-title::-webkit-resizer {
-                background-color: transparent;
-            }
-            .window-title.base-title{
-                header{
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-            }
-            .window-title{
-                min-height: 45px;
-                display: flex;
-                justify-content: space-between;
-                color: #ffffff;
-                font-size: 17px;
-                position: relative;
                 align-items: center;
-                border-bottom: 1px #ffffff12 solid;
-                background: #00000000;
-          
-                .opt{
-                    right: 7px;
-                    position: absolute;
-                    .iconfont{
-                        font-size: 19px;
-                        margin: 0 5px;
-                        cursor: pointer;
-                        transition: all 0.2s;
-                     }
-                    .iconfont:hover{
-                        background: #912929;
-                        border-radius: 50%;
-                        color: #ffffff;
-                    }
+                justify-content: center;
+            }
+        }
+
+        .window-title {
+            min-height: 45px;
+            display: flex;
+            justify-content: space-between;
+            color: #ffffff;
+            font-size: 17px;
+            position: relative;
+            align-items: center;
+            border-bottom: 1px #ffffff12 solid;
+            background: #00000000;
+
+            .opt {
+                right: 7px;
+                position: absolute;
+
+                .iconfont {
+                    font-size: 19px;
+                    margin: 0 5px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+
+                .iconfont:hover {
+                    background: #912929;
+                    border-radius: 50%;
+                    color: #ffffff;
                 }
             }
-            .window-body{
-                flex: 1;
-                overflow-y: auto;
-               
-            }
-    }   
+        }
+
+        .window-body {
+            flex: 1;
+            overflow-y: auto;
+
+        }
+    }
 
 }
 
 
-.file-upload-manager{
-    .item:hover .cancel{
+.file-upload-manager {
+    .item:hover .cancel {
         opacity: 1;
     }
-    .empty{
+
+    .empty {
         width: 100%;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    .item{
+
+    .item {
         padding: 8px;
         position: relative;
         border-radius: 6px;
@@ -432,7 +489,8 @@
         display: flex;
         align-items: center;
         cursor: pointer;
-        .cancel{
+
+        .cancel {
             transition: all 0.2s;
             z-index: 2;
             position: absolute;
@@ -445,18 +503,22 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            img{
+
+            img {
                 width: 10px;
             }
         }
-        img.file{
+
+        img.file {
             min-width: 32px;
         }
-        .info{
+
+        .info {
             margin-left: 10px;
             flex: 1;
             position: relative;
-            img{
+
+            img {
                 position: absolute;
                 right: 5px;
                 width: 12px;
@@ -465,20 +527,21 @@
                 cursor: pointer;
             }
         }
-     
-        .name{
+
+        .name {
             display: block;
             height: 100%;
             align-items: center;
             color: #ffffff;
             font-size: 13px;
         }
-        .progress{
+
+        .progress {
             margin-top: 12px;
             height: 8px;
             width: 0%;
-            background:#1f784c;
-            border-radius:100px;
+            background: #1f784c;
+            border-radius: 100px;
         }
     }
 

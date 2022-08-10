@@ -18,7 +18,7 @@ let BASE_WINDOW_PROPERTYS = {
     closeWindowTransition: false,
     canResize: true,
     singleInstance: false,
-    visibilityIsDesktop:false
+    visibilityIsDesktop: false
 }
 
 function getWindowProperty(windowProperty, data = {}) {
@@ -40,7 +40,7 @@ export function DialogCompressSelect(data) {
     return getWindowProperty({ applicationId: 5, windowType: "dialog-compress-select", application: { windowSize: 27525378 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function FileAttribute(data) {
-    return getWindowProperty({ applicationId: 6, windowType: "file-attribute", application: { windowSize: 28181080 }}, data);
+    return getWindowProperty({ applicationId: 6, windowType: "file-attribute", application: { windowSize: 28181080 } }, data);
 }
 export function DialogCreateFile(data) {
     return getWindowProperty({ applicationId: 7, windowType: "dialog-create-file", showWindowInTaskBar: false, canMax: false, canMin: false }, data);
@@ -81,6 +81,10 @@ export function DeveloperDoc(data) {
 }
 
 export function Tail(data) {
-    return getWindowProperty({visibilityIsDesktop:false, applicationId: 19, windowType: "tail", "icon": defaultApps[7].icon }, data);
+    return getWindowProperty({ visibilityIsDesktop: false, applicationId: 19, windowType: "tail", "icon": defaultApps[7].icon }, data);
+}
+
+export function SysLog(data) {
+    return getWindowProperty({ application: { "windowBackground": "#000000c2", windowSize: 56885748 }, applicationId: 20, windowType: "sys-log", "icon": defaultApps[8].icon }, data);
 }
 

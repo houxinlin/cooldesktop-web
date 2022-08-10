@@ -26,9 +26,9 @@ let eventKey = `/event/tail/${props.item.data.path}`;
 let eventHandler = (e) => {
   data.value.push(e.data);
   if (windowBody == null) windowBody = document.querySelector(`#${props.item.id} .window-body`);
- setTimeout(() => {
+  setTimeout(() => {
     windowBody.scrollTop = windowBody.scrollHeight + 10;
- }, 0);
+  }, 0);
 }
 const props = defineProps({
   item: Object,
@@ -54,7 +54,7 @@ props.item.events = function (name, data) {
 .tail .window-body {
   color: #ffffff;
   padding: 5px;
-  .datas div{
+  .datas div {
     font-size: 14px;
     user-select: text;
   }

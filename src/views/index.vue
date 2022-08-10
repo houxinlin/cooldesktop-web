@@ -35,6 +35,8 @@
         <div class="left"></div>
         <div class="center"></div>
         <div class="right flex flex-all-center">
+          <span>{{userNameRef}}</span>
+          <span>{{serverTimeRef}}</span>
           <span @click="logout"> <i> <svg t="1658147165145" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5333" width="16" height="16">
                 <path
                   d="M511.771963 1023.291077c-63.724308 0-125.558154-12.445538-183.768615-37.100308a469.464615 469.464615 0 0 1-150.134154-101.139692 471.118769 471.118769 0 0 1 59.392-717.351385 37.021538 37.021538 0 0 1 43.008 59.864616 403.692308 403.692308 0 0 0-121.304616 139.027692A391.798154 391.798154 0 0 0 113.435963 551.227077c0 106.338462 41.432615 206.375385 116.657231 281.6a395.736615 395.736615 0 0 0 281.678769 116.736c106.338462 0 206.454154-41.432615 281.757539-116.736a395.421538 395.421538 0 0 0 116.65723-281.6 391.483077 391.483077 0 0 0-45.528615-184.635077 403.298462 403.298462 0 0 0-121.304615-138.870154 36.864 36.864 0 0 1 43.008-59.943384 471.04 471.04 0 0 1 59.392 717.430153 471.04 471.04 0 0 1-333.981539 138.161231z m11.106462-512.236308a36.864 36.864 0 0 1-36.94277-36.864V37.021538a37.021538 37.021538 0 0 1 73.964308 0v437.169231c0 20.48-16.541538 36.864-37.021538 36.864z"
@@ -83,6 +85,8 @@
         <DeveloperDoc :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'developer-doc'" />
         <InputDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'input-dialog'" />
         <Tail :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'tail'" />
+        <SysLog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'sys-log'" />
+
       </template>
     </div>
     <!-- 任务栏 -->
@@ -127,6 +131,7 @@ import CustomApplicationView from "./custom-application.vue";
 import DeveloperDoc from "./doc.vue";
 import InputDialog from "./dialog/input-dialog.vue";
 import Tail from "./tail-log.vue";
+import SysLog from "./sys-log.vue";
 
 import { onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
@@ -141,6 +146,10 @@ import * as systemApi from "../http/system"
 import * as globalApi from "../global/api/global-api.js"
 import { refreshApplication, applicationState, getApplicationByMedia } from "../global/application.js";
 import { WindowActions } from "../windows/window-action";
+let userNameRef = ref("");
+let serverTimeRef = ref("");
+//服务器事件戳
+let serverTimeStamp = 0;
 // 文件夹列表
 let folderState = reactive({ "list": [] })
 //右键菜单
@@ -161,18 +170,18 @@ let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
 let { proxy } = getCurrentInstance();
 
 const showContextMenu = (event, item) => {
-  contentMenuState.visual = true
-  contentMenuState.x = event.x + 3
-  contentMenuState.y = event.y + 3
-  contentMenuState.selectFile = item
+  contentMenuState.visual = true;
+  contentMenuState.x = event.x + 3;
+  contentMenuState.y = event.y + 3;
+  contentMenuState.selectFile = item;
 
 }
 const logout = () => {
-  location.href = "/tomcat/api/logout"
+  location.href = "/tomcat/api/logout";
 }
 //获取系统配置
 const startApplication = (application) => {
-  coolWindow.startNewWebView(application)
+  coolWindow.startNewWebView(application);
 }
 const startHandlerWindow = (item) => {
   //不知道文件类型
@@ -181,7 +190,7 @@ const startHandlerWindow = (item) => {
     return;
   }
   if (item.type == "folder") {
-    coolWindow.startNewFolder(item.path)
+    coolWindow.startNewFolder(item.path);
     return;
   }
   //查找能处理这个应用的app
@@ -192,7 +201,7 @@ const startHandlerWindow = (item) => {
     return;
   }
   //打开首页
-  coolWindow.startNewWebView(handlerApp, `path=${item.path}`)
+  coolWindow.startNewWebView(handlerApp, `path=${item.path}`);
 }
 /**
  * 以下是测试区域
@@ -206,32 +215,32 @@ const startHandlerWindow = (item) => {
 //主程序通信,分发到订阅
 const connectWebSocketServer = () => {
   getSocketConnection("/topic/events", (response) => {
-    let event = JSON.parse(response.body)
-    proxy.eventBus.emit(event["subject"], event)
+    let event = JSON.parse(response.body);
+    proxy.eventBus.emit(event["subject"], event);
   }, (e) => {
     setTimeout(() => {
-      connectWebSocketServer()
+      connectWebSocketServer();
     }, 2000);
   });
 }
 //刷新应用程序列表订阅
-proxy.eventBus.on("/event/refresh/application", (e) => { refreshApplication() })
+proxy.eventBus.on("/event/refresh/application", (e) => { refreshApplication() });
 //刷新壁纸
-proxy.eventBus.on("/event/refresh/wallpaper", (e) => { refreshWallpaper() })
+proxy.eventBus.on("/event/refresh/wallpaper", (e) => { refreshWallpaper() });
 //打目录
-proxy.eventBus.on("/event/open/directory", (e) => { coolWindow.startNewFolder(e.data, true) })
+proxy.eventBus.on("/event/open/directory", (e) => { coolWindow.startNewFolder(e.data, true) });
 
-proxy.eventBus.on("/event/notify/message/error", (e) => { coolWindow.startNewErrorMessageDialog(e.data) })
+proxy.eventBus.on("/event/notify/message/error", (e) => { coolWindow.startNewErrorMessageDialog(e.data) });
 
-proxy.eventBus.on("/event/notify/message/success", (e) => { coolWindow.startNewSuccessMessageDialog(e.data) })
+proxy.eventBus.on("/event/notify/message/success", (e) => { coolWindow.startNewSuccessMessageDialog(e.data) });
 
-proxy.eventBus.on("/event/refresh/folder", (e) => { refreshDesktopFile() })
+proxy.eventBus.on("/event/refresh/folder", (e) => { refreshDesktopFile() });
 
 //所有异步文件处理结果通知统一走这里，用来提示
 proxy.eventBus.on("/event/file", (e) => {
   if (e.hasOwnProperty("result")) {
     if (e.result.code != 0) {
-      coolWindow.startNewErrorMessageDialog(e.result.msg)
+      coolWindow.startNewErrorMessageDialog(e.result.msg);
     }
   }
 })
@@ -239,35 +248,50 @@ const refreshWallpaper = () => {
   systemApi.apiGetCoolDesktopConfigs().then((response) => {
     let wallpaper = response.data.data["wallpaper"]
     if (wallpaper != undefined && wallpaper != '') {
-      wallpaper = wallpaper.substr(1)
-      defaultBackgroundImageUrl.value = `url('${serverDomain.value}${wallpaper}')`
+      wallpaper = wallpaper.substr(1);
+      defaultBackgroundImageUrl.value = `url('${serverDomain.value}${wallpaper}')`;
     }
   })
 }
 const refreshDesktopFile = () => {
   systemApi.apiListDesktopFile(string.DESKTOP_FOLDER_KEY).then((response) => {
-    folderState.list = response.data.data
+    folderState.list = response.data.data;
   })
 }
 const deleteDesktopFile = () => {
   systemApi.apiRemoveDesktopFile(contentMenuState.selectFile.path).then((response) => {
 
   })
-  contentMenuState.visual = false
+  contentMenuState.visual = false;
 }
 const openContainer = () => {
-  coolWindow.startNewFolder(contentMenuState.selectFile.parent)
-  contentMenuState.visual = false
+  coolWindow.startNewFolder(contentMenuState.selectFile.parent);
+  contentMenuState.visual = false;
 }
 const getLastName = (path) => {
-  let sp = path.split("/")
-  return sp[sp.length - 1]
+  let sp = path.split("/");
+  return sp[sp.length - 1];
 }
 
-refreshDesktopFile()
-refreshWallpaper()
-refreshApplication()
-connectWebSocketServer()
+const init = () => {
+  refreshDesktopFile();
+  refreshWallpaper();
+  refreshApplication();
+  connectWebSocketServer();
+
+  let startTimer = new Date().getTime();
+  systemApi.apiGetBaseInfo().then((response) => {
+    let inv = new Date().getTime() - startTimer
+    serverTimeStamp = response.data.data["timer"] + inv;
+    userNameRef.value = response.data.data["user"];
+    setInterval(() => {
+      serverTimeStamp += 1000;
+      let date = new Date(serverTimeStamp)
+      serverTimeRef.value = date.getHours() + ":" + date.getMinutes()
+    }, 1000);
+  })
+}
+init()
 </script>
 
 <style lang="less">

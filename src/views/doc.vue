@@ -1,10 +1,10 @@
 <template>
   <BaseWindow :item="item" className="developer-doc web">
     <template v-slot:body>
-         <div class="iframe">
-        <iframe  class="" src="https://houxinlin.com/DeveloperCoolDesktop.html" frameborder="0"></iframe>
+      <div class="iframe">
+        <iframe class="" src="https://houxinlin.com/DeveloperCoolDesktop.html" frameborder="0"></iframe>
 
-         </div>
+      </div>
     </template>
     <template v-slot:header>
       <header>开发文档</header>
