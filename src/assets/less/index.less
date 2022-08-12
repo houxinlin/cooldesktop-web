@@ -7,6 +7,8 @@
 
 :root {
   --nav-select-color: #bd0e75b8;
+  --nav-select-hover-color: #b1abae2b;
+  --default-hover-color: #b1abae2b;
 }
 
 @NAV_SELECT_COLOR: #bd0e75b8;
@@ -326,7 +328,9 @@ img.cover {
   animation-delay: 0s;
 }
 
+// 左右导航布局
 .left-tab-layout {
+   height: 100%;
   .left-tab-layout-container {
     flex: 1;
     background: #ffffff00;
@@ -338,17 +342,21 @@ img.cover {
     top: 51px;
     width: 140px;
 
+    li:hover {
+      background-color: var(--nav-select-hover-color);
+    }
+
     li.select {
       background: var(--nav-select-color);
       color: #ffffff;
-      border-radius: 9px;
     }
 
     li {
+      border-radius: 9px;
       height: 50px;
       display: flex;
       align-items: center;
-      margin: 0 8px;
+      margin: 2px 8px;
       padding: 10px;
       cursor: pointer;
 
@@ -369,4 +377,47 @@ img.cover {
     }
   }
 
+}
+
+//表格buju
+div.table-layout {
+  padding: 3px;
+
+  ul.table-body {
+    display: flex;
+    flex-direction: column;
+    li.select{
+      background: var(--default-hover-color);
+    }
+    li:hover{
+      background: var(--default-hover-color);
+    }
+    li {
+      border-radius: 3px;
+      padding: 7px 5px;
+      display: flex;
+      margin: 3px 0px;
+      span {
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  header.fixed{
+    position: absolute;
+  }
+  header {
+    width: 100%;
+
+    ul {
+      display: flex;
+
+      li {
+        padding: 3px;
+        flex: 1;
+      }
+    }
+  }
 }
