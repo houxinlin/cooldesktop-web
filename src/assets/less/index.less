@@ -6,12 +6,12 @@
 }
 
 :root {
-  --nav-select-color: #bd0e75b8;
-  --nav-select-hover-color: #b1abae2b;
+  --nav-select-color: #e34130d1;
+  --nav-select-hover-color: #ffffff14;
   --default-hover-color: #b1abae2b;
 }
 
-@NAV_SELECT_COLOR: #bd0e75b8;
+
 
 body {
   background: #000;
@@ -330,7 +330,8 @@ img.cover {
 
 // 左右导航布局
 .left-tab-layout {
-   height: 100%;
+  height: 100%;
+
   .left-tab-layout-container {
     flex: 1;
     background: #ffffff00;
@@ -386,17 +387,21 @@ div.table-layout {
   ul.table-body {
     display: flex;
     flex-direction: column;
-    li.select{
+
+    li.select {
       background: var(--default-hover-color);
     }
-    li:hover{
+
+    li:hover {
       background: var(--default-hover-color);
     }
+
     li {
       border-radius: 3px;
       padding: 7px 5px;
       display: flex;
       margin: 3px 0px;
+
       span {
         flex: 1;
         overflow: hidden;
@@ -405,9 +410,11 @@ div.table-layout {
       }
     }
   }
-  header.fixed{
+
+  header.fixed {
     position: absolute;
   }
+
   header {
     width: 100%;
 
@@ -419,5 +426,21 @@ div.table-layout {
         flex: 1;
       }
     }
+  }
+}
+
+.page {
+  button {
+    border: none;
+    background: #dddddd;
+    color: #000000;
+    padding: 2px 7px;
+    margin: 0 3px;
+    cursor: pointer;
+  }
+
+  button.select {
+    background: var(--nav-select-color);
+    color: #ffffff;
   }
 }

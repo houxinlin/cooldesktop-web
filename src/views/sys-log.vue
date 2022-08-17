@@ -54,10 +54,17 @@
                     <span>{{item.IP}}</span>
                   </li>
                 </template>
+
               </ul>
+              <div class="page">
+                <template v-for="item in pageSize" :key="item">
+                  <button :class="[currentPage==item?'select':'']" @click="listLog(item)">{{item}}</button>
+                </template>
+              </div>
             </div>
           </div>
-          <footer class="">
+
+          <footer v-if="logs.select>=0" class="">
             <span>信息</span>
             <div class="line"></div>
             <span>{{logs.checked.LOG_VALUE}}</span>
@@ -83,9 +90,9 @@ let navIndex = ref(0);
 let filterTimer = reactive({ "list": ["全部", "今天", "三天内", "一周内"], "select": 0 });
 let logLevel = reactive({ "list": ["全部", "信息", "错误"], "select": 0 });
 let logType = reactive({ "list": ["接口日志", "系统日志", "应用程序日志", "登陆日志"], "select": 1 });
-let page = ref(0);
 let logs = reactive({ "list": [], "checked": {}, "select": -1 });
-
+let pageSize = ref(0)
+let currentPage = ref(0)
 const selectFilterTimer = (index) => {
   filterTimer.select = index;
   listLog();
@@ -98,14 +105,20 @@ const selectLogType = (index) => {
   logType.select = index;
   listLog();
 }
-const listLog = () => {
+// 获取日志
+const listLog = (page = 1) => {
   logs.checked = {};
   logs.select = -1
-  let lType = logType.list[logType.select];
-  let lLevel = logLevel.list[logLevel.select];
-  let lTimer = filterTimer.list[filterTimer.select];
-  apiGetSystemLog(lType, lLevel, lTimer, page.value).then((response) => {
+  let lType = logType.list[logType.select];  //日志类型
+  let lLevel = logLevel.list[logLevel.select]; //日志级别
+  let lTimer = filterTimer.list[filterTimer.select]; //时间过滤
+  apiGetSystemLog(lType, lLevel, lTimer, page).then((response) => {
     logs.list = response.data.data.datas;
+    currentPage.value = response.data.data.current;
+    let total = response.data.data.total;
+    let size = response.data.data.size;
+    let result = (total % size) != 0 ? parseInt(total / size) + 1 : parseInt(total / size);
+    pageSize.value = result;
   })
 }
 
