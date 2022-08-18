@@ -81,15 +81,13 @@
 
 <script setup>
 import BaseWindow from "../components/window.vue";
-import { defineProps, onMounted, ref, getCurrentInstance, reactive } from "vue";
-import { apiTailStart, apiTailStop } from "../http/folder.js"
+import { ref, reactive } from "vue";
 import { apiGetSystemLog } from "../http/system.js";
-let { proxy } = getCurrentInstance();
 let navIndex = ref(0);
 
 let filterTimer = reactive({ "list": ["全部", "今天", "三天内", "一周内"], "select": 0 });
 let logLevel = reactive({ "list": ["全部", "信息", "错误"], "select": 0 });
-let logType = reactive({ "list": ["接口日志", "系统日志", "应用程序日志", "登陆日志"], "select": 1 });
+let logType = reactive({ "list": ["接口日志", "系统日志", "应用程序日志", "登陆日志"], "select": 0 });
 let logs = reactive({ "list": [], "checked": {}, "select": -1 });
 let pageSize = ref(0)
 let currentPage = ref(0)
