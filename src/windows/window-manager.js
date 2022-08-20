@@ -77,14 +77,14 @@ class CoolWindowStarter {
     startNewTerminal = (path) => {
         startNewWindow(createWindowByType(WindowEnum.Terminal, { path }));
     }
-    startNewWebView = (application, args = null) => {
+    startNewWebView = (application, args = null, page = "") => {
         if (application.singleInstance) {
             if (state.windowsCollection.findIndex((item) => { return application.applicationId === (item.application || {}).applicationId }) != -1) {
                 wact.showWindowByApplicationId(application.applicationId);
                 return;
             }
         }
-        let window = createWindowByType(WindowEnum.WebWindow, { url: getApplicationIndexUrl(application, args), application });
+        let window = createWindowByType(WindowEnum.WebWindow, { url: getApplicationIndexUrl(application, args, page), application });
         window.icon = getApplicationIconUrl(application);
         window.application = application;
         window.applicationId = application.applicationId;
@@ -128,7 +128,7 @@ class CoolWindowStarter {
         startNewWindow(createWindowByType(WindowEnum.Tail, { path }));
     }
     startSysLog = () => {
-        startNewWindow(createWindowByType(WindowEnum.SysLog, { }));
+        startNewWindow(createWindowByType(WindowEnum.SysLog, {}));
     }
 }
 export const coolWindow = new CoolWindowStarter();

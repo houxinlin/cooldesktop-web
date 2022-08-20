@@ -5,17 +5,25 @@ const LOGO_IMAGE_NAME = "logo.png";
 export function randId() {
    return uuidv4();
 }
-
-export function getApplicationIndexUrl(application, arg = null) {
-   //如果类型是easy类型
-   if (application.type == 3) {
-      let url = `${serverDomain}${application.applicationId}/`;
-      return url;
-   }
+/**
+ * 生成应用程序首页地址，html中的所有静态资源也统一走${desktop/webapplication/${application.applicationId}}
+ * @param {应用程序信息} application 
+ * @param {参数} arg 
+ * @param {page名称} page 
+ * @returns 
+ */
+export function getApplicationIndexUrl(application, arg = null, page = "") {
+   let newArg =arg!=null?`?${arg}`:"";
+   if (application.type == 3) return `${serverDomain}${application.applicationId}/${page}${newArg}`;
    let url = `${serverDomain}desktop/webapplication/${application.applicationId}/index.html`;
    if (arg != null) url = url + "?" + arg;
    return url;
 }
+/**
+ *  生成应用程序icon地址
+ * @param {应用程序信息} application 
+ * @returns 
+ */
 export function getApplicationIconUrl(application) {
    return `${serverDomain}desktop/webapplication/${application.applicationId}/${LOGO_IMAGE_NAME}`;
 }
