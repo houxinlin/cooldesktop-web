@@ -7,9 +7,12 @@ export default (subscribe, socketMessageCallback, websocketCloseCallback) => {
 
     let stompClient = Stomp.over(new SockJS(url));
     //连接成功则订阅
-    stompClient.connect({}, () => {
+    let client = stompClient.connect({}, () => {
         stompClient.subscribe(subscribe, (e) => { socketMessageCallback(e) });
     }, websocketCloseCallback);
+
     stompClient.debug = null;
+
+    return stompClient;
 
 }

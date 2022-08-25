@@ -1,6 +1,6 @@
 
 import { randId, getApplicationIndexUrl, getApplicationIconUrl } from "../utils/utils";
-import { reactive } from "vue";
+import { reactive,getCurrentInstance } from "vue";
 import { createFolder } from "./data/folder.js";
 import { WindowActions } from "./window-action";
 import * as WindowEnum from "../windows/window-enum.js"
@@ -77,7 +77,7 @@ class CoolWindowStarter {
     startNewTerminal = (path) => {
         startNewWindow(createWindowByType(WindowEnum.Terminal, { path }));
     }
-    startNewWebView = (application, args = null, page = "") => {
+    startNewWebView = (application, args = null, page = "", property = {}) => {
         if (application.singleInstance) {
             if (state.windowsCollection.findIndex((item) => { return application.applicationId === (item.application || {}).applicationId }) != -1) {
                 wact.showWindowByApplicationId(application.applicationId);
@@ -88,8 +88,12 @@ class CoolWindowStarter {
         window.icon = getApplicationIconUrl(application);
         window.application = application;
         window.applicationId = application.applicationId;
+        //客户端传递过来的属性
+        for(let key in property){
+            window[key]=property[key]
+        }
         startNewWindow(window, application);
-
+       return  window;
     }
     startNewLoadingView = (msg = "") => {
         let window = createWindowByType(WindowEnum.LoadingView, { message: msg });

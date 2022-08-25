@@ -24,6 +24,7 @@ window.addEventListener("message", (events) => {
     if (events.data.action == "open-application") {
         let application = getApplicationById(events.data.param.applicationId);
         if (application == null) return
-        coolWindow.startNewWebView(application, null, events.data.param.page)
+        let property = events.data.param.property || {}
+        coolWindow.startNewWebView(application, null, events.data.param.page,property)
     }
 });

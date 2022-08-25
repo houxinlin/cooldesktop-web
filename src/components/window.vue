@@ -51,6 +51,9 @@ const props = defineProps({
   title: String,
   backgroundClass: String
 });
+/**
+ * 获取窗口大小
+ */
 const getWindowsSize = (type) => {
   const defaultWidth = "666";
   const defaultHeight = "422";
@@ -63,10 +66,19 @@ const getWindowsSize = (type) => {
   if (type == 1) return height16(props.item.application.windowSize);
   if (type == 2) return low16(props.item.application.windowSize);
 }
+/**
+ * 获取背景
+ */
 const backgroundFilter = (value) => {
+  if(props.item.hasOwnProperty("windowBackground")){
+    return props.item.windowBackground
+  }
   let back = (value || {}).windowBackground || "#000000c4";
   return back;
 }
+/**
+ * 全屏
+ */
 const windowFullScreen = (id) => {
   if (props.item.maxState) restoreWindowsSizeTimeStamp = new Date().getTime();
   wact.windowFullScreen(id)
@@ -80,17 +92,26 @@ onMounted(() => {
   windowTop.value = `calc(50% - ${windowHeight.value / 2}px)`
   setTimeout(() => { first.value = false }, 10);
 
+   
   const erd = elementResizeDetectorMaker();
   //监听窗口大小改变,并将自己目前的宽度保存，下一次启动时候恢复
   erd.listenTo(document.getElementById(props.item.id), (element) => {
+
     if (!element.classList.contains("max-window") && (new Date().getTime() - restoreWindowsSizeTimeStamp) > 500) {
-      localStorage.setItem(props.item.applicationId, JSON.stringify({ width: element.offsetWidth, height: element.offsetHeight, left: element.offsetLeft, top: element.offsetTop }));
+          if(props.item.autoSaveWindowSize){
+             localStorage.setItem(props.item.applicationId, JSON.stringify({ width: element.offsetWidth, height: element.offsetHeight, left: element.offsetLeft, top: element.offsetTop }));
+
+          }
       windowWidth.value = element.offsetWidth;
       windowHeight.value = element.offsetHeight;
     }
+
     pushSizeChangeEvent(element.offsetWidth, element.offsetHeight);
   });
 })
+/**
+ * 向子窗口发送大小改变时间
+ */
 const pushSizeChangeEvent = (width, height) => {
   if (props.item.windowType == "web") {
     let iframe = document.querySelector(`#${props.item.id} .mainFrame`).contentWindow;
