@@ -131,7 +131,7 @@ import InputDialog from "./dialog/input-dialog.vue";
 import Tail from "./tail-log.vue";
 import SysLog from "./sys-log.vue";
 
-import { onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
+import { onMounted, reactive, ref, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { initInstallProgressManager } from "../utils/install-progress-manager.js"
 import { VueNotificationList } from "@dafcoe/vue-notification";
@@ -156,10 +156,7 @@ let contentMenuState = reactive({ x: 0, y: 0, visual: false, selectFile: {} })
 let stompClient =null;
 let defaultBackgroundImageUrl = ref(`url('${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}')`)
 onMounted(() => {
-  setTimeout(() => {
-    state.desktopScale = false;
-  }, 20);
-
+  setTimeout(() => { state.desktopScale = false; }, 20);
   //初始化软件安装管理器
   initInstallProgressManager()
 });
@@ -214,19 +211,17 @@ const startHandlerWindow = (item) => {
 
 //主程序通信,分发到订阅
 const connectWebSocketServer = () => {
-  stompClient = getSocketConnection("/topic/events", (response) => {
+  stompClient = getSocketConnection("/desktop-topic/event", (response) => {
     let event = JSON.parse(response.body);
     proxy.eventBus.emit(event["subject"], event);
   }, (e) => {
-    setTimeout(() => {
-      connectWebSocketServer();
-    }, 2000);
+    setTimeout(() => {  connectWebSocketServer(); }, 2000);
   });
 
 
 }
+//发送程序打开事件，通知后端对应程序
 const startApplicationEvent=(e)=>{
-  console.log(e);
    stompClient.send("/desktop/event",{},JSON.stringify({"eventType":"startApplication","data":e.applicationId}))
 }
 proxy.eventBus.on("/event/startApplication", (e) => { startApplicationEvent(e) });
