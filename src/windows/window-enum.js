@@ -91,3 +91,13 @@ export function SysLog(data) {
 
 }
 
+export function ShareLink(data) {
+    return getWindowProperty({ applicationId: 21, windowType: "share-link", application: { windowSize: 29884616 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
+
+}
+
+export function ShareLinkDaySelectDialog(data) {
+    return getWindowProperty({ applicationId: 22, windowType: "share-link-day-select", application: { windowSize: 29884616 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
+
+}
+

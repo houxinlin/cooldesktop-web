@@ -52,6 +52,9 @@
             <li @click="openFileAttribute(getSelectFile().path)">属性</li>
             <li @click="copyFilePath(getSelectFile().path)">复制文件路径</li>
           </div>
+          <div class="item-group" v-if="state.selectFileItem.type != 'folder'">
+            <li @click="createShareLink(getSelectFile().path)">分享链接</li>
+          </div>
           <div class="item-group">
             <li @click="sendToDesktop(getSelectFile().path)">发送到桌面</li>
           </div>
@@ -197,10 +200,30 @@ let fileSearchValue = ref("");
 let rawFils = [];
 //这里主要用于eventbus
 let { proxy } = getCurrentInstance();
-//任务完成后会掉
+//任务完成后回调
 let doneCallback = new Map()
 
 let selectOpenMethod = ref(false)
+//创建分享链接
+const createShareLink = (path) => {
+  hideAllPopupMenu();
+
+  coolWindow.startNewShareLinkDaySelectDialog(function (value) {
+    let loading = coolWindow.startNewLoadingView("创建中...");
+
+    folderApis.apiCreateShareLink(path, value).then((response) => {
+      loading.closeWindow();
+      if (response.data.status == 0) {
+        coolWindow.startNewShareLink(response.data.data)
+      } else {
+        coolWindow.startNewErrorMessageDialog(response.data.msg)
+      }
+
+    }).catch((e) => { loading.closeWindow(); })
+  });
+
+
+}
 //tail
 const tail = (path) => {
   hideAllPopupMenu()

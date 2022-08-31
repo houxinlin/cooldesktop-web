@@ -105,3 +105,8 @@ export function apiTailStop(id) {
         id
     }));
 }
+export function apiCreateShareLink(path,day) {
+    return axios.post("/desktop/api/file/share/link/create", qs.stringify({
+        path,day
+    }));
+}

@@ -77,6 +77,6 @@ let defaultAppList = [
             coolWindow.startSysLog();
         },
 
-    },
+    }
 ];
 export default defaultAppList

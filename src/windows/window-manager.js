@@ -1,6 +1,6 @@
 
 import { randId, getApplicationIndexUrl, getApplicationIconUrl } from "../utils/utils";
-import { reactive,getCurrentInstance } from "vue";
+import { reactive, getCurrentInstance } from "vue";
 import { createFolder } from "./data/folder.js";
 import { WindowActions } from "./window-action";
 import * as WindowEnum from "../windows/window-enum.js"
@@ -89,11 +89,11 @@ class CoolWindowStarter {
         window.application = application;
         window.applicationId = application.applicationId;
         //客户端传递过来的属性
-        for(let key in property){
-            window[key]=property[key]
+        for (let key in property) {
+            window[key] = property[key]
         }
         startNewWindow(window, application);
-       return  window;
+        return window;
     }
     startNewLoadingView = (msg = "") => {
         let window = createWindowByType(WindowEnum.LoadingView, { message: msg });
@@ -117,6 +117,12 @@ class CoolWindowStarter {
         props.selectCallback = selectCallback;
         props.selectType = selectType;
         startNewWindow(props);
+    }
+    startNewShareLink = (data) => {
+        startNewWindow(createWindowByType(WindowEnum.ShareLink, { data }));
+    }
+    startNewShareLinkDaySelectDialog = (callback) => {
+        startNewWindow(createWindowByType(WindowEnum.ShareLinkDaySelectDialog, { callback }));
     }
 
     startNewInputDialog = (callback, title = "提示", defaultValue = "") => {

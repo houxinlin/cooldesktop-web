@@ -84,6 +84,10 @@
         <InputDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'input-dialog'" />
         <Tail :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'tail'" />
         <SysLog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'sys-log'" />
+        <ShareLink :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link'" />
+        <ShareLinkDaySelect :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link-day-select'" />
+
+
 
       </template>
     </div>
@@ -113,13 +117,13 @@
 </template>
 
 <script  setup >
-import DialogCompressSelect from "./dialog/select-compress.vue";
-import DialogCreateFile from "./dialog/create-file.vue";
+import DialogCompressSelect from "./dialog/select-compress-dialog.vue";
+import DialogCreateFile from "./dialog/create-file-dialog.vue";
 import LoadingView from "./loading-view.vue";
 import FolderView from "./folder.vue";
 import IWebView from "./iframe.vue";
-import ErrorMessageView from "./dialog/error-message.vue";
-import SuccessMessageView from "./dialog/success-dialog.vue";
+import ErrorMessageView from "./dialog/error-message-dialog.vue";
+import SuccessMessageView from "./dialog/success-message-dialog.vue";
 import Setting from "./setting.vue";
 import FileUploadManagerView from "./fileUpload-manager-view.vue";
 import TerminalView from "./terminal.vue";
@@ -130,6 +134,10 @@ import DeveloperDoc from "./doc.vue";
 import InputDialog from "./dialog/input-dialog.vue";
 import Tail from "./tail-log.vue";
 import SysLog from "./sys-log.vue";
+import ShareLink from "./dialog/share-link-dialog.vue";
+
+import ShareLinkDaySelect from "./dialog/share-link-day-select-dialog.vue";
+
 
 import { onMounted, reactive, ref, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
@@ -203,6 +211,7 @@ const startHandlerWindow = (item) => {
 /**
  * 以下是测试区域
  */
+
 
 
 /**
