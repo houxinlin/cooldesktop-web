@@ -15,31 +15,26 @@
 
 <script setup>
 import { defineProps, reactive } from "vue";
-import { coolWindow, wact } from "../../windows/window-manager.js";
 import BaseWindow from "../../components/window.vue";
-import { copyText } from 'vue3-clipboard'
+import { copyTextToClipboard } from "../../utils/utils.js";
 
 const props = defineProps({
   item: Object,
   actionWindowId: String,
 });
 
+//共享链接主机地址
 let prefix=import.meta.env.VITE_APP_REQUEST_URL+"s/";
-
 let state = reactive({ ...props.item.data });
 
-const copyToClipboard = (str) => {
-  copyText(str, undefined, (error, event) => { })
-  postMessage({ "action": "notification", "param": { "message": "复制成功", "type": "success" } }, "*")
- 
-};
+/**
+ * 复制链接地址
+ */
 const copy = () => {
   let data = `${import.meta.env.VITE_APP_REQUEST_URL}s/${state.data}`;
-  copyToClipboard(data);
+  copyTextToClipboard(data);
 }
 </script>
 
 <style lang="less" >
-.container {
-}
 </style>

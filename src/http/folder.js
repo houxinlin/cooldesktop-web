@@ -80,7 +80,7 @@ export function apiRunJar(path, arg, type) {
         timeout: 1000 * 15,
     };
     return axios.post("/desktop/api/file/runJar", qs.stringify({
-        path, arg,type
+        path, arg, type
     }), config);
 }
 
@@ -105,8 +105,17 @@ export function apiTailStop(id) {
         id
     }));
 }
-export function apiCreateShareLink(path,day) {
+export function apiCreateShareLink(path, day) {
     return axios.post("/desktop/api/file/share/link/create", qs.stringify({
-        path,day
+        path, day
+    }));
+}
+
+export function apiListShareLink() {
+    return axios.get("/desktop/api/file/share/link/list");
+}
+export function apiDeleteShareLink(id) {
+    return axios.post("/desktop/api/file/share/link/delete", qs.stringify({
+        id
     }));
 }

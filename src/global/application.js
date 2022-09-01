@@ -1,4 +1,4 @@
-import { reactive, getCurrentInstance } from "vue";
+import { reactive } from "vue";
 
 import { apiListApplication } from "../http/application.js";
 

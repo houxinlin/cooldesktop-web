@@ -100,4 +100,9 @@ export function ShareLinkDaySelectDialog(data) {
     return getWindowProperty({ applicationId: 22, windowType: "share-link-day-select", application: { windowSize: 29884616 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 
 }
+export function ShareLinkList(data) {
+    return getWindowProperty({ applicationId: 23, windowType: "share-link-list", application: {}, "icon":defaultApps[9]}, data);
+
+}
+
 

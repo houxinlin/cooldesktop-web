@@ -84,8 +84,9 @@
         <InputDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'input-dialog'" />
         <Tail :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'tail'" />
         <SysLog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'sys-log'" />
-        <ShareLink :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link'" />
+        <ShareLinkResultDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link'" />
         <ShareLinkDaySelect :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link-day-select'" />
+        <ShareLinkList :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link-list'" />
 
 
 
@@ -134,7 +135,8 @@ import DeveloperDoc from "./doc.vue";
 import InputDialog from "./dialog/input-dialog.vue";
 import Tail from "./tail-log.vue";
 import SysLog from "./sys-log.vue";
-import ShareLink from "./dialog/share-link-dialog.vue";
+import ShareLinkResultDialog from "./dialog/share-link-dialog.vue";
+import ShareLinkList from "./share-link-list.vue";
 
 import ShareLinkDaySelect from "./dialog/share-link-day-select-dialog.vue";
 

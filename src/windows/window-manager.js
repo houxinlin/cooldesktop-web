@@ -124,6 +124,11 @@ class CoolWindowStarter {
     startNewShareLinkDaySelectDialog = (callback) => {
         startNewWindow(createWindowByType(WindowEnum.ShareLinkDaySelectDialog, { callback }));
     }
+    startNewShareLinkList = () => {
+        startNewWindow(createWindowByType(WindowEnum.ShareLinkList, {  }));
+
+    }
+
 
     startNewInputDialog = (callback, title = "提示", defaultValue = "") => {
         startNewWindow(createWindowByType(WindowEnum.DialogInput, { callback, title, defaultValue }));

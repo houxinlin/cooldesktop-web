@@ -1,7 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 const serverDomain = import.meta.env.VITE_APP_REQUEST_URL;
 const LOGO_IMAGE_NAME = "logo.png";
-
+import { copyText } from 'vue3-clipboard'
+export function copyTextToClipboard(text, notification = true) {
+   copyText(text, undefined, (error, event) => { })
+   if (!notification) return
+   postMessage({ "action": "notification", "param": { "message": "复制成功", "type": "success" } }, "*")
+}
 export function randId() {
    return uuidv4();
 }
@@ -13,7 +18,7 @@ export function randId() {
  * @returns 
  */
 export function getApplicationIndexUrl(application, arg = null, page = "") {
-   let newArg =arg!=null?`?${arg}`:"";
+   let newArg = arg != null ? `?${arg}` : "";
    if (application.type == 3) return `${serverDomain}${application.applicationId}/${page}${newArg}`;
    let url = `${serverDomain}desktop/webapplication/${application.applicationId}/index.html`;
    if (arg != null) url = url + "?" + arg;

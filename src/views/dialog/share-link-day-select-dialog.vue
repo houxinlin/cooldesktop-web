@@ -6,7 +6,7 @@
           <span class="key">有效期:</span>
           <div class="value">
             <div class="cooldesktop-select-container">
-              <div @click="select" class="selected">{{dayValue}}</div>
+              <div @click="openSelectList" class="selected">{{dayValue}}</div>
               <ul v-if="showSelectList" class="cooldesktop-select-ul">
                 <template v-for="item in DAY_VALUE">
                   <li @click="selectItem(item)">{{item}}</li>
@@ -28,7 +28,6 @@
 </template>
 
 
-
 <script setup>
 import { defineProps, ref } from "vue";
 
@@ -41,14 +40,19 @@ const props = defineProps({
 const DAY_VALUE = ["1天", "7天", "永久"];
 let showSelectList = ref(false);
 let dayValue = ref(DAY_VALUE[0]);
-const select = () => {
+const openSelectList = () => {
   showSelectList.value = true;
 }
+/**
+ * select框选择
+ */
 const selectItem = (value) => {
   dayValue.value = value;
   showSelectList.value = false;
 }
-
+/**
+ * 回调给调用方并关闭本窗口
+ */
 const share = () => {
   props.item.data.callback(dayValue.value);
   props.item.closeWindow();

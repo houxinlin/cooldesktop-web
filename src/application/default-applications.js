@@ -77,6 +77,17 @@ let defaultAppList = [
             coolWindow.startSysLog();
         },
 
+    },    {
+        visibilityIsDesktop: true,
+        name: "共享链接",
+        icon: new URL(`../assets/icon/ic-share-lilnk.png`, import.meta.url).href,
+        action: () => {
+            coolWindow.startNewShareLinkList();
+        },
+
     }
+
+
+    
 ];
 export default defaultAppList
