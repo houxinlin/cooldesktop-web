@@ -42,9 +42,23 @@
 
 <script setup>
 import BaseWindow from "../components/window.vue";
-import { ref, reactive } from "vue";
-import { copyTextToClipboard } from "../utils/utils.js";
+import { ref, reactive, getCurrentInstance } from "vue";
+import { copyTextToClipboard, getSystemAddressByKey } from "../utils/utils.js";
 import { apiListShareLink, apiDeleteShareLink } from "../http/folder.js";
+let { proxy } = getCurrentInstance();
+const props = defineProps({
+  item: Object,
+  actionWindowId: String,
+});
+proxy.eventBus.on("/event/notif/refresh/share/link", ()=>{listShareLink();});
+
+props.item.events = function (name, data) {
+  //关闭窗口
+  if (name == "resume") {
+    listShareLink();
+  }
+
+};
 
 let shareLink = reactive({ list: [] })
 /**
@@ -68,7 +82,7 @@ const deleteShareLink = (item) => {
  * 复制共享链接地址
  */
 const copyShareLink = (item) => {
-  let data = `${import.meta.env.VITE_APP_REQUEST_URL}s/${item.shareId}`;
+  let data = `${getSystemAddressByKey("host")}s/${item.shareId}`;
   copyTextToClipboard(data);
 }
 listShareLink();

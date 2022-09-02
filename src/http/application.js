@@ -1,4 +1,3 @@
-import { applicationServer } from "./axios.js";
 import defaultAxios from "./axios.js";
 import qs from 'qs'
 
@@ -9,11 +8,11 @@ export function apiListApplication() {
 
 
 export function apiListAllApplicationByType(name) {
-    return applicationServer.get("software/api/list", { params: { typeName: name } });
+    return defaultAxios.get("/desktop/api/application/server/app/list", { params: { typeName: name } });
 }
 
-export function apiListAllApplicationType(params) {
-    return applicationServer.get("software/api/types");
+export function apiListAllApplicationType() {
+    return defaultAxios.get("/desktop/api/application/server/type/list");
 }
 
 export function apiUnInstallApplication(id) {

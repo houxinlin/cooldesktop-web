@@ -16,7 +16,8 @@
 <script setup>
 import { defineProps, reactive } from "vue";
 import BaseWindow from "../../components/window.vue";
-import { copyTextToClipboard } from "../../utils/utils.js";
+
+import { copyTextToClipboard,getSystemAddressByKey } from "../../utils/utils.js";
 
 const props = defineProps({
   item: Object,
@@ -24,14 +25,14 @@ const props = defineProps({
 });
 
 //共享链接主机地址
-let prefix=import.meta.env.VITE_APP_REQUEST_URL+"s/";
+let prefix=getSystemAddressByKey("host")+"s/";
 let state = reactive({ ...props.item.data });
 
 /**
  * 复制链接地址
  */
 const copy = () => {
-  let data = `${import.meta.env.VITE_APP_REQUEST_URL}s/${state.data}`;
+  let data = `${getSystemAddressByKey("host")}s/${state.data}`;
   copyTextToClipboard(data);
 }
 </script>

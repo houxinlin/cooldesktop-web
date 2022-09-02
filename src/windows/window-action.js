@@ -37,17 +37,29 @@ export class WindowActions {
     setWindowPos = (id) => {
         for (const item of state.windowsCollection) {
             item.actionWindow = false;
+            if (id != item.id && item.activityStatus != 1) {
+                this.postWindowEvents(item.id, "pause", {});
+                item.activityStatus = 1;
+            }
+
         }
         //当前活动id
         state.actionWindowId = id;
         //设置当前为置顶
-        this.getAppById(id).instance.actionWindow = true;
+        let window = this.getAppById(id).instance;
+        window.actionWindow = true;
+
+        if (window.activityStatus != 0) {
+            window.activityStatus = 0;
+            this.postWindowEvents(id, "resume", {});
+        }
 
         //如果是最小化的时候，则显示
         if (this.getAppById(id).instance.minState) {
             this.getAppById(id).instance.minState = false;
             return;
         }
+
     };
 
 
@@ -161,11 +173,6 @@ export class WindowActions {
         let disX = e.clientX - odiv.offsetLeft;
         let disY = e.clientY - odiv.offsetTop;
         document.onmousemove = (e) => {
-            // if() {
-            //     console.log("asd");
-            // }
-
-
             let left = e.clientX - disX;
             let top = e.clientY - disY;
             if (top <= 23) {

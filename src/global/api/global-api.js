@@ -13,7 +13,6 @@ const createFileSelectCallback = (events) => {
 }
 //所有iframe向这里发送msg，主程序处理
 window.addEventListener("message", (events) => {
-    console.log(events);
     if (events.data.action == "notification") {
         notification(events.data.param);
         return;

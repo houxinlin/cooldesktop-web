@@ -8,54 +8,65 @@ export function apiChangeWallpaper(wallpaperFile) {
     let config = {
         timeout: UPLOAD_TIMER_OUT,
     };
-    return axios.post("/desktop/api/system/changeWallpaper", wallpaperFile, config);
+    return axios.post("/desktop/api/system/wallpaper/change", wallpaperFile, config);
 }
 
 export function apiGetCoolDesktopConfigs() {
-    return axios.post("/desktop/api/system/getCoolDesktopConfigs");
+    return axios.get("/desktop/api/system/cooldesktop/config/get");
+}
+export function apiSetCoolDesktopConfigs(key, value) {
+    return axios.post("/desktop/api/system/cooldesktop/config/set", qs.stringify({
+        key, value
+    }));
+}
+
+export function apiSetSoftwareServerHost(value) {
+    return apiSetCoolDesktopConfigs("application_server_host", value);
 }
 
 export function apiConfigSecureShell() {
-    return axios.post("/desktop/api/system/configSecureShell");
+    return axios.post("/desktop/api/system/ssh/reset");
 }
 
 export function apiConfigSecureShellUser(userName) {
-    return axios.post("/desktop/api/system/configSecureShellUser", qs.stringify({
+    return axios.post("/desktop/api/system/ssh/username/set", qs.stringify({
         userName
     }));
 }
 export function apiResetLoginPasswd(pass) {
-    return axios.post("/desktop/api/system/resetLoginPasswd", qs.stringify({
+    return axios.post("/desktop/api/system/login/passwd/reset", qs.stringify({
         pass
     }));
 }
 
 export function apiGetOpenUrl() {
-    return axios.post("/desktop/api/system/getOpenUrl");
+    return axios.get("/desktop/api/system/open/url/get");
 }
 
 export function apiAddOpenUrl(url) {
-    return axios.post("/desktop/api/system/addOpenUrl", qs.stringify({
+    return axios.post("/desktop/api/system/open/url/add", qs.stringify({
         url
     }));
 }
 
 export function apiRemoveOpenUrl(url) {
-    return axios.post("/desktop/api/system/removeOpenUrl", qs.stringify({
+    return axios.post("/desktop/api/system/open/url/add", qs.stringify({
         url
     }));
 }
 
 export function apiSetAppProperty(key, value) {
-    return axios.post("/desktop/api/system/setAppProperty", qs.stringify({
+    return axios.post("/desktop/api/system/app/property/set", qs.stringify({
         key, value
     }));
 }
 
 export function apiGetAppProperty(key) {
-    return axios.post("/desktop/api/system/getAppProperty", qs.stringify({
-        key
-    }));
+    return axios.get("/desktop/api/system/app/property/get", {
+        params: {
+            key
+        }
+    });
 }
 
 export function apiAddDesktopFile(path) {
@@ -75,7 +86,7 @@ export function apiListDesktopFile() {
 }
 
 export function apiGetBaseInfo() {
-    return axios.get("/desktop/api/system/baseInfo");
+    return axios.get("/desktop/api/system/system/info/base");
 }
 
 export function apiGetSystemLog(logType, logLevel, filterTimer, page) {

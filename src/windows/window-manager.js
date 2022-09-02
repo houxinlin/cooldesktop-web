@@ -30,6 +30,7 @@ const startNewWindow = (windowProperty = {}, application = null) => {
     state.application = application;
     state.actionWindowId = windowProperty.id;
     state.windowsCollection.push(windowProperty);
+    wact.setWindowPos(windowProperty.id);
     return windowProperty;
 }
 export const createWindowByType = (desktopWindow, data = {}) => {

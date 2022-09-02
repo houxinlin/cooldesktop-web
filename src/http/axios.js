@@ -1,13 +1,10 @@
 import axios from 'axios';
+import { getSystemAddressByKey } from '../utils/utils';
+
 
 let instance = axios.create({
-  baseURL: import.meta.env.VITE_APP_REQUEST_URL,
-  timeout: 4000,
-});
-
-let applicationServer = axios.create({
-  baseURL: import.meta.env.VITE_APP_SOFTWARE_SERVER_URL,
-  timeout: 4000,
+  baseURL:  getSystemAddressByKey("host"),
+  timeout: 5000,
 });
 
 instance.interceptors.response.use(
@@ -25,5 +22,3 @@ instance.interceptors.response.use(
   })
 
 export default instance
-
-export { applicationServer }

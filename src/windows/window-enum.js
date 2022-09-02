@@ -1,5 +1,9 @@
 import defaultApps from "../application/default-applications.js"
+const AVTIVITY_RUN=0;
+const AVTIVITY_PAUSE=1;
+
 let BASE_WINDOW_PROPERTYS = {
+    canSelect:false,
     showWindowInTaskBar: true,
     minState: false,
     maxState: false,
@@ -19,17 +23,18 @@ let BASE_WINDOW_PROPERTYS = {
     canResize: true,
     singleInstance: false,
     visibilityIsDesktop: false,
-    autoSaveWindowSize:true
+    autoSaveWindowSize:true,
+    activityStatus:AVTIVITY_RUN
 }
 
 function getWindowProperty(windowProperty, data = {}) {
     return Object.assign({}, BASE_WINDOW_PROPERTYS, windowProperty, { data });
 }
 export function ErrorMessage(data) {
-    return getWindowProperty({ applicationId: 1, application: { "windowBackground": "#c95447d4", windowSize: 29884616 }, windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data);
+    return getWindowProperty({  canSelect:true,applicationId: 1, application: { "windowBackground": "#c95447d4", windowSize: 29884616 }, windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function SuccessMessage(data) {
-    return getWindowProperty({ applicationId: 2, windowType: "success-message", application: { windowSize: 29884616 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
+    return getWindowProperty({ canSelect:true,applicationId: 2, windowType: "success-message", application: { windowSize: 29884616 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function WebWindow(data) {
     return getWindowProperty({ windowType: "web" }, data);
@@ -101,7 +106,7 @@ export function ShareLinkDaySelectDialog(data) {
 
 }
 export function ShareLinkList(data) {
-    return getWindowProperty({ applicationId: 23, windowType: "share-link-list", application: {}, "icon":defaultApps[9]}, data);
+    return getWindowProperty({ applicationId: 23, windowType: "share-link-list", application: {windowSize: 56885748 }, "icon":defaultApps[9].icon}, data);
 
 }
 

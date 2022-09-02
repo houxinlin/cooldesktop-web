@@ -185,7 +185,7 @@ import { offerFile } from "../utils/upload/file-upload";
 //用于判断有没有文件上传记录
 import { uploads } from "../utils/upload/manager";
 import { applicationState, getApplicationByMedia } from "../global/application.js";
-import { randId } from "../utils/utils.js"
+import { randId,getSystemAddressByKey } from "../utils/utils.js"
 import { notifyMessage } from "../utils/notify.js"
 let loadingVisable = ref(false)
 import { copyText } from 'vue3-clipboard'
@@ -193,7 +193,7 @@ import { copyText } from 'vue3-clipboard'
 //传递过来的数据
 let state = reactive({ ...props.item.data });
 //服务器域名
-let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
+let serverDomain = ref(getSystemAddressByKey("host"));
 //文件搜索值
 let fileSearchValue = ref("");
 //原始文件列表，搜索的时候这里保存原来记录

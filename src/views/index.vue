@@ -105,7 +105,7 @@
           <template v-for="item in state.windowsCollection" :key="item">
             <li v-if="item.showWindowInTaskBar" @click="wact.showWindow(item.id)">
               <div class="task-item">
-                <img :class="{ select: item.id == state.actionWindowId }" :src="item.icon" alt="" />
+                <img :class="{ select: item.id == state.actionWindowId }" :src="item.icon" />
                 <span :class="{ select: item.id == state.actionWindowId }"></span>
               </div>
             </li>
@@ -137,7 +137,6 @@ import Tail from "./tail-log.vue";
 import SysLog from "./sys-log.vue";
 import ShareLinkResultDialog from "./dialog/share-link-dialog.vue";
 import ShareLinkList from "./share-link-list.vue";
-
 import ShareLinkDaySelect from "./dialog/share-link-day-select-dialog.vue";
 
 
@@ -145,13 +144,13 @@ import { onMounted, reactive, ref, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { initInstallProgressManager } from "../utils/install-progress-manager.js"
 import { VueNotificationList } from "@dafcoe/vue-notification";
-
+import {setAddressConfig,getSystemAddressByKey} from "../utils/utils.js";
 import "@dafcoe/vue-notification/dist/vue-notification.css";
 import defaultAppList from "../application/default-applications.js"
 import getSocketConnection from "../utils/socket.js";
 import * as string from "../global/strings.js";
-import * as systemApi from "../http/system"
-import * as globalApi from "../global/api/global-api.js"
+import * as globalApi from "../global/api/global-api.js";
+import * as systemApi from "../http/system";
 import { refreshApplication, applicationState, getApplicationByMedia } from "../global/application.js";
 import { WindowActions } from "../windows/window-action";
 let userNameRef = ref("");
@@ -166,14 +165,16 @@ let contentMenuState = reactive({ x: 0, y: 0, visual: false, selectFile: {} })
 let stompClient =null;
 let defaultBackgroundImageUrl = ref(`url('${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}')`)
 onMounted(() => {
+  //缩放动画
   setTimeout(() => { state.desktopScale = false; }, 20);
   //初始化软件安装管理器
   initInstallProgressManager()
 });
 
-let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
-
+let serverDomain = ref(getSystemAddressByKey("host"));
 let { proxy } = getCurrentInstance();
+
+
 
 const showContextMenu = (event, item) => {
   contentMenuState.visual = true;

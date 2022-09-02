@@ -38,11 +38,7 @@ const targetName = ref(props.item.data.targetName);
 
 const finish = () => {
   wact.closeWindow(props.item.id);
-
-  props.item.data.callback(
-    { targetName: targetName.value, type: radioVal.value },
-    props.item
-  );
+  props.item.data.callback({ targetName: targetName.value, type: radioVal.value }, props.item );
 };
 </script>
 

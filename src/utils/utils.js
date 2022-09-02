@@ -1,12 +1,34 @@
 import { v4 as uuidv4 } from 'uuid';
-const serverDomain = import.meta.env.VITE_APP_REQUEST_URL;
+
+let addressConfig = {};
+export function setAddressConfig(config) {
+
+   addressConfig = config;
+ 
+}
+
+export function getSystemAddressByKey(key){
+   return addressConfig[key];
+}
+
+
 const LOGO_IMAGE_NAME = "logo.png";
 import { copyText } from 'vue3-clipboard'
+/**
+ * 
+ * @param {复制的文本} text 
+ * @param {是否弹出通知} notification 
+ * @returns 
+ */
 export function copyTextToClipboard(text, notification = true) {
    copyText(text, undefined, (error, event) => { })
    if (!notification) return
    postMessage({ "action": "notification", "param": { "message": "复制成功", "type": "success" } }, "*")
 }
+/**
+ * 随机id
+ * @returns 
+ */
 export function randId() {
    return uuidv4();
 }
@@ -19,8 +41,9 @@ export function randId() {
  */
 export function getApplicationIndexUrl(application, arg = null, page = "") {
    let newArg = arg != null ? `?${arg}` : "";
-   if (application.type == 3) return `${serverDomain}${application.applicationId}/${page}${newArg}`;
-   let url = `${serverDomain}desktop/webapplication/${application.applicationId}/index.html`;
+   let host =getSystemAddressByKey("host");
+   if (application.type == 3) return `${host}${application.applicationId}/${page}${newArg}`;
+   let url = `${host}desktop/webapplication/${application.applicationId}/index.html`;
    if (arg != null) url = url + "?" + arg;
    return url;
 }
@@ -30,7 +53,8 @@ export function getApplicationIndexUrl(application, arg = null, page = "") {
  * @returns 
  */
 export function getApplicationIconUrl(application) {
-   return `${serverDomain}desktop/webapplication/${application.applicationId}/${LOGO_IMAGE_NAME}`;
+   let host =getSystemAddressByKey("host");
+   return `${host}desktop/webapplication/${application.applicationId}/${LOGO_IMAGE_NAME}`;
 }
 
 export const sizeFormate = (size) => {

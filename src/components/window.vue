@@ -8,6 +8,7 @@
       'window-scale': item.windowScale,
       'min-window': item.minState,
       'max-window': item.maxState,
+      'user-select-text':item.canSelect,
       'window-z-height': item.actionWindow,
       'window-item-resize':item.canResize,
     } ,className,backgroundClass]" :style="[{'left':(first?windowLeft:'error')},{'top':(first?windowTop:'error')},{'width':windowWidth+'px','height':windowHeight+'px','background':backgroundFilter(item.application )}]"

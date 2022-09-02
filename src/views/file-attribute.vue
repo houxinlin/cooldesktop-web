@@ -41,8 +41,9 @@
 import { defineProps, reactive, ref } from "vue";
 import { apiFileAttribute } from "../http/folder.js";
 import BaseWindow from "../components/window.vue";
+import {getSystemAddressByKey} from "../utils/utils.js"
 
-let request = ref(import.meta.env.VITE_APP_REQUEST_URL);
+let request = ref(getSystemAddressByKey("host"));
 const props = defineProps({
   item: Object,
   actionWindowId: String,

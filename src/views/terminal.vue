@@ -21,6 +21,7 @@ import { createTerminalInstance } from "../utils/xterm.js"
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { AttachAddon } from 'xterm-addon-attach';
+import {getSystemAddressByKey} from "../utils/utils.js";
 let windowTitle = ref("连接中...")
 let terminalSocket = null
 let listenerWindowSizeEventTimerId = null
@@ -116,8 +117,7 @@ const websocketOpen = (e) => {
   }
 }
 const connectWebSocket = () => {
-  let url = import.meta.env.VITE_APP_TERMINAL_WEBSOCKET;
-  url = eval(url)
+  let url = getSystemAddressByKey("terminalSocket");
   terminalSocket = new WebSocket(url);
   const attachAddon = new AttachAddon(terminalSocket);
   term.loadAddon(attachAddon);

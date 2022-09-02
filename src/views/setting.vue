@@ -17,7 +17,7 @@
             <div class="form-item">
               <span>用户名:</span>
               <input v-model="secureShellUser" type="text">
-              <button class="save-user-button base-button green" @click="apiConfigSecureShellUser">保存</button>
+              <button class="save-user-button base-button green" @click="configSecureShellUser">保存</button>
             </div>
             <div class="form-item">
               <div class="tip">
@@ -27,7 +27,7 @@
               </div>
             </div>
             <div class="form-item">
-              <button @click="configSecureShellClick" class="button base-button green">重置</button>
+              <button @click="configSecureShell" class="button base-button green">重置</button>
             </div>
           </div>
           <div :style="[navIndex==1?'':'display:none']" class="page-background">
@@ -35,10 +35,10 @@
               <img @click="selectBackground" :src="currentBackgroundImageUrl" alt="">
             </div>
           </div>
-          <div :style="[navIndex==2?'':'display:none']" class="page-passwd">
+          <div :style="[navIndex==2?'':'display:none']" class="page-passwd flex flex-align-items-center">
             <span>新密码：</span>
             <input v-model="loginPasswd" type="password" class="base-input">
-            <button @click="resetPassClick" class="button color-white base-button">重置</button>
+            <button @click="resetLoginPass" class="button color-white base-button red">重置</button>
           </div>
           <div :style="[navIndex==3?'':'display:none']" class="padding-10px page-url-config">
             <span>开放路径用于对外开放某个请求路径，使此地址不再受系统权限管理</span>
@@ -53,7 +53,13 @@
               </template>
             </ul>
           </div>
-          <div :style="[navIndex==4?'':'display:none']" class="page-about padding-10px">
+          <div :style="[navIndex==4?'':'display:none']" class="flex flex-align-items-center">
+            <span>服务器地址：</span>
+            <input v-model="softwareServerHost" class="base-input">
+            <button @click="setSoftwareServerHost" class="button color-white base-button red">设置</button>
+
+          </div>
+          <div :style="[navIndex==5?'':'display:none']" class="page-about padding-10px">
             CoolDesktop({{version}})是一款服务器管理软件，提供强大的软件扩展能力，任何开发者都将可以自行开发管理软件并挂在到本系统上。
             <br>
             <br>
@@ -78,9 +84,13 @@ import { defineProps, onMounted, reactive, ref, toRef, toRefs, getCurrentInstanc
 import { selectFile } from "../utils/file.js";
 import * as systemApi from "../http/system.js";
 import { coolWindow } from "../windows/window-manager.js";
+import { getSystemAddressByKey } from "../utils/utils.js";
+import { notifyMessage } from "../utils/notify.js"
 import md5 from "md5";
 let secureShellUser = ref("");
 let loginPasswd = ref("");
+let softwareServerHost = ref("");
+
 let openUrlState = reactive({ list: [] });
 let currentBackgroundImageUrl = ref(`${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}`);
 let version = ref("未获取到");
@@ -105,99 +115,137 @@ const nav = [{
   "icon": new URL(`../assets/icon/ic-setting-url.png`, import.meta.url).href,
 },
 {
+  "name": "软件商店",
+  "icon": new URL(`../assets/icon/ic-software.png`, import.meta.url).href,
+},
+{
   "name": "关于",
   "icon": new URL(`../assets/icon/ic-about.png`, import.meta.url).href,
 },]
-let navIndex = ref(0)
+let navIndex = ref(0);
 
-const resetPassClick = () => {
-  let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{6,20}/
-  if (reg.test(loginPasswd.value)) {
-    let loadingWindow = coolWindow.startNewLoadingView("重置中")
-    systemApi.apiResetLoginPasswd(md5(loginPasswd.value + COOLDESKTOP_PASS_SUFFIX)).then((response) => {
-      loadingWindow.closeWindow()
-      postMessage({ action: "notification", param: { message: response.data.data, type: "success" } });
-    })
+/**
+ * 设置软件服务器地址
+ */
+const setSoftwareServerHost = () => {
+  if (softwareServerHost.value == "") {
+    notifyMessage("请填写服务器地址", "error");
     return
   }
-  coolWindow.startNewErrorMessageDialog("你需要设置至少包含一个大写字母、一个小写字母、一个数字、一个特殊符号的6-20位密码")
+  systemApi.apiSetSoftwareServerHost(softwareServerHost.value).then((response) => {
+    notifyMessage(response.data.data, "success");
+  })
+}
+/**
+ * 重置登录密码
+ */
+const resetLoginPass = () => {
+  let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{6,20}/
+  if (reg.test(loginPasswd.value)) {
+    let loadingWindow = coolWindow.startNewLoadingView("重置中");
+    systemApi.apiResetLoginPasswd(md5(loginPasswd.value + COOLDESKTOP_PASS_SUFFIX)).then((response) => {
+      loadingWindow.closeWindow();
+      postMessage({ action: "notification", param: { message: response.data.data, type: "success" } });
+    })
+    return;
+  }
+  coolWindow.startNewErrorMessageDialog("你需要设置至少包含一个大写字母、一个小写字母、一个数字、一个特殊符号的6-20位密码");
 
 }
+/**
+ * 显示所有配置
+ */
 
-const showaseConfig = () => {
+const showAllConfig = () => {
   systemApi.apiGetCoolDesktopConfigs().then((response) => {
-    let wallpaper = response.data.data["wallpaper"]
-    version.value = response.data.data["cooldesktop.version"]
+    let wallpaper = response.data.data["wallpaper"];
+    version.value = response.data.data["cooldesktop.version"];
+    softwareServerHost.value = response.data.data["application_server_host"];
     if (wallpaper != undefined && wallpaper != '') {
-      wallpaper = wallpaper.substr(1)
-      let serverDomain = ref(import.meta.env.VITE_APP_REQUEST_URL);
-      currentBackgroundImageUrl.value = `${serverDomain.value}${wallpaper}`
+      wallpaper = wallpaper.substr(1);
+      let serverDomain = ref(getSystemAddressByKey("host"));
+      currentBackgroundImageUrl.value = `${serverDomain.value}${wallpaper}`;
     }
   })
 
 }
-//选择壁纸
+/**
+ * 选择壁纸
+ */
 const selectBackground = () => {
   selectFile("image/*", false).then((imagefile) => {
     const formData = new FormData();
     formData.append("file", imagefile);
     //修改壁纸
-    let loading = coolWindow.startNewLoadingView("上传中...")
+    let loading = coolWindow.startNewLoadingView("上传中...");
 
     systemApi.apiChangeWallpaper(formData).then((response) => {
-      showaseConfig()
-      loading.closeWindow()
+      showaseConfig();
+      loading.closeWindow();
     })
   })
 
 }
-const apiConfigSecureShellUser = () => {
-  let window = coolWindow.startNewLoadingView("保存中")
+/**
+ * 设置ssh用户名
+ */
+const configSecureShellUser = () => {
+  let window = coolWindow.startNewLoadingView("保存中");
   systemApi.apiConfigSecureShellUser(secureShellUser.value).then((response) => {
-    window.closeWindow()
-    coolWindow.startNewSuccessMessageDialog(response.data.data)
+    window.closeWindow();
+    notifyMessage(response.data.data, "success");
   })
 }
-//配置系统ssh
-const configSecureShellClick = () => {
-  let window = coolWindow.startNewLoadingView("重置中")
+/**
+ * 配置系统ssh
+ */
+const configSecureShell = () => {
+  let window = coolWindow.startNewLoadingView("重置中");
   systemApi.apiConfigSecureShell().then((response) => {
-    window.closeWindow()
-    coolWindow.startNewSuccessMessageDialog(response.data.data)
+    window.closeWindow();
+    coolWindow.startNewSuccessMessageDialog(response.data.data);
   })
 }
-
+/**
+ * 添加系统url
+ */
 const addOpenUrl = () => {
   coolWindow.startNewDialogCreateFile((data) => {
     if ((data.targetName || "").length == 0) {
-      coolWindow.startNewErrorMessageDialog("参数不能为空")
-      return
+      coolWindow.startNewErrorMessageDialog("参数不能为空");
+      return;
     }
     systemApi.apiAddOpenUrl(data.targetName).then((response) => {
       if (response.data.status < 0) {
-        coolWindow.startNewErrorMessageDialog(response.data.msg)
+        coolWindow.startNewErrorMessageDialog(response.data.msg);
       }
-      showAllOpenUrl()
+      showAllOpenUrl();
     })
   })
 }
+/**
+ * 删除系统开放url
+ */
 const removeOpenUrl = (url) => {
   systemApi.apiRemoveOpenUrl(url).then((response) => {
-    coolWindow.startNewSuccessMessageDialog(response.data.msg)
-    showAllOpenUrl()
+    coolWindow.startNewSuccessMessageDialog(response.data.msg);
+    showAllOpenUrl();
   })
 }
 
+/**
+ * 显示所有url
+ */
 const showAllOpenUrl = () => {
   systemApi.apiGetOpenUrl().then((response) => {
-    openUrlState.list = response.data.data
+    openUrlState.list = response.data.data;
   })
 }
-showaseConfig()
-showAllOpenUrl()
+showAllConfig();
+showAllOpenUrl();
 
 const changeNavIndex = (index) => {
-  navIndex.value = index
+  navIndex.value = index;
 }
 </script>
 
