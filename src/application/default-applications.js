@@ -5,7 +5,7 @@ let defaultAppList = [
         name: "文件",
         icon: new URL(`../assets/icon/ic-folder.png`, import.meta.url).href,
         action: () => {
-            coolWindow.startNewFolder();
+            coolWindow.startNewFolder("/",false,true);
         },
     },
     {

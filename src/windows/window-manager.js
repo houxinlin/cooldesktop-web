@@ -45,7 +45,7 @@ class CoolWindowStarter {
         state.appStarterVisible = !state.appStarterVisible;
     };
 
-    startNewFolder = (path = "/", single = false) => {
+    startNewFolder = (path = "/", single = false,showRootPanel=false) => {
         if (single) {
             for (const window of state.windowsCollection) {
                 if (window.windowType == "folder" && path == window.data.path.path) {
@@ -53,7 +53,7 @@ class CoolWindowStarter {
                 }
             }
         }
-        startNewWindow(createWindowByType(WindowEnum.FolderWindow, createFolder(path, [])));
+        startNewWindow(createWindowByType(WindowEnum.FolderWindow, {"showRootPanel":showRootPanel,"folder":createFolder(path, [])}));
     };
     startFileUploadManager = () => {
         startNewWindow(createWindowByType(WindowEnum.UploadManager, uploads));

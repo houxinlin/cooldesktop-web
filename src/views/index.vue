@@ -57,7 +57,7 @@
             <li @contextmenu.prevent="showContextMenu($event, item)" @dblclick="startHandlerWindow(item)">
               <div class="file-item">
                 <img v-if="item.type != 'image'" :src=" serverDomain + 'desktop/api/file/getFileIconByType?type=' + item.rawType" />
-                <img v-if="item.type == 'image'" :src=" serverDomain +'desktop/api/file/getImageThumbnail?path=' + encodeURIComponent(item.path) " alt="" />
+                <img v-if="item.type == 'image'" :src=" serverDomain +'desktop/api/file/image/thumbnail/get?path=' + encodeURIComponent(item.path) " alt="" />
                 <span class="file-name">{{ getLastName(item.name) }}</span>
               </div>
             </li>

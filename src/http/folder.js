@@ -1,20 +1,14 @@
 import axios from "./axios.js";
 import qs from 'qs'
-
+export function apiGetSpaceStatus(root = "/") {
+    return axios.get("/desktop/api/file/space/status", { params: { root } });
+}
 
 export function apiListDirectory(params) {
-    return axios.get("/desktop/api/file/list", {
-        params: {
-            root: params
-        }
-    });
+    return axios.get("/desktop/api/file/list", { params: { root: params } });
 }
 export function apiDeleteFileOrFolder(params) {
-    return axios.get("/desktop/api/file/delete?", {
-        params: {
-            path: params
-        }
-    });
+    return axios.get("/desktop/api/file/delete?", { params: { path: params } });
 }
 
 export function apiChunkFileUpload(chunkFile, axiosRequestConfig) {
@@ -29,9 +23,7 @@ export function apiChunkFileMerge(chunkId, targetName, inPath, size) {
     }));
 }
 export function apiFileCopy(path) {
-    return axios.post("/desktop/api/file/fileCopy", qs.stringify({
-        path: path
-    }));
+    return axios.post("/desktop/api/file/fileCopy", qs.stringify({ path: path }));
 }
 export function apiFilePaste(path, taskId) {
     return axios.post("/desktop/api/file/filePaste", qs.stringify({
@@ -40,9 +32,7 @@ export function apiFilePaste(path, taskId) {
     }), { timeout: 60 * 1000 * 30 });
 }
 export function apiFileCut(path) {
-    return axios.post("/desktop/api/file/fileCut", qs.stringify({
-        path: path
-    }));
+    return axios.post("/desktop/api/file/fileCut", qs.stringify({ path: path }));
 }
 export function apiFileRename(source, newName) {
     return axios.post("/desktop/api/file/fileRename", qs.stringify({
@@ -106,16 +96,12 @@ export function apiTailStop(id) {
     }));
 }
 export function apiCreateShareLink(path, day) {
-    return axios.post("/desktop/api/file/share/link/create", qs.stringify({
-        path, day
-    }));
+    return axios.post("/desktop/api/file/share/link/create", qs.stringify({ path, day }));
 }
 
 export function apiListShareLink() {
     return axios.get("/desktop/api/file/share/link/list");
 }
 export function apiDeleteShareLink(id) {
-    return axios.post("/desktop/api/file/share/link/delete", qs.stringify({
-        id
-    }));
+    return axios.post("/desktop/api/file/share/link/delete", qs.stringify({ id }));
 }

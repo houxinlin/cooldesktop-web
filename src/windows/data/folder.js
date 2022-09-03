@@ -60,6 +60,7 @@ export class Folder {
 
     }
 }
-export const createFolder = (root, child) => {
+export const createFolder = (root, child,showRootPanel=false) => {
+    if (root == null) return null;
     return new Folder(root, child);
 }

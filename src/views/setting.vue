@@ -4,7 +4,7 @@
       <div class="left-tab-layout">
         <aside class="pos-fixed tbl0 ">
           <ul>
-            <li @click="changeNavIndex(index)" v-for="(item,index) in nav" :class="[index==navIndex?'select':'']" :key="item">
+            <li @click="changeNavIndex(index)" v-for="(item,index) in NAV_LIST" :class="[index==navIndex?'select':'']" :key="item">
               <div>
                 <img :src="item.icon" alt="" srcset="">
                 <span>{{item.name}}</span>
@@ -80,18 +80,22 @@
 
 <script setup>
 import BaseWindow from "../components/window.vue";
-import { defineProps, onMounted, reactive, ref, toRef, toRefs, getCurrentInstance } from "vue";
+import { defineProps, reactive, ref } from "vue";
 import { selectFile } from "../utils/file.js";
 import * as systemApi from "../http/system.js";
 import { coolWindow } from "../windows/window-manager.js";
 import { getSystemAddressByKey } from "../utils/utils.js";
 import { notifyMessage } from "../utils/notify.js"
 import md5 from "md5";
+//ssh用户名
 let secureShellUser = ref("");
+//登录密码
 let loginPasswd = ref("");
+//软件服务器地址
 let softwareServerHost = ref("");
 
 let openUrlState = reactive({ list: [] });
+//背景
 let currentBackgroundImageUrl = ref(`${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}`);
 let version = ref("未获取到");
 let COOLDESKTOP_PASS_SUFFIX = "cooldesktop@passwd!.";
@@ -99,7 +103,8 @@ const props = defineProps({
   item: Object,
   actionWindowId: String
 });
-const nav = [{
+//设置列表
+const NAV_LIST = [{
   "name": "SSH",
   "icon": new URL(`../assets/icon/ic-setting-shell.png`, import.meta.url).href,
 }, {
@@ -132,6 +137,7 @@ const setSoftwareServerHost = () => {
     notifyMessage("请填写服务器地址", "error");
     return
   }
+  
   systemApi.apiSetSoftwareServerHost(softwareServerHost.value).then((response) => {
     notifyMessage(response.data.data, "success");
   })

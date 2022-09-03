@@ -2,10 +2,7 @@
   <BaseWindow :item="item" className="folder">
     <template v-slot:extend>
       <!-- 文件右击菜单 -->
-      <div v-if="state.folderContextMenuVisible" :style="{
-        left: state.folderContextMenuPoint.x + 'px',
-        top: state.folderContextMenuPoint.y + 'px',
-      }" class="file-menu">
+      <div v-if="state.folderContextMenuVisible" :style="{ left: state.folderContextMenuPoint.x + 'px',   top: state.folderContextMenuPoint.y + 'px', }" class="file-menu">
         <menu>
           <div class="item-group">
             <li @click="openTerminal()">在此处打开终端</li>
@@ -85,63 +82,75 @@
     </template>
     <template v-slot:body>
       <!-- 打开方式遮罩 -->
-      <div v-if="selectOpenMethod" class="select-method-mask pos-absolute fit-parent"></div>
-      <!-- 打开方式对话框 -->
-      <div v-if="selectOpenMethod" class="select-method pos-absolute flex flex-all-center fit-parent">
-        <div class="height-200px flex flex-column background-white ">
-          <header class="grid">
-            <button @click="selectOpenMethod=false" class="base-button">取消</button>
-            <div class="title flex flex-all-center">请选择打开方式</div>
-            <div></div>
-          </header>
-          <ul class="padding-10px flex-1">
-            <template v-for="applicationItem in applicationState.applications" :key="applicationItem.applicationId">
-              <li @click="openByApplicationId(applicationItem)" class="cursor-pointer margin-b-5px">
-                <div class="flex flex-aling-item-center">
-                  <img class="wh-30px" :src=" serverDomain + 'desktop/webapplication/' + applicationItem.applicationId + '/logo.png'" alt="" />
-                  <span class="font-size-10px">{{applicationItem.applicationName}}</span>
+      <div class="fit-parent" v-if="!showRootPanel">
+        <div v-if="selectOpenMethod" class="select-method-mask pos-absolute fit-parent"></div>
+        <!-- 打开方式对话框 -->
+        <div v-if="selectOpenMethod" class="select-method pos-absolute flex flex-all-center fit-parent">
+          <div class="height-200px flex flex-column background-white ">
+            <header class="grid">
+              <button @click="selectOpenMethod=false" class="base-button">取消</button>
+              <div class="title flex flex-all-center">请选择打开方式</div>
+              <div></div>
+            </header>
+            <ul class="padding-10px flex-1">
+              <template v-for="applicationItem in applicationState.applications" :key="applicationItem.applicationId">
+                <li @click="openByApplicationId(applicationItem)" class="cursor-pointer margin-b-5px">
+                  <div class="flex flex-aling-item-center">
+                    <img class="wh-30px" :src=" serverDomain + 'desktop/webapplication/' + applicationItem.applicationId + '/logo.png'" alt="" />
+                    <span class="font-size-10px">{{applicationItem.applicationName}}</span>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        <div @dragstart="dragstart" @dragover="dragover" @dragleave="dragleave" @drop="drop" @contextmenu.prevent="folderContextMenu($event)" @click="
+           hideAllPopupMenu()
+        " class="folder-global pos-relative">
+          <div v-if="loadingVisable" class="loading pos-absolute flex pos-ltrb0 flex-all-center">
+            <img class="wh-40px" src="../assets/icon/ic-loading.png" alt="">
+          </div>
+          <ul class="folder-u" v-if="item.windowType == 'folder'">
+            <template v-for="(item, index) in state.child" :key="item">
+              <li @contextmenu.prevent="fileContextMenu($event, item)" :class="{ select: state.currentSelectName == item.name }" @click="
+                state.currentSelectName = item.name;
+                state.contextMenuVisible = false;
+                state.selectFileItem=item
+              " @dblclick="fileDblClick(item)">
+                <div class="file-item">
+                  <img v-if="item.type != 'image'" :src="
+                    serverDomain +
+                    'desktop/api/file/getFileIconByType?type=' +
+                    item.rawType
+                  " />
+                  <img v-if="item.type == 'image'" :src=" serverDomain + 'desktop/api/file/image/thumbnail/get?path='+ encodeURIComponent(item.path)" alt="" />
+                  <span @keydown="fileKeyDown($event, index)" @blur="fileBlur(index)" class="contenteditable" v-if="item.edit" contenteditable="true">{{ item.name }}</span>
+                  <span class="file-name" v-if="item.edit == false">{{ item.name }}</span>
+                  <div class="tip">{{ item.name }}</div>
                 </div>
               </li>
             </template>
           </ul>
         </div>
-      </div>
-      <div @dragstart="dragstart" @dragover="dragover" @dragleave="dragleave" @drop="drop" @contextmenu.prevent="folderContextMenu($event)" @click="
-           hideAllPopupMenu()
-        " class="folder-global pos-relative">
-        <div v-if="loadingVisable" class="loading pos-absolute flex pos-ltrb0 flex-all-center">
-          <img class="wh-40px" src="../assets/icon/ic-loading.png" alt="">
-        </div>
-        <ul class="folder-u" v-if="item.windowType == 'folder'">
-          <template v-for="(item, index) in state.child" :key="item">
-            <li @contextmenu.prevent="fileContextMenu($event, item)" :class="{ select: state.currentSelectName == item.name }" @click="
-                state.currentSelectName = item.name;
-                state.contextMenuVisible = false;
-                state.selectFileItem=item
-              " @dblclick="fileDblClick(item)">
-              <div class="file-item">
-                <img v-if="item.type != 'image'" :src="
-                    serverDomain +
-                    'desktop/api/file/getFileIconByType?type=' +
-                    item.rawType
-                  " />
-                <img v-if="item.type == 'image'" :src="
-                    serverDomain +
-                    'desktop/api/file/getImageThumbnail?path=' +
-                    encodeURIComponent(item.path)
-                  " alt="" />
-                <span @keydown="fileKeyDown($event, index)" @blur="fileBlur(index)" class="contenteditable" v-if="item.edit" contenteditable="true">{{ item.name }}</span>
-                <span class="file-name" v-if="item.edit == false">{{ item.name }}</span>
-                <div class="tip">{{ item.name }}</div>
-              </div>
-            </li>
-          </template>
-        </ul>
+
       </div>
 
+      <div v-if="showRootPanel">
+
+        <div class="padding-10px">
+
+          <div @click="showRootPanel=false" class="cursor-pointer  root-item">
+            <div class="bar">
+              <div class="name">/ 已使用 {{parseInt((spaceState.used/spaceState.total)*100)}}%</div>
+              <span :style="{'width':parseInt((spaceState.used/spaceState.total)*100)+'%'}" class="use"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </template>
     <template v-slot:header>
-      <header>
+      <header v-if="!showRootPanel">
         <ul>
           <template v-for="(item, index) in state.path.pathBlock" :key="item">
             <li @click="navPathClick(index)">{{ item }}</li>
@@ -158,7 +167,7 @@
 
         </div>
       </header>
-
+      <header v-if="showRootPanel"></header>
     </template>
   </BaseWindow>
 
@@ -185,13 +194,16 @@ import { offerFile } from "../utils/upload/file-upload";
 //用于判断有没有文件上传记录
 import { uploads } from "../utils/upload/manager";
 import { applicationState, getApplicationByMedia } from "../global/application.js";
-import { randId,getSystemAddressByKey } from "../utils/utils.js"
-import { notifyMessage } from "../utils/notify.js"
-let loadingVisable = ref(false)
-import { copyText } from 'vue3-clipboard'
+import { randId, getSystemAddressByKey } from "../utils/utils.js";
+import { notifyMessage } from "../utils/notify.js";
+let loadingVisable = ref(false);
+import { copyText } from 'vue3-clipboard';
 
 //传递过来的数据
-let state = reactive({ ...props.item.data });
+let state = reactive({ ...props.item.data.folder });
+//显示磁盘面板
+let showRootPanel = ref(props.item.data.showRootPanel);
+let spaceState = ref({});
 //服务器域名
 let serverDomain = ref(getSystemAddressByKey("host"));
 //文件搜索值
@@ -201,9 +213,9 @@ let rawFils = [];
 //这里主要用于eventbus
 let { proxy } = getCurrentInstance();
 //任务完成后回调
-let doneCallback = new Map()
+let doneCallback = new Map();
 
-let selectOpenMethod = ref(false)
+let selectOpenMethod = ref(false);
 //创建分享链接
 const createShareLink = (path) => {
   hideAllPopupMenu();
@@ -214,24 +226,24 @@ const createShareLink = (path) => {
     folderApis.apiCreateShareLink(path, value).then((response) => {
       loading.closeWindow();
       if (response.data.status == 0) {
-        coolWindow.startNewShareLink(response.data.data)
+        coolWindow.startNewShareLink(response.data.data);
       } else {
-        coolWindow.startNewErrorMessageDialog(response.data.msg)
+        coolWindow.startNewErrorMessageDialog(response.data.msg);
       }
 
-    }).catch((e) => { loading.closeWindow(); })
+    }).catch((e) => { loading.closeWindow(); });
   });
 
 
 }
 //tail
 const tail = (path) => {
-  hideAllPopupMenu()
-  coolWindow.startTail(path)
+  hideAllPopupMenu();
+  coolWindow.startTail(path);
 }
 //复制文件路径
 const copyFilePath = (text) => {
-  copyText(text, undefined, (error, event) => { })
+  copyText(text, undefined, (error, event) => { });
   hideAllPopupMenu();
 }
 //发送到桌面
@@ -338,9 +350,7 @@ const downloadCurSelectFile = () => {
 const createFile = (type) => {
   hideAllPopupMenu();
   coolWindow.startNewInputDialog((data) => {
-    folderApis
-      .apiCreateFile(getCurrentDirectory(), data.targetName, type)
-      .then((res) => {
+    folderApis.apiCreateFile(getCurrentDirectory(), data.targetName, type).then((res) => {
         if (res.data.status != 0) {
           coolWindow.startNewErrorMessageDialog(res.data.msg);
         }
@@ -357,11 +367,11 @@ const openFileAttribute = (filePath) => {
 //文件解压
 const fileDecompression = () => {
   hideAllPopupMenu();
-  let loading = coolWindow.startNewLoadingView("解压中")
-  let taskId = randId()
+  let loading = coolWindow.startNewLoadingView("解压中");
+  let taskId = randId();
   addDoneTask(taskId, () => {
-    loading.closeWindow()
-    refresh()
+    loading.closeWindow();
+    refresh();
   })
   folderApis.apiFileDecompression(getSelectFile().path, taskId).then((res) => { });
 };
@@ -386,11 +396,11 @@ const fileCompress = () => {
   //选择压缩类型
   coolWindow.startNewCompressDialogSelect(name, function (data, dialog) {
     //压缩
-    let loading = coolWindow.startNewLoadingView("压缩中")
-    let taskId = randId()
+    let loading = coolWindow.startNewLoadingView("压缩中");
+    let taskId = randId();
     addDoneTask(taskId, () => {
-      loading.closeWindow()
-      refresh()
+      loading.closeWindow();
+      refresh();
     })
     folderApis.apiFileCompress(getSelectFile().path, data.targetName, data.type, taskId).then((res) => {
 
@@ -401,7 +411,7 @@ const fileCompress = () => {
 const hideAllPopupMenu = () => {
   state.folderContextMenuVisible = false;
   state.contextMenuVisible = false;
-  props.item.canResize = true
+  props.item.canResize = true;
 };
 //文件复制
 const fileCopy = () => {
@@ -411,13 +421,13 @@ const fileCopy = () => {
 //文件粘贴
 const filePaste = () => {
   hideAllPopupMenu();
-  let windowLoadingProperty = coolWindow.startNewLoadingView("文件复制中...")
+  let windowLoadingProperty = coolWindow.startNewLoadingView("文件复制中...");
   let taskId = randId()
   //由于不知道什么时候复制完成，先将完成后的事情做个回调
   //服务器会返回一个id，当文件处理完成后，会回调这个id
   //文件处理完成后会回调到doneFunction
   addDoneTask(taskId, () => {
-    windowLoadingProperty.closeWindow()
+    windowLoadingProperty.closeWindow();
     refresh();
   })
   folderApis.apiFilePaste(state.path.getPath(), taskId).then((res) => {
@@ -450,12 +460,8 @@ const selectText = (element) => {
 
 const fileKeyDown = (events, index) => {
   if (events.keyCode == 13) {
-    let span = document.querySelector(
-      `.window-body ul li:nth-child(${index + 1}) span`
-    );
-    folderApis
-      .apiFileRename(state.child[index].path, span.textContent)
-      .then((res) => {
+    let span = document.querySelector( `.window-body ul li:nth-child(${index + 1}) span` );
+    folderApis .apiFileRename(state.child[index].path, span.textContent).then((res) => {
         refresh();
         if (res.data.status != 0) {
           coolWindow.startNewErrorMessageDialog(res.data.msg);
@@ -470,14 +476,10 @@ const fileBlur = (index) => {
 };
 const rename = () => {
   let select = getSelectFile();
-  let index = state.child.findIndex((r) => {
-    return r == select;
-  });
+  let index = state.child.findIndex((r) => { return r == select; });
 
   setTimeout(function () {
-    document
-      .querySelector(`.window-body ul li:nth-child(${index + 1}) span`)
-      .focus();
+    document.querySelector(`.window-body ul li:nth-child(${index + 1}) span`).focus();
     selectText(`.window-body ul li:nth-child(${index + 1}) span`);
   }, 0);
   state.child[index].edit = true;
@@ -500,7 +502,7 @@ const fileContextMenu = (e, item) => {
 const folderContextMenu = (e) => {
   e.preventDefault();
   e.stopPropagation();
-  props.item.canResize = false
+  props.item.canResize = false;
   state.currentSelectName = "";
   state.folderContextMenuVisible = true;
   state.contextMenuVisible = false;
@@ -511,10 +513,10 @@ const folderContextMenu = (e) => {
 };
 
 const listDirector = (path) => {
-  loadingVisable.value = true
-  state.child.length = 0
+  loadingVisable.value = true;
+  state.child.length = 0;
   folderApis.apiListDirectory(path).then((res) => {
-    loadingVisable.value = false
+    loadingVisable.value = false;
     state.child = res.data.data;
     state.searchInputVisible = false;
     rawFils = state.child;
@@ -539,7 +541,7 @@ const doHandlerFileDblClick = (item) => {
   }
   //打开首页
 
-  coolWindow.startNewWebView(handlerApp, `path=${item.path}`)
+  coolWindow.startNewWebView(handlerApp, `path=${item.path}`);
 };
 //文件双击
 const fileDblClick = (item) => {
@@ -607,35 +609,41 @@ const drop = (event) => {
   }
 };
 const addDoneTask = (taskId, func) => {
-  doneCallback.set(taskId, { "doneFunction": func })
+  doneCallback.set(taskId, { "doneFunction": func });
 }
 
 const doHandlerTaskEvent = (data) => {
   if (data.action == "refresh") {
-    refresh()
-    return
+    refresh();
+    return;
   }
-  let taskInfo = doneCallback.get(data.id)
+  let taskInfo = doneCallback.get(data.id);
   if (taskInfo != null) {
-    let fun = taskInfo.doneFunction
+    let fun = taskInfo.doneFunction;
     if (fun instanceof Function) { fun() }
   }
 }
 
 let webSocketEventHandlerFunction = (data) => { doHandlerTaskEvent(data) }
 const initEventListener = () => {
-  proxy.eventBus.on("/event/file", webSocketEventHandlerFunction)
-  proxy.eventBus.on("/event/compress/result", webSocketEventHandlerFunction)
+  proxy.eventBus.on("/event/file", webSocketEventHandlerFunction);
+  proxy.eventBus.on("/event/compress/result", webSocketEventHandlerFunction);
 }
 props.item.events = function (e, d) {
   if (e == "close") {
-    proxy.eventBus.off("/event/file", webSocketEventHandlerFunction)
-    proxy.eventBus.off("/event/compress/result", webSocketEventHandlerFunction)
+    proxy.eventBus.off("/event/file", webSocketEventHandlerFunction);
+    proxy.eventBus.off("/event/compress/result", webSocketEventHandlerFunction);
   }
 };
 
 onMounted(() => {
   initEventListener();
+  if (showRootPanel) {
+    folderApis.apiGetSpaceStatus().then((response) => {
+      spaceState.value = response.data.data;
+    })
+
+  }
   listDirector(state.path.getPath());
 
 });
