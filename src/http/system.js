@@ -50,7 +50,7 @@ export function apiAddOpenUrl(url) {
 }
 
 export function apiRemoveOpenUrl(url) {
-    return axios.post("/desktop/api/system/open/url/add", qs.stringify({
+    return axios.post("/desktop/api/system/open/url/remove", qs.stringify({
         url
     }));
 }

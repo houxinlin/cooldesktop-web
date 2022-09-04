@@ -12,10 +12,10 @@ export function apiDeleteFileOrFolder(params) {
 }
 
 export function apiChunkFileUpload(chunkFile, axiosRequestConfig) {
-    return axios.post("/desktop/api/file/chunkUpload", chunkFile, axiosRequestConfig);
+    return axios.post("/desktop/api/file/chunk/upload", chunkFile, axiosRequestConfig);
 }
 export function apiChunkFileMerge(chunkId, targetName, inPath, size) {
-    return axios.post("/desktop/api/file/chunkFileMerge", qs.stringify({
+    return axios.post("/desktop/api/file/chunk/file/merge", qs.stringify({
         name: chunkId,
         targetName: targetName,
         inPath: inPath,
@@ -23,25 +23,25 @@ export function apiChunkFileMerge(chunkId, targetName, inPath, size) {
     }));
 }
 export function apiFileCopy(path) {
-    return axios.post("/desktop/api/file/fileCopy", qs.stringify({ path: path }));
+    return axios.post("/desktop/api/file/copy", qs.stringify({ path: path }));
 }
 export function apiFilePaste(path, taskId) {
-    return axios.post("/desktop/api/file/filePaste", qs.stringify({
+    return axios.post("/desktop/api/file/paste", qs.stringify({
         path,
         taskId
     }), { timeout: 60 * 1000 * 30 });
 }
 export function apiFileCut(path) {
-    return axios.post("/desktop/api/file/fileCut", qs.stringify({ path: path }));
+    return axios.post("/desktop/api/file/cut", qs.stringify({ path: path }));
 }
 export function apiFileRename(source, newName) {
-    return axios.post("/desktop/api/file/fileRename", qs.stringify({
+    return axios.post("/desktop/api/file/rename", qs.stringify({
         newName: newName,
         source: source
     }));
 }
 export function apiFileCompress(path, targetName, compressType, taskId) {
-    return axios.post("/desktop/api/file/fileCompress", qs.stringify({
+    return axios.post("/desktop/api/file/compress", qs.stringify({
         path,
         targetName,
         compressType,
@@ -49,18 +49,18 @@ export function apiFileCompress(path, targetName, compressType, taskId) {
     }));
 }
 export function apiFileDecompression(path, taskId) {
-    return axios.post("/desktop/api/file/fileDecompression", qs.stringify({
+    return axios.post("/desktop/api/file/decompression", qs.stringify({
         path,
         taskId
     }));
 }
 export function apiFileAttribute(path) {
-    return axios.post("/desktop/api/file/getFileAttribute", qs.stringify({
+    return axios.post("/desktop/api/file/attribute/get", qs.stringify({
         path
     }));
 }
 export function apiCreateFile(parent, name, type) {
-    return axios.post("/desktop/api/file/createFile", qs.stringify({
+    return axios.post("/desktop/api/file/create", qs.stringify({
         parent, name, type
     }));
 }
@@ -69,19 +69,19 @@ export function apiRunJar(path, arg, type) {
     let config = {
         timeout: 1000 * 15,
     };
-    return axios.post("/desktop/api/file/runJar", qs.stringify({
+    return axios.post("/desktop/api/file/jar/run", qs.stringify({
         path, arg, type
     }), config);
 }
 
 export function apiStopJar(path) {
-    return axios.post("/desktop/api/file/stopJar", qs.stringify({
+    return axios.post("/desktop/api/file/jar/stop", qs.stringify({
         path
     }));
 }
 
 export function apiRunShell(path) {
-    return axios.post("/desktop/api/file/runShell", qs.stringify({
+    return axios.post("/desktop/api/file/shell/run", qs.stringify({
         path
     }));
 }

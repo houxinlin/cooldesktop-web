@@ -2,7 +2,7 @@
   <BaseWindow :item="item" className="file-attribute">
     <template v-slot:body>
       <header class="icon">
-        <img :src="request + 'desktop/api/file/getFileIconByType?type=' +  state.attribute.type " alt="" />
+        <img :src="request + 'desktop/api/file/icon/by/type/get/?type=' +  state.attribute.type " alt="" />
       </header>
       <div class="item-info">
         <span class="name">文件名称:</span>

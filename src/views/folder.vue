@@ -120,7 +120,7 @@
                 <div class="file-item">
                   <img v-if="item.type != 'image'" :src="
                     serverDomain +
-                    'desktop/api/file/getFileIconByType?type=' +
+                    'desktop/api/file/icon/by/type/get?type=' +
                     item.rawType
                   " />
                   <img v-if="item.type == 'image'" :src=" serverDomain + 'desktop/api/file/image/thumbnail/get?path='+ encodeURIComponent(item.path)" alt="" />

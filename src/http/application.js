@@ -32,6 +32,6 @@ export function apiInstallApplication(id) {
 
 
 export function apiInstallCustomApplication(application, axiosRequestConfig) {
-    return defaultAxios.post("/desktop/api/application/installCustomApplication", application, axiosRequestConfig);
+    return defaultAxios.post("/desktop/api/application/custom/application/install", application, axiosRequestConfig);
 }
 

@@ -56,7 +56,7 @@
           <template v-for="item in folderState.list" :key="item.path">
             <li @contextmenu.prevent="showContextMenu($event, item)" @dblclick="startHandlerWindow(item)">
               <div class="file-item">
-                <img v-if="item.type != 'image'" :src=" serverDomain + 'desktop/api/file/getFileIconByType?type=' + item.rawType" />
+                <img v-if="item.type != 'image'" :src=" serverDomain + 'desktop/api/file/icon/by/type/get?type=' + item.rawType" />
                 <img v-if="item.type == 'image'" :src=" serverDomain +'desktop/api/file/image/thumbnail/get?path=' + encodeURIComponent(item.path) " alt="" />
                 <span class="file-name">{{ getLastName(item.name) }}</span>
               </div>
