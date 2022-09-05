@@ -6,7 +6,7 @@
           <ul>
             <!-- 增加已安装 -->
             <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listApplicationByType(-1,'已安装')" :class="{'select':serverApplicationState.typeIndex==-1}">已安装</li>
-           <!-- 类别集合 -->
+            <!-- 类别集合 -->
             <template v-for="(item,index) in serverApplicationState.types" :key="item.id">
               <li class="cursor-pointer hegiht-50px flex flex-align-items-center" @click="listApplicationByType(index,item.typeName)" :class="{'select':serverApplicationState.typeIndex==index}">{{item.typeName}}</li>
             </template>
@@ -28,6 +28,7 @@
                     <span v-if="installStatus.value==-3">已安装</span>
                     <span v-if="installStatus.value==-4">安装中</span>
                     <span v-if="installStatus.value==-5" @click="doInstallApplication">安装失败</span>
+                    <span class="background-green" v-if="installStatus.value==-6" @click="doUpdataApplication">更新</span>
                   </div>
                 </div>
                 <div class="introduce">
@@ -46,6 +47,10 @@
                   <div class="introduce-item">
                     <span class="key">简介:</span>
                     <span class="value">{{serverApplicationState.current.software.softwareDesc}}</span>
+                  </div>
+                  <div class="introduce-item">
+                    <span class="key">版本:</span>
+                    <span class="value">{{serverApplicationState.current.software.softwareVersion}}</span>
                   </div>
                 </div>
               </div>
@@ -161,6 +166,9 @@ const refreshInstalled = () => {
 const doInstallApplication = () => {
   beginInstall(serverApplicationState.current.software.softwareId)
 }
+const doUpdataApplication = () => {
+  beginInstall(serverApplicationState.current.software.softwareId)
+}
 
 function uninstall(id) {
   let loadingWindow = coolWindow.startNewLoadingView("卸载中")
@@ -180,7 +188,7 @@ const goBackPage = () => {
 const applicationDetail = (index) => {
   layerIndex.value = LAYER_DETAIL
   serverApplicationState.current = serverApplicationState.list[index]
-  installStatus.value = getRefProgressValue(serverApplicationState.current.software.softwareId)
+  installStatus.value = getRefProgressValue(serverApplicationState.current.software)
 }
 initApplicationList();
 listApplicationByType(-1, "已安装")

@@ -351,11 +351,11 @@ const createFile = (type) => {
   hideAllPopupMenu();
   coolWindow.startNewInputDialog((data) => {
     folderApis.apiCreateFile(getCurrentDirectory(), data.targetName, type).then((res) => {
-        if (res.data.status != 0) {
-          coolWindow.startNewErrorMessageDialog(res.data.msg);
-        }
-        refresh();
-      });
+      if (res.data.status != 0) {
+        coolWindow.startNewErrorMessageDialog(res.data.msg);
+      }
+      refresh();
+    });
   }, "输入文件名")
 
 };
@@ -460,13 +460,13 @@ const selectText = (element) => {
 
 const fileKeyDown = (events, index) => {
   if (events.keyCode == 13) {
-    let span = document.querySelector( `.window-body ul li:nth-child(${index + 1}) span` );
-    folderApis .apiFileRename(state.child[index].path, span.textContent).then((res) => {
-        refresh();
-        if (res.data.status != 0) {
-          coolWindow.startNewErrorMessageDialog(res.data.msg);
-        }
-      });
+    let span = document.querySelector(`.window-body ul li:nth-child(${index + 1}) span`);
+    folderApis.apiFileRename(state.child[index].path, span.textContent).then((res) => {
+      refresh();
+      if (res.data.status != 0) {
+        coolWindow.startNewErrorMessageDialog(res.data.msg);
+      }
+    });
     events.preventDefault();
     events.stopPropagation();
   }
@@ -629,11 +629,15 @@ const initEventListener = () => {
   proxy.eventBus.on("/event/file", webSocketEventHandlerFunction);
   proxy.eventBus.on("/event/compress/result", webSocketEventHandlerFunction);
 }
-props.item.events = function (e, d) {
-  if (e == "close") {
+props.item.events = function (name, data) {
+  if (name == "close") {
     proxy.eventBus.off("/event/file", webSocketEventHandlerFunction);
     proxy.eventBus.off("/event/compress/result", webSocketEventHandlerFunction);
   }
+  if (name == "pause") {
+    hideAllPopupMenu();
+  }
+
 };
 
 onMounted(() => {

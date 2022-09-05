@@ -53,7 +53,6 @@ const props = defineProps({
 proxy.eventBus.on("/event/notif/refresh/share/link", ()=>{listShareLink();});
 
 props.item.events = function (name, data) {
-  //关闭窗口
   if (name == "resume") {
     listShareLink();
   }
