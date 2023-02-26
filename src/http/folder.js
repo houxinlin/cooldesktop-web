@@ -65,13 +65,11 @@ export function apiCreateFile(parent, name, type) {
     }));
 }
 
-export function apiRunJar(path, arg, type) {
+export function apiRunJar(arg) {
     let config = {
         timeout: 1000 * 15,
     };
-    return axios.post("/desktop/api/file/jar/run", qs.stringify({
-        path, arg, type
-    }), config);
+    return axios.post("/desktop/api/file/jar/run", qs.stringify(arg), config);
 }
 
 export function apiStopJar(path) {

@@ -104,7 +104,8 @@ body {
   border-radius: 4px;
   cursor: pointer;
 }
-.base-button.white-translucent{
+
+.base-button.white-translucent {
   background: #ffffff4a;
 
 }
@@ -252,9 +253,10 @@ img.cover {
   background: #ffffff47;
 }
 
-.background-green{
+.background-green {
   background: #228b5b;
 }
+
 // ann
 .element-rotate {
   animation: rotate 2s linear infinite;
@@ -312,9 +314,11 @@ img.cover {
 .window-body-background-green {
   background: #238f74d1 !important
 }
-.window-body-background-red{
+
+.window-body-background-red {
   background: #c5355dc4 !important;
 }
+
 //border
 .border-10-radius {
   border-radius: 10px;
@@ -429,6 +433,7 @@ div.table-layout {
   header {
     width: 100%;
     border-bottom: 1px #ffffff42 solid;
+
     ul {
       display: flex;
 
@@ -456,13 +461,14 @@ div.table-layout {
   }
 }
 
-.info-form-item{
-  .value{
+.info-form-item {
+  .value {
     margin-left: 10px;
   }
 }
+
 .cooldesktop-select-container {
-  .selected{
+  .selected {
     background: #ffffff26;
     padding: 5px 10px;
     min-width: 127px;
@@ -470,23 +476,68 @@ div.table-layout {
     min-height: 30px;
     position: relative;
   }
-  .cooldesktop-select-ul{
+
+  .cooldesktop-select-ul {
     background: #38303047;
     position: absolute;
     width: 127px;
     font-size: 14px;
-    li{
+
+    li {
       padding: 4px 5px;
       cursor: pointer;
       cursor: pointer;
     }
-    li:hover{
+
+    li:hover {
       background-color: #ffffff0f;
     }
   }
 
 }
 
-.user-select-text{
+.user-select-text {
   user-select: text !important
+}
+
+// menu
+.base-menu {
+  ul {
+    width: 100%;
+  }
+
+  li:hover {
+    background: #3a3a3a91;
+  }
+
+  li {
+    box-sizing: border-box;
+    position: relative;
+    cursor: pointer;
+    padding: 6px 29px;
+  }
+}
+
+.mulit-level-menu-first li:hover .mulit-level-menu-second {
+  display: flex;
+}
+
+.mulit-level-menu-first {
+  li {
+    position: relative;
+  }
+
+  .mulit-level-menu-second {
+    display: none;
+    position: absolute;
+    left: 180px;
+    display: none;
+    width: 121px;
+    top: 0px;
+
+    li {
+      position: relative;
+      cursor: pointer;
+    }
+  }
 }

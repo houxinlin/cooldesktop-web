@@ -184,6 +184,7 @@ export class WindowActions {
             this.postWindowEvents(actionMoveId, "move", { left, top })
             odiv.style.left = left + "px";
             odiv.style.top = top + "px";
+            this.getAppById(actionMoveId).instance.laseMoveTimeStamp = new Date().getTime();
         };
         document.onmouseup = (e) => {
             document.onmousemove = null;

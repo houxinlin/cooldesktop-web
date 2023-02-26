@@ -3,7 +3,7 @@
     <template v-slot:body>
       <div class="item">
         <header>名称:</header>
-        <input class="base-input" v-model="targetName" type="text" />
+        <input @keyup="keyUp" class="base-input" v-model="targetName" type="text" />
       </div>
 
       <button class="base-button color-white red-a" @click="finish()">创建</button>
@@ -32,6 +32,8 @@ const finish = () => {
   wact.closeWindow(props.item.id);
   props.item.data.callback({ targetName: targetName.value }, props.item);
 };
+const keyUp=(e)=>{
+}
 </script>
 
 <style lang="less" >

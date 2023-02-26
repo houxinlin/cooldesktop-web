@@ -45,7 +45,7 @@ class CoolWindowStarter {
         state.appStarterVisible = !state.appStarterVisible;
     };
 
-    startNewFolder = (path = "/", single = false,showRootPanel=false) => {
+    startNewFolder = (path = "/", single = false, showRootPanel = false) => {
         if (single) {
             for (const window of state.windowsCollection) {
                 if (window.windowType == "folder" && path == window.data.path.path) {
@@ -53,7 +53,8 @@ class CoolWindowStarter {
                 }
             }
         }
-        startNewWindow(createWindowByType(WindowEnum.FolderWindow, {"showRootPanel":showRootPanel,"folder":createFolder(path, [])}));
+        let viewModel = localStorage.getItem("folder-model") || 0;
+        startNewWindow(createWindowByType(WindowEnum.FolderWindow, { viewModel: viewModel, "showRootPanel": showRootPanel, "folder": createFolder(path, []) }));
     };
     startFileUploadManager = () => {
         startNewWindow(createWindowByType(WindowEnum.UploadManager, uploads));
@@ -77,6 +78,9 @@ class CoolWindowStarter {
     }
     startNewTerminal = (path) => {
         startNewWindow(createWindowByType(WindowEnum.Terminal, { path }));
+    }
+    startRunJarDialog = (jvmTargetName, applicationTargetName, logTargetName, callback) => {
+        startNewWindow(createWindowByType(WindowEnum.RunJarDialog, { jvmTargetName, applicationTargetName, logTargetName, callback }));
     }
     startNewWebView = (application, args = null, page = "", property = {}) => {
         if (application.singleInstance) {
@@ -126,7 +130,7 @@ class CoolWindowStarter {
         startNewWindow(createWindowByType(WindowEnum.ShareLinkDaySelectDialog, { callback }));
     }
     startNewShareLinkList = () => {
-        startNewWindow(createWindowByType(WindowEnum.ShareLinkList, {  }));
+        startNewWindow(createWindowByType(WindowEnum.ShareLinkList, {}));
 
     }
 

@@ -1,6 +1,7 @@
 
 <template>
-  <div :class="{ 'desktop-none': state.desktopScale }" :style="{'background-image':defaultBackgroundImageUrl}" class="desktop">
+  <div :class="{ 'desktop-none': state.desktopScale }" :style="{ 'background-image': defaultBackgroundImageUrl }"
+    class="desktop">
     <div class="app-starter" :class="{ 'app-starter-visible': state.appStarterVisible }">
       <div class="app-list">
         <ul>
@@ -20,7 +21,7 @@
             <li v-if="item.visibilityIsDesktop" @dblclick="startApplication(item)">
               <div class="app-item">
                 <div class="app-icon">
-                  <img :src=" serverDomain + 'desktop/webapplication/' + item.applicationId + '/logo.png'" alt="" />
+                  <img :src="serverDomain + 'desktop/webapplication/' + item.applicationId + '/logo.png'" alt="" />
                 </div>
                 <div class="app-name">{{ item.applicationName }}</div>
               </div>
@@ -29,16 +30,19 @@
         </ul>
       </div>
     </div>
-    <div class="work-region" :class="{'work-region-low-z-index':state.appStarterVisible }">
+    <div class="work-region" :class="{ 'work-region-low-z-index': state.appStarterVisible }">
       <!-- 状态栏 -->
       <div class="status-bar pos-absolute color-white flex">
         <div class="left"></div>
         <div class="center"></div>
         <div class="right flex flex-all-center">
-          <span>{{userNameRef}}</span>
-          <span>{{serverTimeRef}}</span>
-          <span @click="logout"> <i> <svg t="1658147165145" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5333" width="16" height="16">
-                <path d="M511.771963 1023.291077c-63.724308 0-125.558154-12.445538-183.768615-37.100308a469.464615 469.464615 0 0 1-150.134154-101.139692 471.118769 471.118769 0 0 1 59.392-717.351385 37.021538 37.021538 0 0 1 43.008 59.864616 403.692308 403.692308 0 0 0-121.304616 139.027692A391.798154 391.798154 0 0 0 113.435963 551.227077c0 106.338462 41.432615 206.375385 116.657231 281.6a395.736615 395.736615 0 0 0 281.678769 116.736c106.338462 0 206.454154-41.432615 281.757539-116.736a395.421538 395.421538 0 0 0 116.65723-281.6 391.483077 391.483077 0 0 0-45.528615-184.635077 403.298462 403.298462 0 0 0-121.304615-138.870154 36.864 36.864 0 0 1 43.008-59.943384 471.04 471.04 0 0 1 59.392 717.430153 471.04 471.04 0 0 1-333.981539 138.161231z m11.106462-512.236308a36.864 36.864 0 0 1-36.94277-36.864V37.021538a37.021538 37.021538 0 0 1 73.964308 0v437.169231c0 20.48-16.541538 36.864-37.021538 36.864z" p-id="5334" fill="#ffffff"></path>
+          <span>{{ userNameRef }}</span>
+          <span>{{ serverTimeRef }}</span>
+          <span @click="logout"> <i> <svg t="1658147165145" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="5333" width="16" height="16">
+                <path
+                  d="M511.771963 1023.291077c-63.724308 0-125.558154-12.445538-183.768615-37.100308a469.464615 469.464615 0 0 1-150.134154-101.139692 471.118769 471.118769 0 0 1 59.392-717.351385 37.021538 37.021538 0 0 1 43.008 59.864616 403.692308 403.692308 0 0 0-121.304616 139.027692A391.798154 391.798154 0 0 0 113.435963 551.227077c0 106.338462 41.432615 206.375385 116.657231 281.6a395.736615 395.736615 0 0 0 281.678769 116.736c106.338462 0 206.454154-41.432615 281.757539-116.736a395.421538 395.421538 0 0 0 116.65723-281.6 391.483077 391.483077 0 0 0-45.528615-184.635077 403.298462 403.298462 0 0 0-121.304615-138.870154 36.864 36.864 0 0 1 43.008-59.943384 471.04 471.04 0 0 1 59.392 717.430153 471.04 471.04 0 0 1-333.981539 138.161231z m11.106462-512.236308a36.864 36.864 0 0 1-36.94277-36.864V37.021538a37.021538 37.021538 0 0 1 73.964308 0v437.169231c0 20.48-16.541538 36.864-37.021538 36.864z"
+                  p-id="5334" fill="#ffffff"></path>
               </svg></i></span>
         </div>
       </div>
@@ -46,18 +50,22 @@
       <!-- 桌面文件 -->
       <div class="desktop-work pos-absolute pos-ltrb0">
         <!-- 菜单 -->
-        <div v-if="contentMenuState.visual" class="menu pos-absolute" :style="{ left: contentMenuState.x +'px',top: contentMenuState.y + 'px' }">
+        <div v-if="contentMenuState.visual" class="menu pos-absolute"
+          :style="{ left: contentMenuState.x + 'px', top: contentMenuState.y + 'px' }">
           <ul>
             <li @click="deleteDesktopFile()">删除此快捷方式</li>
             <li @click="openContainer()">打开所在目录</li>
           </ul>
         </div>
-        <ul class="folder" @mousedown="contentMenuState.visual=false">
+        <ul class="folder" @mousedown="contentMenuState.visual = false">
           <template v-for="item in folderState.list" :key="item.path">
             <li @contextmenu.prevent="showContextMenu($event, item)" @dblclick="startHandlerWindow(item)">
               <div class="file-item">
-                <img v-if="item.type != 'image'" :src=" serverDomain + 'desktop/api/file/icon/by/type/get?type=' + item.rawType" />
-                <img v-if="item.type == 'image'" :src=" serverDomain +'desktop/api/file/image/thumbnail/get?path=' + encodeURIComponent(item.path) " alt="" />
+                <img v-if="item.type != 'image'"
+                  :src="serverDomain + 'desktop/api/file/icon/by/type/get?type=' + item.rawType" />
+                <img v-if="item.type == 'image'"
+                  :src="serverDomain + 'desktop/api/file/image/thumbnail/get?path=' + encodeURIComponent(item.path)"
+                  alt="" />
                 <span class="file-name">{{ getLastName(item.name) }}</span>
               </div>
             </li>
@@ -67,26 +75,34 @@
       </div>
       <!-- 窗口 -->
       <template v-for="item in state.windowsCollection" :key="item">
-        <DialogCreateFile :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'dialog-create-file'" />
-        <FileUploadManagerView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'upload-manager'" />
+        <DialogCreateFile :actionWindowId="state.actionWindowId" :item="item"
+          v-if="item.windowType == 'dialog-create-file'" />
+        <FileUploadManagerView :actionWindowId="state.actionWindowId" :item="item"
+          v-if="item.windowType == 'upload-manager'" />
         <FolderView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'folder'" />
         <IWebView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'web'" />
         <ErrorMessageView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'error-message'" />
-        <SuccessMessageView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'success-message'" />
-        <DialogCompressSelect :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'dialog-compress-select'" />
+        <SuccessMessageView :actionWindowId="state.actionWindowId" :item="item"
+          v-if="item.windowType == 'success-message'" />
+        <DialogCompressSelect :actionWindowId="state.actionWindowId" :item="item"
+          v-if="item.windowType == 'dialog-compress-select'" />
         <FileAttribute :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'file-attribute'" />
         <TerminalView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'terminal'" />
         <LoadingView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'loading-view'" />
         <ApplicationView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'software'" />
         <Setting :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'setting'" />
-        <CustomApplicationView :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'custom-application'" />
+        <CustomApplicationView :actionWindowId="state.actionWindowId" :item="item"
+          v-if="item.windowType == 'custom-application'" />
         <DeveloperDoc :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'developer-doc'" />
         <InputDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'input-dialog'" />
         <Tail :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'tail'" />
         <SysLog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'sys-log'" />
-        <ShareLinkResultDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link'" />
-        <ShareLinkDaySelect :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link-day-select'" />
+        <ShareLinkResultDialog :actionWindowId="state.actionWindowId" :item="item"
+          v-if="item.windowType == 'share-link'" />
+        <ShareLinkDaySelect :actionWindowId="state.actionWindowId" :item="item"
+          v-if="item.windowType == 'share-link-day-select'" />
         <ShareLinkList :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'share-link-list'" />
+        <RunJarDialog :actionWindowId="state.actionWindowId" :item="item" v-if="item.windowType == 'run-jar-dialog'" />
 
 
 
@@ -97,7 +113,7 @@
       <div class="task-bar-mask"></div>
       <div class="task-bar-content">
         <ul>
-          <li @click="coolWindow.openStarter(); contentMenuState.visual=false">
+          <li @click="coolWindow.openStarter(); contentMenuState.visual = false">
             <div class="task-item">
               <img src="../assets/icon/ic-app.png" />
             </div>
@@ -138,13 +154,14 @@ import SysLog from "./sys-log.vue";
 import ShareLinkResultDialog from "./dialog/share-link-dialog.vue";
 import ShareLinkList from "./share-link-list.vue";
 import ShareLinkDaySelect from "./dialog/share-link-day-select-dialog.vue";
+import RunJarDialog from "./dialog/run-jar-dialog.vue";
 
 
 import { onMounted, reactive, ref, getCurrentInstance } from "vue";
 import { state, coolWindow, wact } from "../windows/window-manager.js";
 import { initInstallProgressManager } from "../utils/install-progress-manager.js"
 import { VueNotificationList } from "@dafcoe/vue-notification";
-import {setAddressConfig,getSystemAddressByKey} from "../utils/utils.js";
+import { setAddressConfig, getSystemAddressByKey } from "../utils/utils.js";
 import "@dafcoe/vue-notification/dist/vue-notification.css";
 import defaultAppList from "../application/default-applications.js"
 import getSocketConnection from "../utils/socket.js";
@@ -162,7 +179,7 @@ let folderState = reactive({ "list": [] })
 //右键菜单
 let contentMenuState = reactive({ x: 0, y: 0, visual: false, selectFile: {} })
 
-let stompClient =null;
+let stompClient = null;
 let defaultBackgroundImageUrl = ref(`url('${new URL(`../assets/background/desktop.jpg`, import.meta.url).href}')`)
 onMounted(() => {
   //缩放动画
@@ -188,8 +205,8 @@ const logout = () => {
 }
 //获取系统配置
 const startApplication = (application) => {
- let window = coolWindow.startNewWebView(application);
- startApplicationEvent(window);
+  let window = coolWindow.startNewWebView(application);
+  startApplicationEvent(window);
 }
 const startHandlerWindow = (item) => {
   //不知道文件类型
@@ -215,7 +232,7 @@ const startHandlerWindow = (item) => {
  * 以下是测试区域
  */
 
-
+// coolWindow.startRunJarDialog()
 
 /**
  * 测试区域结束
@@ -227,14 +244,14 @@ const connectWebSocketServer = () => {
     let event = JSON.parse(response.body);
     proxy.eventBus.emit(event["subject"], event);
   }, (e) => {
-    setTimeout(() => {  connectWebSocketServer(); }, 2000);
+    setTimeout(() => { connectWebSocketServer(); }, 2000);
   });
 
 
 }
 //发送程序打开事件，通知后端对应程序
-const startApplicationEvent=(e)=>{
-   stompClient.send("/desktop/event",{},JSON.stringify({"eventType":"startApplication","data":e.applicationId}))
+const startApplicationEvent = (e) => {
+  stompClient.send("/desktop/event", {}, JSON.stringify({ "eventType": "startApplication", "data": e.applicationId }))
 }
 proxy.eventBus.on("/event/startApplication", (e) => { startApplicationEvent(e) });
 //刷新应用程序列表订阅

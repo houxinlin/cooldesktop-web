@@ -3,12 +3,12 @@
     <template v-slot:body>
       <div class="datas">
         <template v-for="item in data" v-key="item">
-          <div>{{item}}</div>
+          <div>{{ item }}</div>
         </template>
       </div>
     </template>
     <template v-slot:header>
-      <header>{{props.item.data.path}}</header>
+      <header>{{ props.item.data.path }}</header>
     </template>
   </BaseWindow>
 </template>
@@ -54,9 +54,12 @@ props.item.events = function (name, data) {
 .tail .window-body {
   color: #ffffff;
   padding: 5px;
+
   .datas div {
     font-size: 14px;
     user-select: text;
+    margin-bottom: 5px;
+    color: #17cfa1;
   }
 }
 </style>

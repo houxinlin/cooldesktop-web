@@ -11,8 +11,7 @@
       'user-select-text':item.canSelect,
       'window-z-height': item.actionWindow,
       'window-item-resize':item.canResize,
-    } ,className,backgroundClass]" :style="[{'left':(first?windowLeft:'error')},{'top':(first?windowTop:'error')},{'width':windowWidth+'px','height':windowHeight+'px','background':backgroundFilter(item.application )}]"
-    class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
+    } ,className,backgroundClass]" :style="[{'left':(first?windowLeft:'error')},{'top':(first?windowTop:'error')},{'width':windowWidth+'px','height':windowHeight+'px','background':backgroundFilter(item.application )}]" class="window-item" @mousedown="wact.windowMove" @mouseup="wact.windowMouseUp">
     <!-- 插槽3 扩展 -->
     <slot name="extend"></slot>
     <div @click="wact.setWindowPos(item.id)" v-if="item.windowType=='web'" :class="{ action:  item.actionWindow }" class="window-mask"></div>
@@ -71,7 +70,7 @@ const getWindowsSize = (type) => {
  * 获取背景
  */
 const backgroundFilter = (value) => {
-  if(props.item.hasOwnProperty("windowBackground")){
+  if (props.item.hasOwnProperty("windowBackground")) {
     return props.item.windowBackground
   }
   let back = (value || {}).windowBackground || "#000000c4";
@@ -85,6 +84,7 @@ const windowFullScreen = (id) => {
   wact.windowFullScreen(id)
 }
 onMounted(() => {
+  props.item.moveTimeStamp = new Date().getTime();
   let localSize = localStorage.getItem(props.item.applicationId);
   windowWidth.value = localSize != null ? JSON.parse(localSize).width : getWindowsSize(1);
   windowHeight.value = localSize != null ? JSON.parse(localSize).height : getWindowsSize(2);
@@ -93,16 +93,16 @@ onMounted(() => {
   windowTop.value = `calc(50% - ${windowHeight.value / 2}px)`
   setTimeout(() => { first.value = false }, 10);
 
-   
+
   const erd = elementResizeDetectorMaker();
   //监听窗口大小改变,并将自己目前的宽度保存，下一次启动时候恢复
   erd.listenTo(document.getElementById(props.item.id), (element) => {
 
     if (!element.classList.contains("max-window") && (new Date().getTime() - restoreWindowsSizeTimeStamp) > 500) {
-          if(props.item.autoSaveWindowSize){
-             localStorage.setItem(props.item.applicationId, JSON.stringify({ width: element.offsetWidth, height: element.offsetHeight, left: element.offsetLeft, top: element.offsetTop }));
+      if (props.item.autoSaveWindowSize) {
+        localStorage.setItem(props.item.applicationId, JSON.stringify({ width: element.offsetWidth, height: element.offsetHeight, left: element.offsetLeft, top: element.offsetTop }));
 
-          }
+      }
       windowWidth.value = element.offsetWidth;
       windowHeight.value = element.offsetHeight;
     }

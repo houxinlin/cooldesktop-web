@@ -2,13 +2,13 @@
   <BaseWindow :item="item" className="custom-application">
     <template v-slot:body>
       <div @dragstart="dragstart" @dragover="dragover" @dragleave="dragleave" @drop="drop" class="fit-parent ">
-        <div class="flex fit-parent  color-white  flex-column flex-all-center">
+        <div  class="flex fit-parent  color-white  flex-column flex-all-center">
           <div>{{state.tips}}</div>
           <img @mousedown="imgMousedown" :class="[state.imageClass]" class="margin-t-10px" :src="state.imageUrl" alt="">
         </div>
       </div>
     </template>
-    <template v-slot:header>
+    <template  v-slot:header>
       <header>自定义软件</header>
     </template>
   </BaseWindow>

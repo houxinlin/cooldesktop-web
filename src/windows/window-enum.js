@@ -1,9 +1,9 @@
 import defaultApps from "../application/default-applications.js"
-const AVTIVITY_RUN=0;
-const AVTIVITY_PAUSE=1;
+const AVTIVITY_RUN = 0;
+const AVTIVITY_PAUSE = 1;
 
 let BASE_WINDOW_PROPERTYS = {
-    canSelect:false,
+    canSelect: false,
     showWindowInTaskBar: true,
     minState: false,
     maxState: false,
@@ -23,18 +23,18 @@ let BASE_WINDOW_PROPERTYS = {
     canResize: true,
     singleInstance: false,
     visibilityIsDesktop: false,
-    autoSaveWindowSize:true,
-    activityStatus:AVTIVITY_RUN
+    autoSaveWindowSize: true,
+    activityStatus: AVTIVITY_RUN
 }
 
 function getWindowProperty(windowProperty, data = {}) {
     return Object.assign({}, BASE_WINDOW_PROPERTYS, windowProperty, { data });
 }
 export function ErrorMessage(data) {
-    return getWindowProperty({  canSelect:true,applicationId: 1, application: { "windowBackground": "#c95447d4", windowSize: 29884616 }, windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data);
+    return getWindowProperty({ canSelect: true, applicationId: 1, application: { "windowBackground": "#c95447d4", windowSize: 29884616 }, windowType: "error-message", showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function SuccessMessage(data) {
-    return getWindowProperty({ canSelect:true,applicationId: 2, windowType: "success-message", application: { windowSize: 29884616 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
+    return getWindowProperty({ canSelect: true, applicationId: 2, windowType: "success-message", application: { windowSize: 29884616 }, showWindowInTaskBar: false, canMax: false, canMin: false }, data);
 }
 export function WebWindow(data) {
     return getWindowProperty({ windowType: "web" }, data);
@@ -92,7 +92,7 @@ export function Tail(data) {
 
 export function SysLog(data) {
 
-    return getWindowProperty({  application: { "windowBackground": "#0b0a0bcc", windowSize: 56885748 }, applicationId: 20, windowType: "sys-log", "icon": defaultApps[8].icon }, data);
+    return getWindowProperty({ application: { "windowBackground": "#0b0a0bcc", windowSize: 56885748 }, applicationId: 20, windowType: "sys-log", "icon": defaultApps[8].icon }, data);
 
 }
 
@@ -106,7 +106,12 @@ export function ShareLinkDaySelectDialog(data) {
 
 }
 export function ShareLinkList(data) {
-    return getWindowProperty({ applicationId: 23, windowType: "share-link-list", application: {windowSize: 56885748 }, "icon":defaultApps[9].icon}, data);
+    return getWindowProperty({ applicationId: 23, windowType: "share-link-list", application: { windowSize: 56885748 }, "icon": defaultApps[9].icon }, data);
+
+}
+
+export function RunJarDialog(data) {
+    return getWindowProperty({ applicationId: 23, windowType: "run-jar-dialog", application: { windowSize: 20316560 }, "icon": defaultApps[9].icon }, data);
 
 }
 

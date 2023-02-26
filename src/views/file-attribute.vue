@@ -28,6 +28,10 @@
         <span class="name">所有者:</span>
         <span class="value">{{ state.attribute.owner }}</span>
       </div>
+      <div class="item-info">
+        <span class="name">是否链接:</span>
+        <span class="value">{{ state.attribute.isSymbolicLink }}</span>
+      </div>
     </template>
     <template v-slot:header>
       <header>提示</header>
@@ -41,7 +45,7 @@
 import { defineProps, reactive, ref } from "vue";
 import { apiFileAttribute } from "../http/folder.js";
 import BaseWindow from "../components/window.vue";
-import {getSystemAddressByKey} from "../utils/utils.js"
+import { getSystemAddressByKey } from "../utils/utils.js"
 
 let request = ref(getSystemAddressByKey("host"));
 const props = defineProps({
